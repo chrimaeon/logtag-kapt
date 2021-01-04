@@ -1,0 +1,17 @@
+.gradle/
+/local.properties
+/keystore.properties
+/.idea/*
+!/.idea/copyright/
+!/.idea/codeStyles/
+!/.idea/inspectionProfiles/
+!/.idea/.name
+!/.idea/icon.png
+!/.idea/icon_dark.png
+*.iml
+.DS_Store
+build/
+.credentials
+captures/
+/service-account-api-key.json
+/fastlane/report.xml
