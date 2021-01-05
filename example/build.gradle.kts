@@ -29,7 +29,7 @@ plugins {
 }
 
 application {
-    mainClass.set("com.cmgapps.TestKt")
+    mainClass.set("com.cmgapps.example.TestKt")
 }
 
 tasks {

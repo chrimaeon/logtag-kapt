@@ -25,6 +25,8 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.asClassName
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
 import javax.annotation.processing.Messager
@@ -35,8 +37,6 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
-import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
-import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType
 
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
 @AutoService(Processor::class)
@@ -56,6 +56,9 @@ class LogTagProcessor : AbstractProcessor() {
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
+        if (annotations.isEmpty() || annotations.find { it.qualifiedName.contentEquals(LogTag::class.java.canonicalName) } == null) {
+            return false
+        }
 
         roundEnv.getElementsAnnotatedWith(LogTag::class.java).map {
             if (!(it.kind.isClass || it.kind.isInterface)) {
