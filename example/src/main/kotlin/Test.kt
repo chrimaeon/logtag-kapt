@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.cmgapps
 
-@LogTag
-private class TestClassWithLogTag {
+package com.cmgapps.example
+
+@com.cmgapps.LogTag
+class TestClassWithLogTag {
 
     fun getLogTag(): String {
         return LOG_TAG

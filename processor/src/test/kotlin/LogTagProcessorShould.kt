@@ -38,9 +38,16 @@ class LogTagProcessorShould {
 
         @Language("kotlin")
         val expected = """
+          @file:Suppress(
+            "SpellCheckingInspection",
+            "RedundantVisibilityModifier",
+            "unused"
+          )
+
           package cmgapps.test
 
           import kotlin.String
+          import kotlin.Suppress
 
           public val TestClass.LOG_TAG: String
             inline get() = "TestClass"
@@ -81,9 +88,16 @@ class LogTagProcessorShould {
 
         @Language("kotlin")
         val expected = """
+          @file:Suppress(
+            "SpellCheckingInspection",
+            "RedundantVisibilityModifier",
+            "unused"
+          )
+
           package cmgapps.test
 
           import kotlin.String
+          import kotlin.Suppress
 
           public val TestObject.LOG_TAG: String
             inline get() = "TestObject"

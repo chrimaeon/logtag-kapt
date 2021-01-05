@@ -18,6 +18,7 @@ package com.cmgapps.kotlin
 
 import com.cmgapps.LogTag
 import com.google.auto.service.AutoService
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -83,6 +84,12 @@ class LogTagProcessor : AbstractProcessor() {
 
             FileSpec.builder(element.className.packageName, "__${element.className.simpleName}LogTag")
                 .addProperty(propertySpec)
+                .addAnnotation(
+                    AnnotationSpec.builder(Suppress::class).addMember("%S", "SpellCheckingInspection")
+                        .addMember("%S", "RedundantVisibilityModifier")
+                        .addMember("%S", "unused")
+                        .build()
+                )
                 .build().writeTo(filer)
         }
 
