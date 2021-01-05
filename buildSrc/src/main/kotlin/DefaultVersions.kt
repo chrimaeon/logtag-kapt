@@ -14,8 +14,4 @@
  * limitations under the License.
  */
 
-rootProject.name = "logtag-kapt"
-include(
-    "annotation",
-    "processor"
-)
+const val KOTLIN_VERSION = "1.4.21-2"

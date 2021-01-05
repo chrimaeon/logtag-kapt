@@ -14,11 +14,33 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
 plugins {
     kotlin("jvm") version "1.4.21"
-    ktlint
+    kotlin("kapt") version "1.4.21"
+    application
+}
+
+application {
+    mainClass.set("com.cmgapps.TestKt")
+}
+
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation("com.cmgapps:log-tag-annotation:+")
+    kapt("com.cmgapps:log-tag-processor:+")
 }

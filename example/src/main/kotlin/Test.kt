@@ -13,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.cmgapps
 
-rootProject.name = "logtag-kapt"
-include(
-    "annotation",
-    "processor"
-)
+@LogTag
+private class TestClassWithLogTag {
+
+    fun getLogTag(): String {
+        return LOG_TAG
+    }
+}
+
+fun main() {
+    println(TestClassWithLogTag().getLogTag())
+}

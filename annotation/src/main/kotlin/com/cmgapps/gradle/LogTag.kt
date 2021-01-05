@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-rootProject.name = "logtag-kapt"
-include(
-    "annotation",
-    "processor"
-)
+package com.cmgapps
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+annotation class LogTag
