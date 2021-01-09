@@ -95,7 +95,7 @@ class LogTagProcessor : AbstractProcessor() {
     private fun generateJavaClass(element: AnnotatedElement) {
         val field =
             FieldSpec.builder(String::class.java, "LOG_TAG", Modifier.STATIC, Modifier.FINAL)
-                .initializer("\$S", element.javaClassName.simpleName()).build()
+                .initializer("\$S", getTag(element)).build()
         val clazz =
             TypeSpec.classBuilder("${element.kotlinClassName.simpleName}LogTag")
                 .addOriginatingElement(element.element)
@@ -111,7 +111,7 @@ class LogTagProcessor : AbstractProcessor() {
             .getter(
                 FunSpec.getterBuilder()
                     .addModifiers(KModifier.INLINE)
-                    .addStatement("return %S", element.kotlinClassName.simpleName)
+                    .addStatement("return %S", getTag(element))
                     .build()
             ).build()
 
@@ -126,6 +126,25 @@ class LogTagProcessor : AbstractProcessor() {
             .build().writeTo(filer)
     }
 
+    private fun getTag(element: AnnotatedElement): String {
+        val logTag = element.getLogTagAnnotation().value
+        if (logTag.isNotBlank()) {
+            return logTag
+        }
+
+        return element.javaClassName.simpleName().let {
+            if (it.length > 23) {
+                messager.printMessage(
+                    Diagnostic.Kind.WARNING,
+                    "Class name \"$it\" is to long for a log tag. Max. length is 23. Class name will be truncated."
+                )
+                it.substring(0..22)
+            } else {
+                it
+            }
+        }
+    }
+
     inner class AnnotatedElement(val element: TypeElement) {
         private val elementUtils: Elements = processingEnv.elementUtils
         val kotlinClassName: KotlinClassName = KotlinClassName(
@@ -137,6 +156,10 @@ class LogTagProcessor : AbstractProcessor() {
             elementUtils.getPackageOf(element).qualifiedName.toString(),
             element.simpleName.toString()
         )
+
+        fun getLogTagAnnotation(): LogTag {
+            return element.getAnnotation(LogTag::class.java)
+        }
 
         val isKotlin: Boolean
             get() {

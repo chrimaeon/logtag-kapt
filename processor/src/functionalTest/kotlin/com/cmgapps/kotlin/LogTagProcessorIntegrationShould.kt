@@ -23,7 +23,7 @@ import org.hamcrest.core.Is.`is`
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class LogTagProcessorShould {
+class LogTagProcessorIntegrationShould {
 
     @Test
     fun generateForClass() {
@@ -131,6 +131,72 @@ class LogTagProcessorShould {
 
             class TestJavaLogTag {
               static final String LOG_TAG = "TestJava";
+            }
+
+        """.trimIndent()
+
+        assertThat(
+            result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestJavaLogTag.java" }?.readText(),
+            `is`(expected)
+        )
+    }
+
+    @Test
+    fun useCustomLogTagForKotlin() {
+        val result = SourceFile.kotlin(
+            "class.kt",
+            """
+              package cmgapps.test
+
+              @com.cmgapps.LogTag("MyCustomTag")
+              class TestClass
+            """
+        ).compile()
+
+        @Language("kotlin")
+        val expected = """
+          @file:Suppress(
+            "SpellCheckingInspection",
+            "RedundantVisibilityModifier",
+            "unused"
+          )
+
+          package cmgapps.test
+
+          import kotlin.String
+          import kotlin.Suppress
+
+          public val TestClass.LOG_TAG: String
+            inline get() = "MyCustomTag"
+
+        """.trimIndent()
+        assertThat(
+            result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestClassLogTag.kt" }?.readText(),
+            `is`(expected)
+        )
+    }
+
+    @Test
+    fun useCustomTagForJavaClass() {
+        val className = "TestJava"
+        val result = SourceFile.java(
+            "$className.java",
+            """
+              package cmgapps.test;
+
+              @com.cmgapps.LogTag("MyCustomTag")
+              public class $className{}
+            """
+        ).compile()
+
+        @Language("Java")
+        val expected = """
+            package cmgapps.test;
+
+            import java.lang.String;
+
+            class TestJavaLogTag {
+              static final String LOG_TAG = "MyCustomTag";
             }
 
         """.trimIndent()

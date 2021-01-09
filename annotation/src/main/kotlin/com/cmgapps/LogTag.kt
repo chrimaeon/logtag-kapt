@@ -18,4 +18,4 @@ package com.cmgapps
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-annotation class LogTag
+annotation class LogTag(val value: String = "")

@@ -79,14 +79,16 @@ class LogTagProcessorShould {
         val annotationMock = mock(TypeElement::class.java)
         `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
 
+        val logTagAnnotationMock = mock(LogTag::class.java)
+        `when`(logTagAnnotationMock.value).thenReturn("")
+
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.CLASS)
         `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
         `when`(element.simpleName).thenReturn("TestClass".asName())
-        `when`(element.getAnnotation(any<Class<Annotation>>())).thenAnswer {
-            // return any annotation the class is annotated with
-            it.getArgument<Class<Annotation>>(0).annotations[0]
-        }
+        `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
+        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+
         val packageElement = mock(PackageElement::class.java).also {
             `when`(it.qualifiedName).thenReturn("test.pkg".asName())
         }
@@ -135,7 +137,11 @@ class LogTagProcessorShould {
         `when`(element.kind).thenReturn(ElementKind.CLASS)
         `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
         `when`(element.simpleName).thenReturn("TestClass".asName())
-        `when`(element.getAnnotation(any<Class<Annotation>>())).thenReturn(null)
+        `when`(element.getAnnotation(Metadata::class.java)).thenReturn(null)
+        val logTagAnnotationMock = mock(LogTag::class.java)
+        `when`(logTagAnnotationMock.value).thenReturn("")
+        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+
         val packageElement = mock(PackageElement::class.java).also {
             `when`(it.qualifiedName).thenReturn("test.pkg".asName())
         }
@@ -188,6 +194,12 @@ class LogTagProcessorShould {
                 element
             )
         )
+
+        `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
+        val logTagAnnotationMock = mock(LogTag::class.java).also {
+            `when`(it.value).thenReturn("")
+        }
+        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
 
         val result = processor.process(mutableSetOf(annotationMock), roundEnvironmentMock)
 
@@ -251,6 +263,153 @@ class LogTagProcessorShould {
             Diagnostic.Kind.ERROR,
             "LogTag annotation can only be applied to public classes"
         )
+    }
+
+    @Test
+    fun `truncate tag if class name is too long`() {
+        `when`(environmentMock.elementUtils).thenReturn(elementUtilsMock)
+        `when`(elementUtilsMock.getPackageOf(any())).thenAnswer {
+            it.getArgument<TypeElement>(0).enclosingElement
+        }
+
+        val annotationMock = mock(TypeElement::class.java)
+        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+
+        val element = mock(TypeElement::class.java)
+        `when`(element.kind).thenReturn(ElementKind.CLASS)
+        `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
+        `when`(element.simpleName).thenReturn("TestClassWithAFarTooLongName".asName())
+
+        `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
+        val logTagAnnotationMock = mock(LogTag::class.java).also {
+            `when`(it.value).thenReturn("")
+        }
+        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+        val packageElement = mock(PackageElement::class.java).also {
+            `when`(it.qualifiedName).thenReturn("test.pkg".asName())
+        }
+        `when`(element.enclosingElement).thenReturn(packageElement)
+
+        `when`(roundEnvironmentMock.getElementsAnnotatedWith(any<Class<out Annotation>>())).thenReturn(
+            mutableSetOf(
+                element
+            )
+        )
+
+        processor.process(mutableSetOf(annotationMock), roundEnvironmentMock)
+
+        @Language("Kt")
+        val expected = """
+            @file:Suppress(
+              "SpellCheckingInspection",
+              "RedundantVisibilityModifier",
+              "unused"
+            )
+
+            package test.pkg
+
+            import kotlin.String
+            import kotlin.Suppress
+
+            public val TestClassWithAFarTooLongName.LOG_TAG: String
+              inline get() = "TestClassWithAFarTooLon"
+
+        """.trimIndent()
+
+        assertThat(filer.getFileObject()?.getCharContent(false), `is`(expected))
+    }
+
+    @Test
+    fun `show warning if class name is too long`() {
+        `when`(environmentMock.elementUtils).thenReturn(elementUtilsMock)
+        `when`(elementUtilsMock.getPackageOf(any())).thenAnswer {
+            it.getArgument<TypeElement>(0).enclosingElement
+        }
+
+        val annotationMock = mock(TypeElement::class.java)
+        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+
+        val element = mock(TypeElement::class.java)
+        `when`(element.kind).thenReturn(ElementKind.CLASS)
+        `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
+        `when`(element.simpleName).thenReturn("TestClassWithAFarTooLongName".asName())
+        `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
+        val logTagAnnotationMock = mock(LogTag::class.java).also {
+            `when`(it.value).thenReturn("")
+        }
+        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+
+        val packageElement = mock(PackageElement::class.java).also {
+            `when`(it.qualifiedName).thenReturn("test.pkg".asName())
+        }
+        `when`(element.enclosingElement).thenReturn(packageElement)
+
+        `when`(roundEnvironmentMock.getElementsAnnotatedWith(any<Class<out Annotation>>())).thenReturn(
+            mutableSetOf(
+                element
+            )
+        )
+
+        processor.process(mutableSetOf(annotationMock), roundEnvironmentMock)
+
+        verify(messagerMock).printMessage(
+            Diagnostic.Kind.WARNING,
+            "Class name \"TestClassWithAFarTooLongName\" is to long for a log tag. Max. length is 23. Class name will be truncated."
+        )
+    }
+
+    @Test
+    fun `use custom log tag`() {
+        `when`(environmentMock.elementUtils).thenReturn(elementUtilsMock)
+        `when`(elementUtilsMock.getPackageOf(any())).thenAnswer {
+            it.getArgument<TypeElement>(0).enclosingElement
+        }
+
+        val annotationMock = mock(TypeElement::class.java)
+        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+
+        val element = mock(TypeElement::class.java)
+        `when`(element.kind).thenReturn(ElementKind.CLASS)
+        `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
+        `when`(element.simpleName).thenReturn("TestClass".asName())
+        val packageElement = mock(PackageElement::class.java).also {
+            `when`(it.qualifiedName).thenReturn("test.pkg".asName())
+        }
+        `when`(element.enclosingElement).thenReturn(packageElement)
+
+        `when`(roundEnvironmentMock.getElementsAnnotatedWith(any<Class<out Annotation>>())).thenReturn(
+            mutableSetOf(
+                element
+            )
+        )
+
+        `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
+        val logTagAnnotationMock = mock(LogTag::class.java).also {
+            `when`(it.value).thenReturn("MyCustomLogTag")
+        }
+        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+
+        processor.process(mutableSetOf(annotationMock), roundEnvironmentMock)
+
+        @Language("Kt")
+        val expected = """
+            @file:Suppress(
+              "SpellCheckingInspection",
+              "RedundantVisibilityModifier",
+              "unused"
+            )
+
+            package test.pkg
+
+            import kotlin.String
+            import kotlin.Suppress
+
+            public val TestClass.LOG_TAG: String
+              inline get() = "MyCustomLogTag"
+
+        """.trimIndent()
+
+        assertThat(filer.getFileObject()?.getCharContent(false), `is`(expected))
     }
 }
 
