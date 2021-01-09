@@ -17,6 +17,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    `java-library`
     kotlin("jvm") version KOTLIN_VERSION
     kotlin("kapt") version KOTLIN_VERSION
     ktlint

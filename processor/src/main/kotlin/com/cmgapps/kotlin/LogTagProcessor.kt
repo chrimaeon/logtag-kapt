@@ -18,13 +18,14 @@ package com.cmgapps.kotlin
 
 import com.cmgapps.LogTag
 import com.google.auto.service.AutoService
+import com.squareup.javapoet.FieldSpec
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.TypeSpec
 import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.asClassName
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType
 import javax.annotation.processing.AbstractProcessor
@@ -36,7 +37,10 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
+import javax.lang.model.util.Elements
 import javax.tools.Diagnostic
+import com.squareup.javapoet.ClassName as JavaClassName
+import com.squareup.kotlinpoet.ClassName as KotlinClassName
 
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
 @AutoService(Processor::class)
@@ -66,40 +70,80 @@ class LogTagProcessor : AbstractProcessor() {
                     Diagnostic.Kind.ERROR,
                     "LogTag annotation can only be applied to a class/interface"
                 )
+
+                // consume the annotation anyway
+                return true
             }
+
             if (!it.modifiers.contains(Modifier.PUBLIC)) {
                 messager.printMessage(
                     Diagnostic.Kind.ERROR,
                     "LogTag annotation can only be applied to public classes"
                 )
+
+                // consume the annotation anyway
+                return true
             }
             AnnotatedElement(it as TypeElement)
         }.forEach { element ->
-            val propertySpec = PropertySpec.builder("LOG_TAG", String::class)
-                .receiver(element.className)
-                .addOriginatingElement(element.element)
-                .getter(
-                    FunSpec.getterBuilder()
-                        .addModifiers(KModifier.INLINE)
-                        .addStatement("return %S", element.className.simpleName)
-                        .build()
-                ).build()
-
-            FileSpec.builder(element.className.packageName, "__${element.className.simpleName}LogTag")
-                .addProperty(propertySpec)
-                .addAnnotation(
-                    AnnotationSpec.builder(Suppress::class).addMember("%S", "SpellCheckingInspection")
-                        .addMember("%S", "RedundantVisibilityModifier")
-                        .addMember("%S", "unused")
-                        .build()
-                )
-                .build().writeTo(filer)
+            if (element.isKotlin) generateKotlinExtensionFunction(element) else generateJavaClass(element)
         }
 
         return true
     }
+
+    private fun generateJavaClass(element: AnnotatedElement) {
+        val field =
+            FieldSpec.builder(String::class.java, "LOG_TAG", Modifier.STATIC, Modifier.FINAL)
+                .initializer("\$S", element.javaClassName.simpleName()).build()
+        val clazz =
+            TypeSpec.classBuilder("${element.kotlinClassName.simpleName}LogTag")
+                .addOriginatingElement(element.element)
+                .addField(field).build()
+
+        JavaFile.builder(element.kotlinClassName.packageName, clazz).build().writeTo(filer)
+    }
+
+    private fun generateKotlinExtensionFunction(element: AnnotatedElement) {
+        val propertySpec = PropertySpec.builder("LOG_TAG", String::class)
+            .receiver(element.kotlinClassName)
+            .addOriginatingElement(element.element)
+            .getter(
+                FunSpec.getterBuilder()
+                    .addModifiers(KModifier.INLINE)
+                    .addStatement("return %S", element.kotlinClassName.simpleName)
+                    .build()
+            ).build()
+
+        FileSpec.builder(element.kotlinClassName.packageName, "${element.kotlinClassName.simpleName}LogTag")
+            .addProperty(propertySpec)
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class).addMember("%S", "SpellCheckingInspection")
+                    .addMember("%S", "RedundantVisibilityModifier")
+                    .addMember("%S", "unused")
+                    .build()
+            )
+            .build().writeTo(filer)
+    }
+
+    inner class AnnotatedElement(val element: TypeElement) {
+        private val elementUtils: Elements = processingEnv.elementUtils
+        val kotlinClassName: KotlinClassName = KotlinClassName(
+            elementUtils.getPackageOf(element).qualifiedName.toString(),
+            element.simpleName.toString()
+        )
+
+        val javaClassName: JavaClassName = JavaClassName.get(
+            elementUtils.getPackageOf(element).qualifiedName.toString(),
+            element.simpleName.toString()
+        )
+
+        val isKotlin: Boolean
+            get() {
+                val metaDataClass = Class.forName("kotlin.Metadata").asSubclass(Annotation::class.java)
+                return element.getAnnotation(metaDataClass) != null
+            }
+    }
 }
 
-data class AnnotatedElement(val element: TypeElement) {
-    val className: ClassName = element.asClassName()
-}
+

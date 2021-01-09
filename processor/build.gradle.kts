@@ -17,6 +17,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    idea
+    `java-library`
     kotlin("jvm") version KOTLIN_VERSION
     kotlin("kapt") version KOTLIN_VERSION
     `maven-publish`
@@ -28,6 +30,41 @@ repositories {
     jcenter()
 }
 
+val functionalTestName = "functionalTest"
+
+configurations {
+    create("${functionalTestName}Implementation") {
+        extendsFrom(testImplementation.get())
+    }
+
+    create("${functionalTestName}Runtime") {
+        extendsFrom(testRuntime.get())
+    }
+}
+
+sourceSets {
+    create(functionalTestName) {
+        java {
+            srcDir("src/$functionalTestName/kotlin")
+        }
+
+        resources {
+            srcDir("src/$functionalTestName/resources")
+            outputDir = file("$buildDir/resources/$functionalTestName")
+        }
+
+        compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath.get()
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+idea {
+    module {
+        testSourceDirs = testSourceDirs + sourceSets[functionalTestName].allJava.srcDirs
+        testResourceDirs = testResourceDirs + sourceSets[functionalTestName].resources.srcDirs
+    }
+}
+
 tasks {
     withType<KotlinCompile> {
         kotlinOptions {
@@ -36,10 +73,24 @@ tasks {
     }
 
     test {
-        testLogging {
-            events("PASSED", "SKIPPED", "FAILED")
-        }
+        useJUnitPlatform()
+        logEvents()
     }
+
+    val functionalTest by registering(Test::class) {
+        group = "verification"
+        testClassesDirs = sourceSets[functionalTestName].output.classesDirs
+        classpath = sourceSets[functionalTestName].runtimeClasspath
+        logEvents()
+    }
+
+    check {
+        dependsOn(functionalTest)
+    }
+}
+
+fun Test.logEvents() = testLogging {
+    events("PASSED", "SKIPPED", "FAILED")
 }
 
 val group: String by project
@@ -90,6 +141,7 @@ dependencies {
 
     implementation(kotlin("stdlib", KOTLIN_VERSION))
     implementation("com.squareup:kotlinpoet".withVersion())
+    implementation("com.squareup:javapoet".withVersion())
 
     compileOnly("com.google.auto.service:auto-service".withVersion())
     kapt("com.google.auto.service:auto-service".withVersion())
@@ -97,6 +149,12 @@ dependencies {
     compileOnly("net.ltgt.gradle.incap:incap:0.3")
     kapt("net.ltgt.gradle.incap:incap-processor".withVersion())
 
-    testImplementation("junit:junit".withVersion())
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing".withVersion())
+    // testImplementation cannot be resoled by dependencyUpdate task
+    testImplementation(platform("org.junit:junit-bom:5.7.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.mockito:mockito-junit-jupiter:3.7.0")
+    testImplementation("org.hamcrest:hamcrest-library:2.2")
+
+    "functionalTestImplementation"("junit:junit".withVersion())
+    "functionalTestImplementation"("com.github.tschuchortdev:kotlin-compile-testing".withVersion())
 }

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import com.cmgapps.kotlin.LogTagProcessor
+package com.cmgapps.kotlin
+
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.hamcrest.MatcherAssert.assertThat
@@ -54,7 +55,7 @@ class LogTagProcessorShould {
 
         """.trimIndent()
         assertThat(
-            result.sourcesGeneratedByAnnotationProcessor.find { it.name == "__TestClassLogTag.kt" }?.readText(),
+            result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestClassLogTag.kt" }?.readText(),
             `is`(expected)
         )
     }
@@ -104,7 +105,38 @@ class LogTagProcessorShould {
 
         """.trimIndent()
         assertThat(
-            result.sourcesGeneratedByAnnotationProcessor.find { it.name == "__TestObjectLogTag.kt" }?.readText(),
+            result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestObjectLogTag.kt" }?.readText(),
+            `is`(expected)
+        )
+    }
+
+    @Test
+    fun generateForJavaClass() {
+        val className = "TestJava"
+        val result = SourceFile.java(
+            "$className.java",
+            """
+              package cmgapps.test;
+
+              @com.cmgapps.LogTag
+              public class $className{}
+            """
+        ).compile()
+
+        @Language("Java")
+        val expected = """
+            package cmgapps.test;
+
+            import java.lang.String;
+
+            class TestJavaLogTag {
+              static final String LOG_TAG = "TestJava";
+            }
+
+        """.trimIndent()
+
+        assertThat(
+            result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestJavaLogTag.java" }?.readText(),
             `is`(expected)
         )
     }
