@@ -55,7 +55,7 @@ val description: String by project
 afterEvaluate {
     publishing {
         publications {
-            create<MavenPublication>("annotation") {
+            create<MavenPublication>("library") {
                 from(components["release"])
 
                 val name: String by project
@@ -98,7 +98,7 @@ afterEvaluate {
             key = credentialProps.getProperty("key")
         }
 
-        setPublications("processor")
+        setPublications("library")
 
         pkg(closureOf<BintrayExtension.PackageConfig> {
             repo = "maven"

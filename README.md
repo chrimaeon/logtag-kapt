@@ -10,8 +10,8 @@ Add the KAPT and annotation to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:<version>")
-    kapt("com.cmgapps:log-tag-processor:<version>")
+    implementation("com.cmgapps:log-tag:0.1.0")
+    kapt("com.cmgapps:log-tag-processor:0.1.0")
 }
 ```
 
@@ -36,7 +36,7 @@ class SuperImportantClass
 For _Kotlin_ classes this will generate an extension property to you class called `LOG_TAG`
 you can then use as the tag for your android log messages.
 
-For _Java_ it will generate a class called &lt;Classname&gt;LogTag which has a constant field called LOG_TAG you can
+For _Java_ it will generate a class called &lt;Classname&gt;LogTag which has a constant field called `LOG_TAG` you can
 then import to tag your android log messages
 
 ## License
