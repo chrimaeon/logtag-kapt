@@ -54,10 +54,16 @@ project.version = versionName
 val name: String by project
 val description: String by project
 
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
 publishing {
     publications {
         create<MavenPublication>("annotation") {
             from(components["java"])
+            artifact(sourcesJar.get())
 
             val artifactId: String by project
             val name: String by project
@@ -100,7 +106,7 @@ bintray {
         key = credentialProps.getProperty("key")
     }
 
-    setPublications("processor")
+    setPublications("annotation")
 
     pkg(closureOf<BintrayExtension.PackageConfig> {
         repo = "maven"
