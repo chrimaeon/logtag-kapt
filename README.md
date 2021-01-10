@@ -1,5 +1,8 @@
 # Log TAG Annotation Processor
 
+[![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Bintray](https://www.cmgapps.com/badge/chrimaeon/maven/com.cmgapps:log-tag/badge.svg)](https://bintray.com/chrimaeon/maven/com.cmgapps:log-tag)
+
 This is an annotation processor that will generate an appropriate log tag for Android Log messages
 
 ## Usage
