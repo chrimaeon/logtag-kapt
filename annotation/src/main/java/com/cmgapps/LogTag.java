@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm") version "1.4.21"
-    ktlint
-}
+package com.cmgapps;
 
-dependencies {
-    implementation(kotlin("stdlib"))
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
+public @interface LogTag {
+    String value() default "";
 }

@@ -11,7 +11,5 @@
 *.iml
 .DS_Store
 build/
-.credentials
 captures/
-/service-account-api-key.json
-/fastlane/report.xml
+credentials.properties

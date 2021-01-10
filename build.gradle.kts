@@ -16,11 +16,14 @@
 
 buildscript {
     repositories {
+        google()
         jcenter()
         helixTeamHubRepo(project)
     }
 
     dependencies {
+        classpath("com.android.tools.build:gradle".withVersion())
+        classpath(kotlin("gradle-plugin", KOTLIN_VERSION))
         classpath("com.cmgapps.gradle:gradle-dependencies-versions-plugin".withVersion())
     }
 }
@@ -29,8 +32,16 @@ apply(plugin = "com.cmgapps.versions")
 
 subprojects {
     repositories {
-        mavenCentral()
+        google()
         jcenter()
+        mavenCentral()
+    }
+
+    gradle.projectsEvaluated {
+        tasks.withType<JavaCompile>()
+            .configureEach {
+                options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xmaxerrs", "500"))
+            }
     }
 }
 
