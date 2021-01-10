@@ -10,7 +10,7 @@ Add the KAPT and annotation to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag-annotation:<version>")
+    implementation("com.cmgapps:log-tag:<version>")
     kapt("com.cmgapps:log-tag-processor:<version>")
 }
 ```

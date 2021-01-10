@@ -14,33 +14,18 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package com.cmgapps.lint
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
-}
+import com.android.tools.lint.client.api.IssueRegistry
+import com.android.tools.lint.detector.api.CURRENT_API
+import com.android.tools.lint.detector.api.Issue
+import com.google.auto.service.AutoService
 
-plugins {
-    kotlin("jvm") version "1.4.21"
-    kotlin("kapt") version "1.4.21"
-    application
-}
+@Suppress("UnstableApiUsage")
+@AutoService(IssueRegistry::class)
+class IssueRegistry : IssueRegistry() {
 
-application {
-    mainClass.set("com.cmgapps.example.TestKt")
-}
+    override val api = CURRENT_API
 
-tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
-}
-
-dependencies {
-    implementation("com.cmgapps:log-tag-annotation:+")
-    kapt("com.cmgapps:log-tag-processor:+")
+    override val issues: List<Issue> = listOf(LogTagDetector.ISSUE)
 }

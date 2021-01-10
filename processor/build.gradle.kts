@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     idea
     `java-library`
-    kotlin("jvm") version KOTLIN_VERSION
-    kotlin("kapt") version KOTLIN_VERSION
+    kotlin("jvm")
+    kotlin("kapt")
     `maven-publish`
     ktlint
 }
@@ -63,6 +63,11 @@ idea {
         testSourceDirs = testSourceDirs + sourceSets[functionalTestName].allJava.srcDirs
         testResourceDirs = testResourceDirs + sourceSets[functionalTestName].resources.srcDirs
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks {
@@ -149,11 +154,10 @@ dependencies {
     compileOnly("net.ltgt.gradle.incap:incap:0.3")
     kapt("net.ltgt.gradle.incap:incap-processor".withVersion())
 
-    // testImplementation cannot be resoled by dependencyUpdate task
-    testImplementation(platform("org.junit:junit-bom:5.7.0"))
+    testImplementation(platform("org.junit:junit-bom".withVersion()))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.mockito:mockito-junit-jupiter:3.7.0")
-    testImplementation("org.hamcrest:hamcrest-library:2.2")
+    testImplementation("org.mockito:mockito-junit-jupiter".withVersion())
+    testImplementation("org.hamcrest:hamcrest-library".withVersion())
 
     "functionalTestImplementation"("junit:junit".withVersion())
     "functionalTestImplementation"("com.github.tschuchortdev:kotlin-compile-testing".withVersion())

@@ -168,5 +168,3 @@ class LogTagProcessor : AbstractProcessor() {
             }
     }
 }
-
-

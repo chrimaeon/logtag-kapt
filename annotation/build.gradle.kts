@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     `java-library`
-    kotlin("jvm") version KOTLIN_VERSION
-    kotlin("kapt") version KOTLIN_VERSION
-    ktlint
     `maven-publish`
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 val group: String by project
@@ -69,10 +69,3 @@ publishing {
     }
 }
 
-tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
-}
