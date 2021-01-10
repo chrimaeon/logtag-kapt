@@ -1,4 +1,4 @@
-// Generated with dependencyUpdates on 1/10/21 5:57 PM
+// Generated with dependencyUpdates on 1/10/21 9:58 PM
 // DO NOT EDIT
 @file:Suppress(
     "SpellCheckingInspection",
@@ -13,6 +13,7 @@ private val versions: Map<String, String> = mapOf(
     "com.cmgapps.gradle:gradle-dependencies-versions-plugin" to "1.6.0",
     "com.github.tschuchortdev:kotlin-compile-testing" to "1.3.4",
     "com.google.auto.service:auto-service" to "1.0-rc7",
+    "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin" to "1.8.5",
     "com.pinterest:ktlint" to "0.40.0",
     "com.squareup:javapoet" to "1.13.0",
     "com.squareup:kotlinpoet" to "1.7.2",

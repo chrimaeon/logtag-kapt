@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+import com.jfrog.bintray.gradle.BintrayExtension
+import java.util.Date
+import java.util.Properties
+
 plugins {
     `java-library`
     `maven-publish`
+    id("com.jfrog.bintray") version "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin".version()
 }
 
 java {
@@ -24,8 +29,24 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+tasks {
+    jar {
+        manifest {
+            attributes(
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version.toString(),
+                "Built-By" to System.getProperty("user.name"),
+                "Built-Date" to Date(),
+                "Built-JDK" to System.getProperty("java.version"),
+                "Built-Gradle" to gradle.gradleVersion
+            )
+        }
+    }
+}
+
 val group: String by project
 val versionName: String by project
+val artifactId: String by project
 
 project.group = group
 project.version = versionName
@@ -67,5 +88,35 @@ publishing {
             }
         }
     }
+}
+
+bintray {
+    val credentialProps = Properties()
+    val propsFile = project.rootDir.resolve("credentials.properties")
+
+    if (propsFile.exists()) {
+        credentialProps.load(propsFile.inputStream())
+        user = credentialProps.getProperty("user")
+        key = credentialProps.getProperty("key")
+    }
+
+    setPublications("processor")
+
+    pkg(closureOf<BintrayExtension.PackageConfig> {
+        repo = "maven"
+        name = "${project.group}:$artifactId"
+        userOrg = user
+        setLicenses("Apache-2.0")
+        val projectUrl: String by project
+        vcsUrl = projectUrl
+        val issuesTrackerUrl: String by project
+        issueTrackerUrl = issuesTrackerUrl
+        githubRepo = projectUrl
+        version(closureOf<BintrayExtension.VersionConfig> {
+            name = versionName
+            vcsTag = versionName
+            released = Date().toString()
+        })
+    })
 }
 

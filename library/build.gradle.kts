@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
+import com.jfrog.bintray.gradle.BintrayExtension
+import java.util.Date
+import java.util.Properties
+
 plugins {
     id("com.android.library")
     ktlint
     `maven-publish`
+    id("com.jfrog.bintray") version "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin".version()
 }
 
 android {
@@ -39,6 +44,7 @@ dependencies {
 
 val group: String by project
 val versionName: String by project
+val artifactId: String by project
 
 project.group = group
 project.version = versionName
@@ -52,7 +58,6 @@ afterEvaluate {
             create<MavenPublication>("annotation") {
                 from(components["release"])
 
-                val artifactId: String by project
                 val name: String by project
                 val description: String by project
                 val scmUrl: String by project
@@ -81,5 +86,35 @@ afterEvaluate {
                 }
             }
         }
+    }
+
+    bintray {
+        val credentialProps = Properties()
+        val propsFile = project.rootDir.resolve("credentials.properties")
+
+        if (propsFile.exists()) {
+            credentialProps.load(propsFile.inputStream())
+            user = credentialProps.getProperty("user")
+            key = credentialProps.getProperty("key")
+        }
+
+        setPublications("processor")
+
+        pkg(closureOf<BintrayExtension.PackageConfig> {
+            repo = "maven"
+            name = "${project.group}:$artifactId"
+            userOrg = user
+            setLicenses("Apache-2.0")
+            val projectUrl: String by project
+            vcsUrl = projectUrl
+            val issuesTrackerUrl: String by project
+            issueTrackerUrl = issuesTrackerUrl
+            githubRepo = projectUrl
+            version(closureOf<BintrayExtension.VersionConfig> {
+                name = versionName
+                vcsTag = versionName
+                released = Date().toString()
+            })
+        })
     }
 }

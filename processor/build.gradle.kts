@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.Date
+import java.util.Properties
 
 plugins {
     idea
@@ -23,6 +26,7 @@ plugins {
     kotlin("kapt")
     `maven-publish`
     ktlint
+    id("com.jfrog.bintray") version "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin".version()
 }
 
 repositories {
@@ -92,6 +96,19 @@ tasks {
     check {
         dependsOn(functionalTest)
     }
+
+    jar {
+        manifest {
+            attributes(
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version.toString(),
+                "Built-By" to System.getProperty("user.name"),
+                "Built-Date" to Date(),
+                "Built-JDK" to System.getProperty("java.version"),
+                "Built-Gradle" to gradle.gradleVersion
+            )
+        }
+    }
 }
 
 fun Test.logEvents() = testLogging {
@@ -100,17 +117,23 @@ fun Test.logEvents() = testLogging {
 
 val group: String by project
 val versionName: String by project
+val artifactId: String by project
 
 project.group = group
 project.version = versionName
 
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
 publishing {
     publications {
-        create<MavenPublication>("pluginMaven") {
+        create<MavenPublication>("processor") {
 
             from(components["java"])
+            artifact(sourcesJar.get())
 
-            val artifactId: String by project
             val name: String by project
             val description: String by project
             val scmUrl: String by project
@@ -139,6 +162,36 @@ publishing {
             }
         }
     }
+}
+
+bintray {
+    val credentialProps = Properties()
+    val propsFile = file("${project.rootDir}/credentials.properties")
+
+    if (propsFile.exists()) {
+        credentialProps.load(propsFile.inputStream())
+        user = credentialProps.getProperty("user")
+        key = credentialProps.getProperty("key")
+    }
+
+    setPublications("processor")
+
+    pkg(closureOf<BintrayExtension.PackageConfig> {
+        repo = "maven"
+        name = "${project.group}:$artifactId"
+        userOrg = user
+        setLicenses("Apache-2.0")
+        val projectUrl: String by project
+        vcsUrl = projectUrl
+        val issuesTrackerUrl: String by project
+        issueTrackerUrl = issuesTrackerUrl
+        githubRepo = projectUrl
+        version(closureOf<BintrayExtension.VersionConfig> {
+            name = versionName
+            vcsTag = versionName
+            released = Date().toString()
+        })
+    })
 }
 
 dependencies {
