@@ -52,11 +52,17 @@ project.version = versionName
 val name: String by project
 val description: String by project
 
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(android.sourceSets["main"].java.srcDirs)
+}
+
 afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("library") {
                 from(components["release"])
+                artifact(sourcesJar.get())
 
                 val name: String by project
                 val description: String by project

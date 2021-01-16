@@ -1,4 +1,4 @@
-// Generated with dependencyUpdates on 1/10/21 9:58 PM
+// Generated with dependencyUpdates on 1/16/21 11:44 AM
 // DO NOT EDIT
 @file:Suppress(
     "SpellCheckingInspection",
@@ -21,7 +21,7 @@ private val versions: Map<String, String> = mapOf(
     "net.ltgt.gradle.incap:incap-processor" to "0.3",
     "org.hamcrest:hamcrest-library" to "2.2",
     "org.junit:junit-bom" to "5.7.0",
-    "org.mockito:mockito-junit-jupiter" to "3.7.0"
+    "org.mockito:mockito-junit-jupiter" to "3.7.7"
 )
 
 public fun String.version(): String = versions[this] ?: error("""No version found for $this""")
