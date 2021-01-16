@@ -9,3 +9,6 @@ trim_trailing_whitespace=true
 
 [*.{kt,kts}]
 ij_kotlin_imports_layout=*,java.**,javax.**,kotlin.**,^
+
+[*.{json,yml}]
+indent_size=2
