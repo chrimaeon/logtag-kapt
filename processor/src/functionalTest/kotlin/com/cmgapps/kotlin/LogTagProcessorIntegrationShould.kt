@@ -21,12 +21,12 @@ import com.tschuchort.compiletesting.SourceFile
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.intellij.lang.annotations.Language
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class LogTagProcessorIntegrationShould {
 
     @Test
-    fun generateForClass() {
+    fun `generate extension for kotlin class`() {
         val result = SourceFile.kotlin(
             "class.kt",
             """
@@ -61,7 +61,7 @@ class LogTagProcessorIntegrationShould {
     }
 
     @Test
-    fun notGenerateForPrivateClass() {
+    fun `not generate for private class`() {
         val result = SourceFile.kotlin(
             "object.kt",
             """
@@ -76,7 +76,7 @@ class LogTagProcessorIntegrationShould {
     }
 
     @Test
-    fun generateForObject() {
+    fun `generate extension for object`() {
         val result = SourceFile.kotlin(
             "file1.kt",
             """
@@ -111,7 +111,7 @@ class LogTagProcessorIntegrationShould {
     }
 
     @Test
-    fun generateForJavaClass() {
+    fun `generate class for java class`() {
         val className = "TestJava"
         val result = SourceFile.java(
             "$className.java",
@@ -142,7 +142,7 @@ class LogTagProcessorIntegrationShould {
     }
 
     @Test
-    fun useCustomLogTagForKotlin() {
+    fun `use custom logtag for kotlin class`() {
         val result = SourceFile.kotlin(
             "class.kt",
             """
@@ -177,7 +177,7 @@ class LogTagProcessorIntegrationShould {
     }
 
     @Test
-    fun useCustomTagForJavaClass() {
+    fun `use custom tag for java class`() {
         val className = "TestJava"
         val result = SourceFile.java(
             "$className.java",

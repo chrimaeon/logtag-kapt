@@ -28,8 +28,7 @@ private val inCap = "net.ltgt.gradle.incap:incap:" + "net.ltgt.gradle.incap:inca
 private val inCapProcessor = "net.ltgt.gradle.incap:incap-processor".withVersion()
 private val javaPoet = "com.squareup:javapoet".withVersion()
 private val jUnitBom = "org.junit:junit-bom".withVersion()
-private const val jUnit = "junit:junit"
-private const val jUnutJupiter = "org.junit.jupiter:junit-jupiter"
+private const val jUnitJupiter = "org.junit.jupiter:junit-jupiter"
 private val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing".withVersion()
 private val kotlinPoet = "com.squareup:kotlinpoet".withVersion()
 private val lint = "com.android.tools.lint:lint".withVersion()
@@ -53,12 +52,12 @@ fun DependencyHandlerScope.addProcessorDependencies() {
     kapt(inCapProcessor)
 
     testImplementation(platform(jUnitBom))
-    testImplementation(jUnutJupiter)
+    testImplementation(jUnitJupiter)
     testImplementation(mockitoJupiter)
     testImplementation(hamcrest)
 
     "functionalTestImplementation"(platform(jUnitBom))
-    "functionalTestImplementation"(jUnit)
+    "functionalTestImplementation"(jUnitJupiter)
     "functionalTestImplementation"(kotlinCompileTesting)
 }
 
@@ -72,7 +71,7 @@ fun DependencyHandlerScope.addLinterDependencies() {
     kapt(autoService)
 
     testImplementation(platform(jUnitBom))
-    testImplementation(jUnutJupiter)
+    testImplementation(jUnitJupiter)
 
     testImplementation(lint)
     testImplementation(lintTests)

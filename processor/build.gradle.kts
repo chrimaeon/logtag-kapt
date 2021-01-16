@@ -91,6 +91,7 @@ tasks {
         testClassesDirs = sourceSets[functionalTestName].output.classesDirs
         classpath = sourceSets[functionalTestName].runtimeClasspath
         logEvents()
+        useJUnitPlatform()
     }
 
     check {
