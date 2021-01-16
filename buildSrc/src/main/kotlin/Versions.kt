@@ -1,4 +1,4 @@
-// Generated with dependencyUpdates on 1/16/21 11:44 AM
+// Generated with dependencyUpdates on 1/16/21 1:48 PM
 // DO NOT EDIT
 @file:Suppress(
     "SpellCheckingInspection",
@@ -17,9 +17,8 @@ private val versions: Map<String, String> = mapOf(
     "com.pinterest:ktlint" to "0.40.0",
     "com.squareup:javapoet" to "1.13.0",
     "com.squareup:kotlinpoet" to "1.7.2",
-    "junit:junit" to "4.13.1",
     "net.ltgt.gradle.incap:incap-processor" to "0.3",
-    "org.hamcrest:hamcrest-library" to "2.2",
+    "org.hamcrest:hamcrest" to "2.2",
     "org.junit:junit-bom" to "5.7.0",
     "org.mockito:mockito-junit-jupiter" to "3.7.7"
 )

@@ -195,23 +195,5 @@ bintray {
 }
 
 dependencies {
-    implementation(project(":annotation"))
-
-    implementation(kotlin("stdlib", KOTLIN_VERSION))
-    implementation("com.squareup:kotlinpoet".withVersion())
-    implementation("com.squareup:javapoet".withVersion())
-
-    compileOnly("com.google.auto.service:auto-service".withVersion())
-    kapt("com.google.auto.service:auto-service".withVersion())
-
-    compileOnly("net.ltgt.gradle.incap:incap:0.3")
-    kapt("net.ltgt.gradle.incap:incap-processor".withVersion())
-
-    testImplementation(platform("org.junit:junit-bom".withVersion()))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.mockito:mockito-junit-jupiter".withVersion())
-    testImplementation("org.hamcrest:hamcrest-library".withVersion())
-
-    "functionalTestImplementation"("junit:junit".withVersion())
-    "functionalTestImplementation"("com.github.tschuchortdev:kotlin-compile-testing".withVersion())
+    addProcessorDependencies()
 }

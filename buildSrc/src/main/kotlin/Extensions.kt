@@ -17,6 +17,7 @@
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -48,3 +49,18 @@ fun PluginDependenciesSpec.cmgapps(module: String): PluginDependencySpec =
 val PluginDependenciesSpec.ktlint: PluginDependencySpec
     get() = cmgapps("ktlint")
 
+fun DependencyHandlerScope.testImplementation(dependencyNotation: Any) {
+    add("testImplementation", dependencyNotation)
+}
+
+fun DependencyHandlerScope.kapt(dependencyNotation: Any) {
+    add("kapt", dependencyNotation)
+}
+
+fun DependencyHandlerScope.compileOnly(dependencyNotation: Any) {
+    add("compileOnly", dependencyNotation)
+}
+
+fun DependencyHandlerScope.implementation(dependencyNotation: Any) {
+    add("implementation", dependencyNotation)
+}

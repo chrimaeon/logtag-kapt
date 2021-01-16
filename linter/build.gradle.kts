@@ -51,18 +51,5 @@ java {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib", KOTLIN_VERSION))
-
-    compileOnly("com.android.tools.lint:lint-api:27.1.1")
-    compileOnly("com.android.tools.lint:lint-checks:27.1.1")
-
-    compileOnly("com.google.auto.service:auto-service".withVersion())
-    kapt("com.google.auto.service:auto-service".withVersion())
-
-    testImplementation(platform("org.junit:junit-bom".withVersion()))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-
-    testImplementation("com.android.tools.lint:lint".withVersion())
-    testImplementation("com.android.tools.lint:lint-tests".withVersion())
-    testImplementation("com.android.tools:testutils".withVersion())
+    addLinterDependencies()
 }
