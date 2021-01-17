@@ -18,7 +18,6 @@ package com.cmgapps.kotlin
 
 import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.com.intellij.mock.MockProject
-import org.jetbrains.kotlin.com.intellij.openapi.extensions.LoadingOrder
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -27,20 +26,9 @@ import java.io.File
 @AutoService(ComponentRegistrar::class)
 class LogTagComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        AnalysisHandlerExtension.registerExtensionFirst(
+        AnalysisHandlerExtension.registerExtension(
             project,
             CodeGenExtension(File(configuration.getNotNull(srcGenDirKey)))
         )
     }
-
-    private fun AnalysisHandlerExtension.Companion.registerExtensionFirst(
-        project: MockProject,
-        extension: AnalysisHandlerExtension
-    ) {
-        project.extensionArea
-            .getExtensionPoint(AnalysisHandlerExtension.extensionPointName)
-            .registerExtension(extension, LoadingOrder.FIRST, project)
-    }
 }
-
-
