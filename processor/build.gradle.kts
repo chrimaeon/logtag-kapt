@@ -33,6 +33,14 @@ repositories {
     jcenter()
 }
 
+sourceSets {
+    named("main") {
+        java {
+
+        }
+    }
+}
+
 val functionalTestName = "functionalTest"
 
 configurations {

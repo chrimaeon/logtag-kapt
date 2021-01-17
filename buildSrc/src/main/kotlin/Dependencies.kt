@@ -77,3 +77,19 @@ fun DependencyHandlerScope.addLinterDependencies() {
     testImplementation(lintTests)
     testImplementation(testUtils)
 }
+
+fun DependencyHandlerScope.addCompilerPluginDependencies() {
+    implementation(project(":annotation"))
+    implementation(kotlin("stdlib", KOTLIN_VERSION))
+    implementation(kotlinPoet)
+
+    compileOnly(kotlin("compiler-embeddable", KOTLIN_VERSION))
+    compileOnly(autoServiceAnnotations)
+    kapt(autoService)
+}
+
+fun DependencyHandlerScope.addGradlePluginDependencies() {
+    implementation(kotlin("stdlib", KOTLIN_VERSION))
+    implementation(kotlin("gradle-plugin", KOTLIN_VERSION))
+    implementation(kotlin("gradle-plugin-api", KOTLIN_VERSION))
+}

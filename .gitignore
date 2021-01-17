@@ -8,6 +8,7 @@
 !/.idea/.name
 !/.idea/icon.png
 !/.idea/icon_dark.png
+!/.idea/sonarlint.xml
 *.iml
 .DS_Store
 build/

@@ -47,9 +47,6 @@ val versionName: String by project
 project.group = group
 project.version = versionName
 
-val name: String by project
-val description: String by project
-
 val annotationProject = project(":annotation")
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")

@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-rootProject.name = "logtag-kapt"
-include(
-    ":annotation",
-    ":processor",
-    ":linter",
-    ":library",
-    ":compiler-plugin",
-    ":gradle-plugin"
-)
+package test.pkg
+
+import com.cmgapps.LogTag
+
+@LogTag("CustomTag")
+class TestClass {
+    fun getLogTag(): String {
+        return LOG_TAG
+    }
+}
+
+@LogTag
+internal class InternalTestClass {
+    fun getLogTag(): String {
+        return LOG_TAG
+    }
+}
+
+fun main() {
+    println(TestClass().getLogTag())
+    println(InternalTestClass().getLogTag())
+}

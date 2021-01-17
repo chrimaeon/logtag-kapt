@@ -14,12 +14,32 @@
  * limitations under the License.
  */
 
-rootProject.name = "logtag-kapt"
-include(
-    ":annotation",
-    ":processor",
-    ":linter",
-    ":library",
-    ":compiler-plugin",
-    ":gradle-plugin"
-)
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.cmgapps.logtag:gradle:+'
+    }
+}
+
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
+}
+
+application {
+    mainClass = 'test.pkg.TestClassKt'
+}
+
+apply plugin: 'com.cmgapps.kotlin.logtag'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.cmgapps.logtag:annotation:+'
+}

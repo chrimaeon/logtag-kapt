@@ -13,8 +13,8 @@ Add the KAPT and annotation to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:0.1.0")
-    kapt("com.cmgapps:log-tag-processor:0.1.0")
+    implementation("com.cmgapps.log-tag:log-tag:0.1.0")
+    kapt("com.cmgapps.log-tag:processor:0.1.0")
 }
 ```
 

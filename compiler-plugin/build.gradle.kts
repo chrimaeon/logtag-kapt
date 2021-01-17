@@ -14,32 +14,13 @@
  * limitations under the License.
  */
 
-import java.util.Date
-
 plugins {
-    `java-library`
+    kotlin("jvm")
+    kotlin("kapt")
     `maven-publish`
     signing
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks {
-    jar {
-        manifest {
-            attributes(
-                "Implementation-Title" to project.name,
-                "Implementation-Version" to project.version.toString(),
-                "Built-By" to System.getProperty("user.name"),
-                "Built-Date" to Date(),
-                "Built-JDK" to System.getProperty("java.version"),
-                "Built-Gradle" to gradle.gradleVersion
-            )
-        }
-    }
+    ktlint
+    id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
 
 val group: String by project
@@ -48,6 +29,14 @@ val versionName: String by project
 project.group = group
 project.version = versionName
 
+tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+}
+
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
@@ -55,12 +44,13 @@ val sourcesJar by tasks.registering(Jar::class) {
 
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    from(tasks.javadoc)
+    from(tasks.dokkaJavadoc)
 }
 
 publishing {
     publications {
-        create<MavenPublication>("annotation") {
+        create<MavenPublication>("compilerPlugin") {
+
             from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
@@ -74,5 +64,9 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["annotation"])
+    sign(publishing.publications["compilerPlugin"])
+}
+
+dependencies {
+    addCompilerPluginDependencies()
 }
