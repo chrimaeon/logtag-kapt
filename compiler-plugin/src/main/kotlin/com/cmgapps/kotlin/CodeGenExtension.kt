@@ -23,7 +23,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
-import jdk.jfr.internal.LogTag
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
@@ -91,7 +90,7 @@ class CodeGenExtension(private val codeGenDir: File) : AnalysisHandlerExtension 
                 val receiverClassName = ClassName(packageName, clazz.nameAsSafeName.asString())
 
                 check(codeGenDir.exists() || codeGenDir.mkdirs()) {
-                    "Could not generate package directory: ${codeGenDir}"
+                    "Could not generate package directory: $codeGenDir"
                 }
 
                 val modifier =
@@ -167,7 +166,6 @@ private fun KtFile.classes(): Sequence<KtClassOrObject> {
                 it.declarations.filterIsInstance<KtClassOrObject>()
             }
             .ifEmpty { null }
-
     }.flatMap { it.asSequence() }
 }
 
