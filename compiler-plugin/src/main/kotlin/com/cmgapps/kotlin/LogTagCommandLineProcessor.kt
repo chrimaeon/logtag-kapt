@@ -22,27 +22,28 @@ import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-
-internal const val srcGenDirName = "src-gen-dir"
-internal val srcGenDirKey = CompilerConfigurationKey.create<String>(srcGenDirName)
+//
+// internal const val srcGenDirName = "src-gen-dir"
+// internal val srcGenDirKey = CompilerConfigurationKey.create<String>(srcGenDirName)
 
 @AutoService(CommandLineProcessor::class)
 class LogTagCommandLineProcessor : CommandLineProcessor {
     override val pluginId = "com.cmgapps.logtag.compiler"
 
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(
-        CliOption(
-            optionName = srcGenDirName,
-            valueDescription = "<file-path>",
-            description = "Path to directory in which Log Tag specific code should be generated",
-            required = true,
-            allowMultipleOccurrences = false
-        )
-    )
+    override val pluginOptions: Collection<AbstractCliOption> = emptyList()
+    // override val pluginOptions: Collection<AbstractCliOption> = listOf(
+    //     CliOption(
+    //         optionName = srcGenDirName,
+    //         valueDescription = "<file-path>",
+    //         description = "Path to directory in which Log Tag specific code should be generated",
+    //         required = true,
+    //         allowMultipleOccurrences = false
+    //     )
+    // )
 
-    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
-        when (option.optionName) {
-            srcGenDirName -> configuration.put(srcGenDirKey, value)
-        }
-    }
+    // override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
+    //     when (option.optionName) {
+    //         srcGenDirName -> configuration.put(srcGenDirKey, value)
+    //     }
+    // }
 }

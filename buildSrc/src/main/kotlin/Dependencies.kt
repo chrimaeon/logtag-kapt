@@ -41,7 +41,10 @@ private val testUtils = "com.android.tools:testutils".withVersion()
 fun DependencyHandlerScope.addProcessorDependencies() {
     implementation(project(":annotation"))
 
-    implementation(kotlin("stdlib", KOTLIN_VERSION))
+    implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
+    // Necessary to bump a transitive dependency.
+    compileOnly(kotlin("reflect", KOTLIN_VERSION))
+
     implementation(kotlinPoet)
     implementation(javaPoet)
 
@@ -62,7 +65,9 @@ fun DependencyHandlerScope.addProcessorDependencies() {
 }
 
 fun DependencyHandlerScope.addLinterDependencies() {
-    compileOnly(kotlin("stdlib", KOTLIN_VERSION))
+    compileOnly(kotlin("stdlib-jdk8", KOTLIN_VERSION))
+    // Necessary to bump a transitive dependency.
+    compileOnly(kotlin("reflect", KOTLIN_VERSION))
 
     compileOnly(lintApi)
     compileOnly(lintChecks)
@@ -80,8 +85,11 @@ fun DependencyHandlerScope.addLinterDependencies() {
 
 fun DependencyHandlerScope.addCompilerPluginDependencies() {
     implementation(project(":annotation"))
-    implementation(kotlin("stdlib", KOTLIN_VERSION))
+    implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
     implementation(kotlinPoet)
+
+    // Necessary to bump a transitive dependency.
+    compileOnly(kotlin("reflect", KOTLIN_VERSION))
 
     compileOnly(kotlin("compiler-embeddable", KOTLIN_VERSION))
     compileOnly(autoServiceAnnotations)
@@ -89,7 +97,11 @@ fun DependencyHandlerScope.addCompilerPluginDependencies() {
 }
 
 fun DependencyHandlerScope.addGradlePluginDependencies() {
-    implementation(kotlin("stdlib", KOTLIN_VERSION))
+    implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
+    // Necessary to bump a transitive dependency.
+    compileOnly(kotlin("reflect", KOTLIN_VERSION))
+
     implementation(kotlin("gradle-plugin", KOTLIN_VERSION))
     implementation(kotlin("gradle-plugin-api", KOTLIN_VERSION))
+
 }

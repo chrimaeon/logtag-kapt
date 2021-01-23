@@ -17,18 +17,41 @@
 package com.cmgapps.kotlin
 
 import com.google.auto.service.AutoService
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import java.io.File
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 @AutoService(ComponentRegistrar::class)
 class LogTagComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        AnalysisHandlerExtension.registerExtension(
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+        ClassBuilderInterceptorExtension.registerExtension(
             project,
-            CodeGenExtension(File(configuration.getNotNull(srcGenDirKey)))
+            LogTagClassBuilderInterceptorExtension(messageCollector)
         )
+    }
+}
+
+private class LogTagClassBuilderInterceptorExtension(private val messageCollector: MessageCollector) :
+    ClassBuilderInterceptorExtension {
+    override fun interceptClassBuilderFactory(
+        interceptedFactory: ClassBuilderFactory,
+        bindingContext: BindingContext,
+        diagnostics: DiagnosticSink
+    ): ClassBuilderFactory = object : ClassBuilderFactory by interceptedFactory {
+        override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder =
+            LogTagClassBuilder(
+                interceptedFactory.newClassBuilder(origin),
+                origin.descriptor?.original?.annotations,
+                messageCollector
+            )
     }
 }

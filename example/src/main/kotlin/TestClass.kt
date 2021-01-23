@@ -17,22 +17,43 @@
 package test.pkg
 
 import com.cmgapps.LogTag
+import timber.log.Timber
+
+private interface Log {
+    fun log()
+}
 
 @LogTag("CustomTag")
-class TestClass {
-    fun getLogTag(): String {
-        return LOG_TAG
+class TestClass : Log {
+    override fun log() {
+        Timber.i("info message")
+        Timber.tag("Custom").e("error message")
     }
 }
 
 @LogTag
-internal class InternalTestClass {
-    fun getLogTag(): String {
-        return LOG_TAG
+internal class InternalTestClass : Log {
+    override fun log() {
+        Timber.d("debug message")
+    }
+}
+
+class TestClassWithAFarTooLongNameForLogging : Log {
+    override fun log() {
+        Timber.d("no tag debug message")
     }
 }
 
 fun main() {
-    println(TestClass().getLogTag())
-    println(InternalTestClass().getLogTag())
+    Timber.plant(TimberTree());
+    val loggable = listOf(TestClass(), InternalTestClass(), TestClassWithAFarTooLongNameForLogging())
+    loggable.forEach {
+        it.log()
+    }
+}
+
+private class TimberTree : Timber.Tree() {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        println("$priority/$tag $message")
+    }
 }

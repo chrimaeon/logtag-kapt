@@ -27,6 +27,7 @@ buildscript {
 plugins {
     id 'application'
     id 'org.jetbrains.kotlin.jvm' version '1.4.21'
+    id 'org.jetbrains.kotlin.kapt' version '1.4.21'
 }
 
 application {
@@ -38,8 +39,18 @@ apply plugin: 'com.cmgapps.kotlin.logtag'
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
+}
+
+tasks {
+    compileKotlin {
+        outputs.upToDateWhen { false }
+    }
 }
 
 dependencies {
     implementation 'com.cmgapps.logtag:annotation:+'
+//    kapt 'com.cmgapps.logtag:processor:+'
+
+    implementation fileTree(dir: 'libs', include: '*.jar')
 }
