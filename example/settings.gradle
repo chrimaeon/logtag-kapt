@@ -13,3 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+includeBuild('../') {
+    dependencySubstitution {
+        substitute module('com.cmgapps.logtag:gradle') with project(':gradle-plugin')
+        substitute module('com.cmgapps.logtag:annotation') with project(':annotation')
+        substitute module('com.cmgapps.logtag:processor') with project(':processor')
+        substitute module('com.cmgapps.logtag:compiler') with project(':compiler-plugin')
+    }
+}

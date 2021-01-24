@@ -37,9 +37,7 @@ application {
 apply plugin: 'com.cmgapps.kotlin.logtag'
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    jcenter()
 }
 
 tasks {
@@ -49,8 +47,8 @@ tasks {
 }
 
 dependencies {
-    implementation 'com.cmgapps.logtag:annotation:+'
-//    kapt 'com.cmgapps.logtag:processor:+'
+    implementation 'com.cmgapps.logtag:annotation'
+    kapt 'com.cmgapps.logtag:processor'
 
     implementation fileTree(dir: 'libs', include: '*.jar')
 }

@@ -18,8 +18,9 @@ package test.pkg
 
 import com.cmgapps.LogTag
 import timber.log.Timber
+import test.java.pkg.JavaTestClass
 
-private interface Log {
+interface Log {
     fun log()
 }
 
@@ -31,13 +32,14 @@ class TestClass : Log {
     }
 }
 
-@LogTag
+// @LogTag
 internal class InternalTestClass : Log {
     override fun log() {
         Timber.d("debug message")
     }
 }
 
+@LogTag
 class TestClassWithAFarTooLongNameForLogging : Log {
     override fun log() {
         Timber.d("no tag debug message")
@@ -46,7 +48,7 @@ class TestClassWithAFarTooLongNameForLogging : Log {
 
 fun main() {
     Timber.plant(TimberTree());
-    val loggable = listOf(TestClass(), InternalTestClass(), TestClassWithAFarTooLongNameForLogging())
+    val loggable = listOf<Log>(TestClass(), InternalTestClass(), TestClassWithAFarTooLongNameForLogging(), JavaTestClass())
     loggable.forEach {
         it.log()
     }
@@ -54,6 +56,6 @@ fun main() {
 
 private class TimberTree : Timber.Tree() {
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        println("$priority/$tag $message")
+        println("$priority/$tag: $message")
     }
 }
