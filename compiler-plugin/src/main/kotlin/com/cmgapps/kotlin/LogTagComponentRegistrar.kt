@@ -19,8 +19,9 @@ package com.cmgapps.kotlin
 import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -40,16 +41,16 @@ class LogTagComponentRegistrar : ComponentRegistrar {
     }
 }
 
-private class LogTagClassBuilderInterceptorExtension(private val messageCollector: MessageCollector) :
+internal class LogTagClassBuilderInterceptorExtension(private val messageCollector: MessageCollector) :
     ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
         interceptedFactory: ClassBuilderFactory,
         bindingContext: BindingContext,
         diagnostics: DiagnosticSink
-    ): ClassBuilderFactory = object : ClassBuilderFactory by interceptedFactory {
-        override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder =
+    ): ClassBuilderFactory = object : DelegatingClassBuilderFactory(interceptedFactory) {
+        override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder =
             LogTagClassBuilder(
-                interceptedFactory.newClassBuilder(origin),
+                delegate.newClassBuilder(origin),
                 origin.descriptor?.original?.annotations,
                 messageCollector
             )
