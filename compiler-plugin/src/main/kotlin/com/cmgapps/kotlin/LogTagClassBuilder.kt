@@ -101,7 +101,7 @@ internal class LogTagClassBuilder(
                     "Class name \"$it\" exceeds max. length of 23 for a log tag. Class name will be truncated." +
                         " Add the @com.cmgapps.LogTag annotation with a custom tag to override"
                 )
-                it.substring(0..22)
+                it.substring(0..21) + Typography.ellipsis
             } else {
                 it
             }
