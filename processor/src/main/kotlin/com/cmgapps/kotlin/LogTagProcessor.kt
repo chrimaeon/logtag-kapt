@@ -21,6 +21,7 @@ import com.google.auto.service.AutoService
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -28,9 +29,6 @@ import com.squareup.kotlinpoet.PropertySpec
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import javax.annotation.Generated
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
 import javax.annotation.processing.Messager
@@ -42,9 +40,7 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.tools.Diagnostic
-import com.squareup.javapoet.AnnotationSpec as JavaAnnotationSpec
 import com.squareup.javapoet.ClassName as JavaClassName
-import com.squareup.kotlinpoet.AnnotationSpec as KotlinAnnotationSpec
 import com.squareup.kotlinpoet.ClassName as KotlinClassName
 
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
@@ -79,20 +75,14 @@ class LogTagProcessor : AbstractProcessor() {
 
         roundEnv.getElementsAnnotatedWith(LogTag::class.java).map {
             if (!(it.kind.isClass || it.kind.isInterface)) {
-                messager.printMessage(
-                    Diagnostic.Kind.ERROR,
-                    "LogTag annotation can only be applied to a class/interface"
-                )
+                messager.error("LogTag annotation can only be applied to a class/interface")
 
                 // consume the annotation anyway
                 return true
             }
 
             if (!it.modifiers.contains(Modifier.PUBLIC)) {
-                messager.printMessage(
-                    Diagnostic.Kind.ERROR,
-                    "LogTag annotation can only be applied to public classes"
-                )
+                messager.error("LogTag annotation can only be applied to public classes")
 
                 // consume the annotation anyway
                 return true
@@ -113,12 +103,6 @@ class LogTagProcessor : AbstractProcessor() {
         val clazz =
             TypeSpec.classBuilder("${element.kotlinClassName.simpleName}LogTag")
                 .addOriginatingElement(element.element)
-                .addAnnotation(
-                    JavaAnnotationSpec.builder(Generated::class.java)
-                        .addMember("value", "\$S", LogTagProcessor::class.java.canonicalName)
-                        .addMember("date", "\$S", DATE_FORMATTER.format(Date()))
-                        .build()
-                )
                 .addField(field).build()
 
         JavaFile.builder(element.kotlinClassName.packageName, clazz)
@@ -141,15 +125,9 @@ class LogTagProcessor : AbstractProcessor() {
         FileSpec.builder(element.kotlinClassName.packageName, "${element.kotlinClassName.simpleName}LogTag")
             .addProperty(propertySpec)
             .addAnnotation(
-                KotlinAnnotationSpec.builder(Suppress::class).addMember("%S", "SpellCheckingInspection")
+                AnnotationSpec.builder(Suppress::class).addMember("%S", "SpellCheckingInspection")
                     .addMember("%S", "RedundantVisibilityModifier")
                     .addMember("%S", "unused")
-                    .build()
-            )
-            .addAnnotation(
-                KotlinAnnotationSpec.builder(Generated::class)
-                    .addMember("value=[%S]", LogTagProcessor::class.java.canonicalName)
-                    .addMember("date=%S", DATE_FORMATTER.format(Date()))
                     .build()
             )
             .addComment("Automatically generated file. DO NOT MODIFY")
@@ -164,8 +142,7 @@ class LogTagProcessor : AbstractProcessor() {
 
         return element.javaClassName.simpleName().let {
             if (it.length > 23) {
-                messager.printMessage(
-                    Diagnostic.Kind.WARNING,
+                messager.warning(
                     "Class name \"$it\" exceeds max. length of 23 for a log tag. Class name will be truncated." +
                         " Add the @com.cmgapps.LogTag annotation with a custom tag to override"
                 )
@@ -199,8 +176,10 @@ class LogTagProcessor : AbstractProcessor() {
             }
     }
 
+    private fun Messager.error(message: String) = printMessage(Diagnostic.Kind.ERROR, message)
+    private fun Messager.warning(message: String) = printMessage(Diagnostic.Kind.WARNING, message)
+
     companion object {
         private const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
-        private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     }
 }

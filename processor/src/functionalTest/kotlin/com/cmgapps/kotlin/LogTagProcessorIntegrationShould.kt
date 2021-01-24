@@ -39,6 +39,7 @@ class LogTagProcessorIntegrationShould {
 
         @Language("kotlin")
         val expected = """
+          // Automatically generated file. DO NOT MODIFY
           @file:Suppress(
             "SpellCheckingInspection",
             "RedundantVisibilityModifier",
@@ -89,6 +90,7 @@ class LogTagProcessorIntegrationShould {
 
         @Language("kotlin")
         val expected = """
+          // Automatically generated file. DO NOT MODIFY
           @file:Suppress(
             "SpellCheckingInspection",
             "RedundantVisibilityModifier",
@@ -125,6 +127,7 @@ class LogTagProcessorIntegrationShould {
 
         @Language("Java")
         val expected = """
+            // Automatically generated file. DO NOT MODIFY
             package cmgapps.test;
 
             import java.lang.String;
@@ -155,6 +158,7 @@ class LogTagProcessorIntegrationShould {
 
         @Language("kotlin")
         val expected = """
+          // Automatically generated file. DO NOT MODIFY
           @file:Suppress(
             "SpellCheckingInspection",
             "RedundantVisibilityModifier",
@@ -191,6 +195,7 @@ class LogTagProcessorIntegrationShould {
 
         @Language("Java")
         val expected = """
+            // Automatically generated file. DO NOT MODIFY
             package cmgapps.test;
 
             import java.lang.String;

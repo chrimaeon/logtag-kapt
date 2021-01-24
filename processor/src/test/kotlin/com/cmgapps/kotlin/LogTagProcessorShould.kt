@@ -24,12 +24,14 @@ import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.any
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
+import java.io.File
 import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -46,6 +48,9 @@ class LogTagProcessorShould {
 
     private lateinit var processor: LogTagProcessor
     private lateinit var filer: TestFiler
+
+    @TempDir
+    lateinit var tempDir: File
 
     @Mock
     private lateinit var environmentMock: ProcessingEnvironment
@@ -64,6 +69,8 @@ class LogTagProcessorShould {
         filer = TestFiler()
         `when`(environmentMock.filer).thenReturn(filer)
         `when`(environmentMock.messager).thenReturn(messagerMock)
+        `when`(environmentMock.options).thenReturn(mapOf("kapt.kotlin.generated" to tempDir.absolutePath))
+
         processor = LogTagProcessor().apply {
             init(environmentMock)
         }
@@ -104,6 +111,7 @@ class LogTagProcessorShould {
 
         @Language("Kt")
         val expected = """
+            // Automatically generated file. DO NOT MODIFY
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
@@ -120,7 +128,7 @@ class LogTagProcessorShould {
 
         """.trimIndent()
 
-        assertThat(filer.getFileObject()?.getCharContent(false), `is`(expected))
+        assertThat(tempDir.resolve("test/pkg/TestClassLogTag.kt").readText(), `is`(expected))
     }
 
     @Test
@@ -157,6 +165,7 @@ class LogTagProcessorShould {
 
         @Language("Java")
         val expected = """
+            // Automatically generated file. DO NOT MODIFY
             package test.pkg;
 
             import java.lang.String;
@@ -300,6 +309,7 @@ class LogTagProcessorShould {
 
         @Language("Kt")
         val expected = """
+            // Automatically generated file. DO NOT MODIFY
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
@@ -312,11 +322,11 @@ class LogTagProcessorShould {
             import kotlin.Suppress
 
             public val TestClassWithAFarTooLongName.LOG_TAG: String
-              inline get() = "TestClassWithAFarTooLon"
+              inline get() = "TestClassWithAFarTooLo…"
 
         """.trimIndent()
 
-        assertThat(filer.getFileObject()?.getCharContent(false), `is`(expected))
+        assertThat(tempDir.resolve("test/pkg/TestClassWithAFarTooLongNameLogTag.kt").readText(), `is`(expected))
     }
 
     @Test
@@ -354,7 +364,7 @@ class LogTagProcessorShould {
 
         verify(messagerMock).printMessage(
             Diagnostic.Kind.WARNING,
-            "Class name \"TestClassWithAFarTooLongName\" is to long for a log tag. Max. length is 23. Class name will be truncated."
+            "Class name \"TestClassWithAFarTooLongName\" exceeds max. length of 23 for a log tag. Class name will be truncated. Add the @com.cmgapps.LogTag annotation with a custom tag to override"
         )
     }
 
@@ -393,6 +403,7 @@ class LogTagProcessorShould {
 
         @Language("Kt")
         val expected = """
+            // Automatically generated file. DO NOT MODIFY
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
@@ -409,7 +420,7 @@ class LogTagProcessorShould {
 
         """.trimIndent()
 
-        assertThat(filer.getFileObject()?.getCharContent(false), `is`(expected))
+        assertThat(tempDir.resolve("test/pkg/TestClassLogTag.kt").readText(), `is`(expected))
     }
 }
 
