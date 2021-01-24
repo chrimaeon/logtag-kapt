@@ -17,9 +17,6 @@
 package com.cmgapps.gradle
 
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.FilesSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -40,26 +37,8 @@ open class LogTagPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> =
         with(kotlinCompilation.target.project) {
-            val srcGenDir =
-                buildDir.resolve("generated").resolve("source").resolve("logtag").resolve(kotlinCompilation.name)
-
-            val sourceSets =
-                (this as org.gradle.api.plugins.ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
-            sourceSets.getOrCreate("main").java {
-                it.srcDirs(srcGenDir)
-            }
-
             provider {
-                listOf(
-                    FilesSubpluginOption(
-                        key = "src-gen-dir",
-                        files = listOf(srcGenDir)
-                    )
-                )
+                emptyList()
             }
         }
-
-    private fun SourceSetContainer.getOrCreate(name: String): SourceSet {
-        return findByName(name) ?: create(name)
-    }
 }
