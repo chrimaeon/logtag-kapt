@@ -166,7 +166,8 @@ class LogTagProcessor : AbstractProcessor() {
             if (it.length > 23) {
                 messager.printMessage(
                     Diagnostic.Kind.WARNING,
-                    "Class name \"$it\" is to long for a log tag. Max. length is 23. Class name will be truncated."
+                    "Class name \"$it\" exceeds max. length of 23 for a log tag. Class name will be truncated." +
+                        " Add the @com.cmgapps.LogTag annotation with a custom tag to override"
                 )
                 it.substring(0..21) + Typography.ellipsis
             } else {
