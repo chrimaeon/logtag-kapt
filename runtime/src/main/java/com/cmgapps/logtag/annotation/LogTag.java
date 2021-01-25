@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-includeBuild('../') {
-    dependencySubstitution {
-        substitute module('com.cmgapps.logtag:gradle') with project(':gradle-plugin')
-        substitute module('com.cmgapps.logtag:processor') with project(':processor')
-        substitute module('com.cmgapps.logtag:compiler') with project(':compiler-plugin')
-        substitute module('com.cmgapps.logtag:runtime') with project(':runtime')
-    }
+
+package com.cmgapps.logtag.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
+public @interface LogTag {
+    String value() default "";
 }

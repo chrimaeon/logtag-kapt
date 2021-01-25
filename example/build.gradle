@@ -40,14 +40,22 @@ repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 tasks {
     compileKotlin {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
         outputs.upToDateWhen { false }
     }
 }
 
 dependencies {
-    implementation 'com.cmgapps.logtag:annotation'
+    implementation 'com.cmgapps.logtag:runtime'
     kapt 'com.cmgapps.logtag:processor'
 
     implementation fileTree(dir: 'libs', include: '*.jar')

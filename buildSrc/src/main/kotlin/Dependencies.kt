@@ -39,7 +39,7 @@ private val mockitoJupiter = "org.mockito:mockito-junit-jupiter".withVersion()
 private val testUtils = "com.android.tools:testutils".withVersion()
 
 fun DependencyHandlerScope.addProcessorDependencies() {
-    implementation(project(":annotation"))
+    implementation(project(":runtime"))
 
     implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
     // Necessary to bump a transitive dependency.
@@ -84,7 +84,7 @@ fun DependencyHandlerScope.addLinterDependencies() {
 }
 
 fun DependencyHandlerScope.addCompilerPluginDependencies() {
-    implementation(project(":annotation"))
+    implementation(project(":runtime"))
     implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
     implementation(kotlinPoet)
 

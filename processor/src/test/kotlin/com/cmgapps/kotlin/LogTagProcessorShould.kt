@@ -16,7 +16,7 @@
 
 package com.cmgapps.kotlin
 
-import com.cmgapps.LogTag
+import cmgapps.LogTag
 import com.cmgapps.kotlin.internal.TestFiler
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
@@ -84,9 +84,9 @@ class LogTagProcessorShould {
         }
 
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
-        val logTagAnnotationMock = mock(LogTag::class.java)
+        val logTagAnnotationMock = mock(cmgapps.LogTag::class.java)
         `when`(logTagAnnotationMock.value).thenReturn("")
 
         val element = mock(TypeElement::class.java)
@@ -94,7 +94,7 @@ class LogTagProcessorShould {
         `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
         `when`(element.simpleName).thenReturn("TestClass".asName())
         `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
-        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+        `when`(element.getAnnotation(cmgapps.LogTag::class.java)).thenReturn(logTagAnnotationMock)
 
         val packageElement = mock(PackageElement::class.java).also {
             `when`(it.qualifiedName).thenReturn("test.pkg".asName())
@@ -139,16 +139,16 @@ class LogTagProcessorShould {
         }
 
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.CLASS)
         `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
         `when`(element.simpleName).thenReturn("TestClass".asName())
         `when`(element.getAnnotation(Metadata::class.java)).thenReturn(null)
-        val logTagAnnotationMock = mock(LogTag::class.java)
+        val logTagAnnotationMock = mock(cmgapps.LogTag::class.java)
         `when`(logTagAnnotationMock.value).thenReturn("")
-        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+        `when`(element.getAnnotation(cmgapps.LogTag::class.java)).thenReturn(logTagAnnotationMock)
 
         val packageElement = mock(PackageElement::class.java).also {
             `when`(it.qualifiedName).thenReturn("test.pkg".asName())
@@ -187,7 +187,7 @@ class LogTagProcessorShould {
         }
 
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.CLASS)
@@ -205,10 +205,10 @@ class LogTagProcessorShould {
         )
 
         `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
-        val logTagAnnotationMock = mock(LogTag::class.java).also {
+        val logTagAnnotationMock = mock(cmgapps.LogTag::class.java).also {
             `when`(it.value).thenReturn("")
         }
-        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+        `when`(element.getAnnotation(cmgapps.LogTag::class.java)).thenReturn(logTagAnnotationMock)
 
         val result = processor.process(mutableSetOf(annotationMock), roundEnvironmentMock)
 
@@ -234,7 +234,7 @@ class LogTagProcessorShould {
     @Test
     fun `log error if class is not valid`() {
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.FIELD)
@@ -255,7 +255,7 @@ class LogTagProcessorShould {
     @Test
     fun `log error if class is not public`() {
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.CLASS)
@@ -282,7 +282,7 @@ class LogTagProcessorShould {
         }
 
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.CLASS)
@@ -290,10 +290,10 @@ class LogTagProcessorShould {
         `when`(element.simpleName).thenReturn("TestClassWithAFarTooLongName".asName())
 
         `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
-        val logTagAnnotationMock = mock(LogTag::class.java).also {
+        val logTagAnnotationMock = mock(cmgapps.LogTag::class.java).also {
             `when`(it.value).thenReturn("")
         }
-        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+        `when`(element.getAnnotation(cmgapps.LogTag::class.java)).thenReturn(logTagAnnotationMock)
         val packageElement = mock(PackageElement::class.java).also {
             `when`(it.qualifiedName).thenReturn("test.pkg".asName())
         }
@@ -337,17 +337,17 @@ class LogTagProcessorShould {
         }
 
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.CLASS)
         `when`(element.modifiers).thenReturn(setOf(Modifier.PUBLIC))
         `when`(element.simpleName).thenReturn("TestClassWithAFarTooLongName".asName())
         `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
-        val logTagAnnotationMock = mock(LogTag::class.java).also {
+        val logTagAnnotationMock = mock(cmgapps.LogTag::class.java).also {
             `when`(it.value).thenReturn("")
         }
-        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+        `when`(element.getAnnotation(cmgapps.LogTag::class.java)).thenReturn(logTagAnnotationMock)
 
         val packageElement = mock(PackageElement::class.java).also {
             `when`(it.qualifiedName).thenReturn("test.pkg".asName())
@@ -376,7 +376,7 @@ class LogTagProcessorShould {
         }
 
         val annotationMock = mock(TypeElement::class.java)
-        `when`(annotationMock.qualifiedName).thenReturn(LogTag::class.java.canonicalName.asName())
+        `when`(annotationMock.qualifiedName).thenReturn(cmgapps.LogTag::class.java.canonicalName.asName())
 
         val element = mock(TypeElement::class.java)
         `when`(element.kind).thenReturn(ElementKind.CLASS)
@@ -394,10 +394,10 @@ class LogTagProcessorShould {
         )
 
         `when`(element.getAnnotation(Metadata::class.java)).thenReturn(mock(Metadata::class.java))
-        val logTagAnnotationMock = mock(LogTag::class.java).also {
+        val logTagAnnotationMock = mock(cmgapps.LogTag::class.java).also {
             `when`(it.value).thenReturn("MyCustomLogTag")
         }
-        `when`(element.getAnnotation(LogTag::class.java)).thenReturn(logTagAnnotationMock)
+        `when`(element.getAnnotation(cmgapps.LogTag::class.java)).thenReturn(logTagAnnotationMock)
 
         processor.process(mutableSetOf(annotationMock), roundEnvironmentMock)
 

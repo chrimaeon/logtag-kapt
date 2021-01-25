@@ -16,10 +16,10 @@
 
 rootProject.name = "logtag-kapt"
 include(
-    ":annotation",
     ":processor",
     ":linter",
     ":library",
     ":compiler-plugin",
-    ":gradle-plugin"
+    ":gradle-plugin",
+    "runtime"
 )

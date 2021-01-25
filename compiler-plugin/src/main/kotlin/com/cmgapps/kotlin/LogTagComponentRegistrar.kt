@@ -51,7 +51,7 @@ internal class LogTagClassBuilderInterceptorExtension(private val messageCollect
         override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder =
             LogTagClassBuilder(
                 delegate.newClassBuilder(origin),
-                origin.descriptor?.original?.annotations,
+                origin,
                 messageCollector
             )
     }

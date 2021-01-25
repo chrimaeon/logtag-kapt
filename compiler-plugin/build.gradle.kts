@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
+    `java-library`
     kotlin("jvm")
     kotlin("kapt")
     `maven-publish`
@@ -30,9 +33,9 @@ project.group = group
 project.version = versionName
 
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
 }
@@ -50,7 +53,6 @@ val javadocJar by tasks.registering(Jar::class) {
 publishing {
     publications {
         create<MavenPublication>("compilerPlugin") {
-
             from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())

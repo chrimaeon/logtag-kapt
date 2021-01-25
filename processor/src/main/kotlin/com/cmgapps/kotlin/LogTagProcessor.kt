@@ -16,7 +16,7 @@
 
 package com.cmgapps.kotlin
 
-import com.cmgapps.LogTag
+import com.cmgapps.logtag.annotation.LogTag
 import com.google.auto.service.AutoService
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile

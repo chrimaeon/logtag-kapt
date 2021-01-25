@@ -27,7 +27,8 @@ plugins {
 
 val group: String by project
 val versionName: String by project
-val pomName: String by project
+val name: String by project
+val pluginName = name
 val description: String by project
 val pluginDesc = description
 
@@ -38,7 +39,7 @@ gradlePlugin {
     plugins {
         register("pluginMaven") {
             id = "com.cmgapps.kotlin.logtag"
-            displayName = pomName
+            displayName = pluginName
             implementationClass = "com.cmgapps.gradle.LogTagPlugin"
             description = pluginDesc
         }
@@ -106,6 +107,9 @@ tasks {
     }
 
     withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
         dependsOn(generateBuildProperties)
     }
 }

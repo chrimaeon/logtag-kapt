@@ -16,29 +16,32 @@
 
 package com.cmgapps.kotlin
 
-import com.cmgapps.LogTag
+import com.cmgapps.logtag.annotation.LogTag as LogTagAnnotation
+import com.cmgapps.logtag.LogTag
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
+private val logTagAnnotationFqName = FqName(LogTagAnnotation::class.java.canonicalName)
 private val logTagFqName = FqName(LogTag::class.java.canonicalName)
 private const val LOGGING_PREFIX = "***** LOGTAG "
 
 internal class LogTagClassBuilder(
     private val delegateBuilder: ClassBuilder,
-    private val classAnnotations: Annotations?,
+    classOrigin: JvmDeclarationOrigin,
     private val messageCollector: MessageCollector
 ) : DelegatingClassBuilder() {
     override fun getDelegate(): ClassBuilder = delegateBuilder
+
+    private val logTagAnnotation = classOrigin.descriptor?.original?.annotations?.findAnnotation(logTagAnnotationFqName)
 
     override fun newMethod(
         origin: JvmDeclarationOrigin,
@@ -52,43 +55,51 @@ internal class LogTagClassBuilder(
         val className = FqName(delegateBuilder.thisName.replace('/', '.'))
         val original = super.newMethod(origin, access, name, desc, signature, exceptions)
 
-        val logTagAnnotation = classAnnotations?.findAnnotation(logTagFqName) ?: return original
+        if (className != logTagFqName && name == "getLogTag" && desc == "()Ljava/lang/String;") {
 
-        return object : MethodVisitor(Opcodes.ASM5, original) {
-            override fun visitMethodInsn(
-                opcode: Int,
-                owner: String?,
-                name: String?,
-                descriptor: String?,
-                isInterface: Boolean
-            ) {
-                if (owner != "timber/log/Timber") {
-                    return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                }
-
-                if (!LOG_METHOD_NAMES.contains(name)) {
-                    return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                }
-
-                // logging method not invoked static so assume `tag` is already called
-                if (opcode != Opcodes.INVOKESTATIC) {
-                    return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
-                }
-
-                InstructionAdapter(this).apply {
-                    aconst(className.getLogTag(logTagAnnotation, messageCollector))
-                    invokestatic("timber/log/Timber", "tag", "(Ljava/lang/String;)Ltimber/log/Timber\$Tree;", false)
-                    // pop the Timber.Tree so original log call can be executed
-                    pop()
-                }
-
-                return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+            InstructionAdapter(original).apply {
+                aconst(className.getLogTag(logTagAnnotation, messageCollector))
+                areturn(Type.getType(String::class.java))
             }
         }
+
+        return original
+
+        // return object : MethodVisitor(Opcodes.ASM5, original) {
+        //     override fun visitMethodInsn(
+        //         opcode: Int,
+        //         owner: String?,
+        //         name: String?,
+        //         descriptor: String?,
+        //         isInterface: Boolean
+        //     ) {
+        //         if (owner != "timber/log/Timber") {
+        //             return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+        //         }
+        //
+        //         if (!LOG_METHOD_NAMES.contains(name)) {
+        //             return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+        //         }
+        //
+        //         // logging method not invoked static so assume `tag` is already called
+        //         if (opcode != Opcodes.INVOKESTATIC) {
+        //             return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+        //         }
+        //
+        //         InstructionAdapter(this).apply {
+        //             aconst(className.getLogTag(logTagAnnotation, messageCollector))
+        //             invokestatic("timber/log/Timber", "tag", "(Ljava/lang/String;)Ltimber/log/Timber\$Tree;", false)
+        //             // pop the Timber.Tree so original log call can be executed
+        //             pop()
+        //         }
+        //
+        //         return super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+        //     }
+        // }
     }
 
-    private fun FqName.getLogTag(logTagAnnotation: AnnotationDescriptor, messageCollector: MessageCollector): String {
-        val logTagValue = logTagAnnotation.allValueArguments[Name.identifier("value")]?.value as? String
+    private fun FqName.getLogTag(logTagAnnotation: AnnotationDescriptor?, messageCollector: MessageCollector): String {
+        val logTagValue = logTagAnnotation?.allValueArguments?.get(Name.identifier("value"))?.value as? String
 
         if (!logTagValue.isNullOrBlank()) {
             return logTagValue
@@ -106,10 +117,6 @@ internal class LogTagClassBuilder(
                 it
             }
         }
-    }
-
-    companion object {
-        private val LOG_METHOD_NAMES = listOf("v", "d", "i", "w", "e", "wtf", "log")
     }
 
     private fun MessageCollector.log(message: String?) =

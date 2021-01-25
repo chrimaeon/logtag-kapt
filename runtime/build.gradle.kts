@@ -17,39 +17,48 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.lint")
+    `java-library`
     kotlin("jvm")
-    kotlin("kapt")
+    `maven-publish`
+    signing
     ktlint
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
 
-tasks {
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events("PASSED", "SKIPPED", "FAILED")
-        }
-    }
+val group: String by project
+val versionName: String by project
 
-    withType<KotlinCompile> {
+project.group = group
+project.version = versionName
+
+tasks {
+    withType<KotlinCompile>{
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_1_8.toString()
         }
     }
+}
 
-    jar {
-        manifest {
-            attributes("Lint-Registry-v2" to "com.cmgapps.lint.IssueRegistry")
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(tasks.dokkaJavadoc)
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("compilerRuntime") {
+            from(components["java"])
+            artifact(sourcesJar.get())
+            artifact(javadocJar.get())
         }
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-dependencies {
-    addLinterDependencies()
+signing {
+    sign(publishing.publications["compilerRuntime"])
 }

@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    api(project(":annotation"))
+    api(project(":runtime"))
     lintPublish(project(":linter"))
 }
 
@@ -47,15 +47,25 @@ val versionName: String by project
 project.group = group
 project.version = versionName
 
-val annotationProject = project(":annotation")
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
-    from(annotationProject.sourceSets["main"].allSource)
+    from(android.sourceSets["main"].java.getSourceFiles())
 }
 
-val javadocJar by tasks.registering(Jar::class) {
+val androidJavadocs by tasks.registering(Javadoc::class) {
+    source = android.sourceSets["main"].java.getSourceFiles()
+    classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
+    android.libraryVariants.forEach { variant ->
+        if (variant.name == "release") {
+            classpath += variant.javaCompileProvider.get().classpath
+        }
+    }
+    exclude("**/R.html", "**/R.*.html", "**/index.html")
+}
+
+val androidJavadocsJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    from(annotationProject.tasks["javadoc"])
+    from(androidJavadocs)
 }
 
 afterEvaluate {
@@ -64,7 +74,7 @@ afterEvaluate {
             register<MavenPublication>("libraryMaven") {
                 from(components["release"])
                 artifact(sourcesJar.get())
-                artifact(javadocJar.get())
+                artifact(androidJavadocsJar.get())
                 logtagPom(project)
             }
         }

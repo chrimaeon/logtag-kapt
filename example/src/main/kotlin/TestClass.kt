@@ -16,7 +16,8 @@
 
 package test.pkg
 
-import com.cmgapps.LogTag
+import com.cmgapps.logtag.annotation.LogTag as LogTagAnnotation
+import com.cmgapps.logtag.LogTag
 import timber.log.Timber
 import test.java.pkg.JavaTestClass
 
@@ -24,31 +25,31 @@ interface Log {
     fun log()
 }
 
-@LogTag("CustomTag")
-class TestClass : Log {
+@LogTagAnnotation("CustomTag")
+class TestClass : LogTag, Log {
     override fun log() {
-        Timber.i("info message")
-        Timber.tag("Custom").e("error message")
+        Timber.tag(LOG_TAG).i("${this::class.java.simpleName}: info message with LOG_TAG")
+        Timber.tag("Custom").e("${this::class.java.simpleName}: error message with tag method")
+        Timber.tag(logTag).i("${this::class.java.simpleName}: info message with logTag")
     }
 }
 
-// @LogTag
 internal class InternalTestClass : Log {
     override fun log() {
-        Timber.d("debug message")
+        Timber.d("${this::class.java.simpleName}: no tag should be applied")
     }
 }
 
-@LogTag
-class TestClassWithAFarTooLongNameForLogging : Log {
+class TestClassWithAFarTooLongNameForLogging : LogTag, Log {
     override fun log() {
-        Timber.d("no tag debug message")
+        Timber.tag(logTag).d("debug message with logTag and truncated tag")
     }
 }
 
 fun main() {
     Timber.plant(TimberTree());
-    val loggable = listOf<Log>(TestClass(), InternalTestClass(), TestClassWithAFarTooLongNameForLogging(), JavaTestClass())
+    val loggable =
+        listOf<Log>(TestClass(), InternalTestClass(), TestClassWithAFarTooLongNameForLogging(), JavaTestClass())
     loggable.forEach {
         it.log()
     }
@@ -56,6 +57,16 @@ fun main() {
 
 private class TimberTree : Timber.Tree() {
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        println("$priority/$tag: $message")
+        println("${priority.asPriorityString()}/$tag: $message")
+    }
+
+    private fun Int.asPriorityString() = when (this) {
+        2 -> "VERBOSE"
+        3 -> "DEBUG"
+        4 -> "INFO"
+        5 -> "WARN"
+        6 -> "ERROR"
+        7 -> "ASSERT"
+        else -> "N/A"
     }
 }

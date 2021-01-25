@@ -16,6 +16,7 @@
 
 package com.cmgapps.gradle
 
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
@@ -41,4 +42,8 @@ open class LogTagPlugin : KotlinCompilerPluginSupportPlugin {
                 emptyList()
             }
         }
+
+    override fun apply(target: Project) {
+        target.dependencies.add("implementation", "$GROUP:runtime:$VERSION")
+    }
 }
