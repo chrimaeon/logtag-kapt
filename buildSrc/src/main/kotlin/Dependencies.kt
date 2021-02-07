@@ -86,14 +86,15 @@ fun DependencyHandlerScope.addLinterDependencies() {
 fun DependencyHandlerScope.addCompilerPluginDependencies() {
     implementation(project(":runtime"))
     implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
-    implementation(kotlinPoet)
+//    implementation(kotlinPoet)
 
     // Necessary to bump a transitive dependency.
     compileOnly(kotlin("reflect", KOTLIN_VERSION))
 
     compileOnly(kotlin("compiler-embeddable", KOTLIN_VERSION))
-    compileOnly(autoServiceAnnotations)
-    kapt(autoService)
+    compileOnly("io.arrow-kt:compiler-plugin:+")
+//    compileOnly(autoServiceAnnotations)
+//    kapt(autoService)
 }
 
 fun DependencyHandlerScope.addGradlePluginDependencies() {
@@ -103,5 +104,4 @@ fun DependencyHandlerScope.addGradlePluginDependencies() {
 
     implementation(kotlin("gradle-plugin", KOTLIN_VERSION))
     implementation(kotlin("gradle-plugin-api", KOTLIN_VERSION))
-
 }

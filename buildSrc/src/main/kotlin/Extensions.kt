@@ -21,6 +21,7 @@ import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
+import java.net.URI
 
 fun RepositoryHandler.helixTeamHubRepo(project: Project): ArtifactRepository {
     return maven {
@@ -52,6 +53,10 @@ fun RepositoryHandler.sonatype(project: Project): ArtifactRepository = maven {
         this.username = username
         this.password = password
     }
+}
+
+fun RepositoryHandler.bintraySnapshot(): ArtifactRepository = maven {
+    url = URI("https://oss.jfrog.org/artifactory/oss-snapshot-local/")
 }
 
 fun isNotCi(): Boolean {

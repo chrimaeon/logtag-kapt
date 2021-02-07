@@ -20,6 +20,7 @@ plugins {
     `java-library`
     kotlin("jvm")
     kotlin("kapt")
+    id("io.arrow-kt.arrow")
     `maven-publish`
     signing
     ktlint
@@ -32,14 +33,6 @@ val versionName: String by project
 project.group = group
 project.version = versionName
 
-tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
-    }
-}
-
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
@@ -50,9 +43,12 @@ val javadocJar by tasks.registering(Jar::class) {
     from(tasks.dokkaJavadoc)
 }
 
+val pubName = "compilerPlugin"
+
 publishing {
     publications {
-        create<MavenPublication>("compilerPlugin") {
+        create<MavenPublication>(pubName) {
+
             from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
@@ -66,7 +62,7 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["compilerPlugin"])
+    sign(publishing.publications[pubName])
 }
 
 dependencies {

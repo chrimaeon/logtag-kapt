@@ -21,8 +21,8 @@ import org.gradle.kotlin.dsl.provideDelegate
 fun MavenPublication.logtagPom(project: Project) = pom {
 
     val artifactId: String by project
-    val name: String by project
-    val description: String by project
+    val pomName: String by project
+    val pomDescription: String by project
     val scmUrl: String by project
     val connectionUrl: String by project
     val developerConnectionUrl: String by project
@@ -32,8 +32,8 @@ fun MavenPublication.logtagPom(project: Project) = pom {
     this@logtagPom.artifactId = artifactId
     this@logtagPom.version = project.version.toString()
 
-    this.name.set(name)
-    this.description.set(description)
+    this.name.set(pomName)
+    this.description.set(pomDescription)
     this.url.set(projectUrl)
     developers {
         developer {

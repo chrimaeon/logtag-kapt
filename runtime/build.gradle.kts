@@ -31,14 +31,6 @@ val versionName: String by project
 project.group = group
 project.version = versionName
 
-tasks {
-    withType<KotlinCompile>{
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
-    }
-}
-
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
@@ -49,10 +41,12 @@ val javadocJar by tasks.registering(Jar::class) {
     from(tasks.dokkaJavadoc)
 }
 
+val pubName = "compilerRuntime"
+
 publishing {
     publications {
-        register<MavenPublication>("compilerRuntime") {
-            from(components["java"])
+        register<MavenPublication>(pubName) {
+
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
         }
@@ -60,5 +54,5 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["compilerRuntime"])
+    sign(publishing.publications[pubName])
 }

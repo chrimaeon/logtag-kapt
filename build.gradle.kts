@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
+import java.util.Date
+
 buildscript {
     repositories {
         google()
         jcenter()
         helixTeamHubRepo(project)
+        // arrow-kt snapshots
+        bintraySnapshot()
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle".withVersion())
+        // STOPSHIP
+        // classpath("com.android.tools.build:gradle".withVersion())
         classpath(kotlin("gradle-plugin", KOTLIN_VERSION))
         classpath("com.cmgapps.gradle:gradle-dependencies-versions-plugin".withVersion())
+        classpath("io.arrow-kt:gradle-plugin".withVersion())
     }
 }
 
@@ -35,13 +41,42 @@ subprojects {
         google()
         jcenter()
         mavenCentral()
+        // arrow-kt snapshots
+        bintraySnapshot()
     }
+}
 
-    gradle.projectsEvaluated {
-        tasks.withType<JavaCompile>()
-            .configureEach {
+gradle.projectsEvaluated {
+    subprojects {
+        tasks {
+            withType<JavaCompile> {
                 options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xmaxerrs", "500"))
             }
+
+            // withType<KotlinCompile> {
+            //     kotlinOptions {
+            //         jvmTarget = JavaVersion.VERSION_1_8.toString()
+            //     }
+            // }
+        }
+
+        if (plugins.hasPlugin(JavaLibraryPlugin::class)) {
+            tasks.named<Jar>("jar") {
+                manifest {
+                    val pomName: String by project
+                    val versionName: String by project
+                    attributes(
+                        "Implementation-Title" to pomName,
+                        "Implementation-Version" to versionName,
+                        "Built-By" to System.getProperty("user.name"),
+                        "Built-Date" to Date(),
+                        "Built-JDK" to System.getProperty("java.version"),
+                        "Built-Gradle" to gradle.gradleVersion,
+                        "Built-Kotlin" to KOTLIN_VERSION
+                    )
+                }
+            }
+        }
     }
 }
 

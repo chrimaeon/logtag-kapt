@@ -27,21 +27,21 @@ plugins {
 
 val group: String by project
 val versionName: String by project
-val name: String by project
-val pluginName = name
-val description: String by project
-val pluginDesc = description
+val pomName: String by project
+val pomDescription: String by project
 
 project.group = group
 project.version = versionName
 
+val pubName = "pluginMaven"
+
 gradlePlugin {
     plugins {
-        register("pluginMaven") {
+        register(pubName) {
             id = "com.cmgapps.kotlin.logtag"
-            displayName = pluginName
+            displayName = pomName
             implementationClass = "com.cmgapps.gradle.LogTagPlugin"
-            description = pluginDesc
+            description = pomDescription
         }
     }
 }
@@ -58,7 +58,7 @@ val javadocJar by tasks.registering(Jar::class) {
 
 publishing {
     publications {
-        register<MavenPublication>("pluginMaven") {
+        register<MavenPublication>(pubName) {
 
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
@@ -71,7 +71,7 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["pluginMaven"])
+    sign(publishing.publications[pubName])
 }
 
 dependencies {
@@ -107,9 +107,6 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
         dependsOn(generateBuildProperties)
     }
 }

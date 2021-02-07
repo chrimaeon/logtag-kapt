@@ -14,37 +14,17 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package com.cmgapps.kotlin
 
-plugins {
-    // STOPSHIP
-//    id("com.android.lint")
-    kotlin("jvm")
-    kotlin("kapt")
-    ktlint
-    id("org.jetbrains.dokka") version "1.4.20"
-}
+import arrow.meta.CliPlugin
+import arrow.meta.Meta
+import arrow.meta.phases.CompilerContext
+//import com.google.auto.service.AutoService
+//import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 
-tasks {
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events("PASSED", "SKIPPED", "FAILED")
-        }
-    }
-
-    jar {
-        manifest {
-            attributes("Lint-Registry-v2" to "com.cmgapps.lint.IssueRegistry")
-        }
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-dependencies {
-    addLinterDependencies()
+//@AutoService(ComponentRegistrar::class)
+class LogTagPlugin : Meta {
+    override fun intercept(ctx: CompilerContext): List<CliPlugin> = listOf(
+        surroundWithBuildConfig
+    )
 }

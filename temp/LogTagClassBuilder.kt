@@ -16,7 +16,6 @@
 
 package com.cmgapps.kotlin
 
-import com.cmgapps.logtag.annotation.LogTag as LogTagAnnotation
 import com.cmgapps.logtag.LogTag
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -29,10 +28,10 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import com.cmgapps.logtag.annotation.LogTag as LogTagAnnotation
 
 private val logTagAnnotationFqName = FqName(LogTagAnnotation::class.java.canonicalName)
 private val logTagFqName = FqName(LogTag::class.java.canonicalName)
-private const val LOGGING_PREFIX = "***** LOGTAG "
 
 internal class LogTagClassBuilder(
     private val delegateBuilder: ClassBuilder,
@@ -52,11 +51,10 @@ internal class LogTagClassBuilder(
         exceptions: Array<out String>?
     ): MethodVisitor {
 
-        val className = FqName(delegateBuilder.thisName.replace('/', '.'))
+        val className = FqName(Type.getObjectType(delegateBuilder.thisName).className)
         val original = super.newMethod(origin, access, name, desc, signature, exceptions)
 
         if (className != logTagFqName && name == "getLogTag" && desc == "()Ljava/lang/String;") {
-
             InstructionAdapter(original).apply {
                 aconst(className.getLogTag(logTagAnnotation, messageCollector))
                 areturn(Type.getType(String::class.java))
@@ -110,7 +108,7 @@ internal class LogTagClassBuilder(
                 messageCollector.report(
                     CompilerMessageSeverity.WARNING,
                     "Class name \"$it\" exceeds max. length of 23 for a log tag. Class name will be truncated." +
-                        " Add the @com.cmgapps.LogTag annotation with a custom tag to override"
+                        " Add the @${logTagAnnotationFqName.asString()} annotation with a custom tag to override"
                 )
                 it.substring(0..21) + Typography.ellipsis
             } else {
@@ -118,7 +116,4 @@ internal class LogTagClassBuilder(
             }
         }
     }
-
-    private fun MessageCollector.log(message: String?) =
-        report(CompilerMessageSeverity.INFO, "$LOGGING_PREFIX$message")
 }

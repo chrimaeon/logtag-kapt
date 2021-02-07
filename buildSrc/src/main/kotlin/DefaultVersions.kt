@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-const val KOTLIN_VERSION = "1.4.30"
+const val KOTLIN_VERSION = "1.4.10" // has to match arrow-kt gradle plugin version

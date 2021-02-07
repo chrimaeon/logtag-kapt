@@ -16,21 +16,24 @@
 
 package com.cmgapps.kotlin
 
-import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.com.intellij.mock.MockProject
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
-@AutoService(ComponentRegistrar::class)
+// @AutoService(ComponentRegistrar::class)
 class LogTagComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
@@ -38,6 +41,7 @@ class LogTagComponentRegistrar : ComponentRegistrar {
             project,
             LogTagClassBuilderInterceptorExtension(messageCollector)
         )
+        ExpressionCodegenExtension.registerExtension(project, LogTagExpressionCodegenExtension(messageCollector))
     }
 }
 
@@ -56,3 +60,22 @@ internal class LogTagClassBuilderInterceptorExtension(private val messageCollect
             )
     }
 }
+
+internal class LogTagExpressionCodegenExtension(private val messageCollector: MessageCollector) :
+    ExpressionCodegenExtension {
+    override fun applyFunction(
+        receiver: StackValue,
+        resolvedCall: ResolvedCall<*>,
+        c: ExpressionCodegenExtension.Context
+    ): StackValue? {
+        // val actualReceiver = StackValue.receiver(resolvedCall, receiver, c.codegen, null)
+        //
+        // StackValue.functionCall()
+        return super.applyFunction(receiver, resolvedCall, c)
+    }
+}
+
+private const val LOGGING_PREFIX = "***** LOGTAG "
+
+internal fun MessageCollector.log(message: String?) =
+    report(CompilerMessageSeverity.INFO, "$LOGGING_PREFIX$message")

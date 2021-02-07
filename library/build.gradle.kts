@@ -15,30 +15,34 @@
  */
 
 plugins {
-    id("com.android.library")
+    `java-library`
+    // STOPSHIP
+   // id("com.android.library")
+   ktlint
     `maven-publish`
     signing
 }
 
-android {
-    compileSdkVersion(30)
-    defaultConfig {
-        minSdkVersion(15)
-        targetSdkVersion(30)
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    buildFeatures {
-        buildConfig = false
-    }
-}
+// android {
+//     compileSdkVersion(30)
+//     defaultConfig {
+//         minSdkVersion(15)
+//         targetSdkVersion(30)
+//     }
+//     compileOptions {
+//         sourceCompatibility = JavaVersion.VERSION_1_8
+//         targetCompatibility = JavaVersion.VERSION_1_8
+//     }
+//
+//     buildFeatures {
+//         buildConfig = false
+//     }
+// }
 
 dependencies {
     api(project(":runtime"))
-    lintPublish(project(":linter"))
+    // STOPSHIP
+    // lintPublish(project(":linter"))
 }
 
 val group: String by project
@@ -47,34 +51,36 @@ val versionName: String by project
 project.group = group
 project.version = versionName
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.getSourceFiles())
-}
+// val sourcesJar by tasks.registering(Jar::class) {
+//     archiveClassifier.set("sources")
+//     from(android.sourceSets["main"].java.srcDirs)
+// }
+//
+// val androidJavadocs by tasks.registering(Javadoc::class) {
+//     source = android.sourceSets["main"].java.getSourceFiles()
+//     classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
+//     android.libraryVariants.forEach { variant ->
+//         if (variant.name == "release") {
+//             classpath += variant.javaCompileProvider.get().classpath
+//         }
+//     }
+//     exclude("**/R.html", "**/R.*.html", "**/index.html")
+// }
+//
+// val androidJavadocsJar by tasks.registering(Jar::class) {
+//     archiveClassifier.set("javadoc")
+//     from(androidJavadocs)
+// }
 
-val androidJavadocs by tasks.registering(Javadoc::class) {
-    source = android.sourceSets["main"].java.getSourceFiles()
-    classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
-    android.libraryVariants.forEach { variant ->
-        if (variant.name == "release") {
-            classpath += variant.javaCompileProvider.get().classpath
-        }
-    }
-    exclude("**/R.html", "**/R.*.html", "**/index.html")
-}
-
-val androidJavadocsJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(androidJavadocs)
-}
+val pubName = "library"
 
 afterEvaluate {
     publishing {
         publications {
-            register<MavenPublication>("libraryMaven") {
-                from(components["release"])
-                artifact(sourcesJar.get())
-                artifact(androidJavadocsJar.get())
+            register<MavenPublication>(pubName) {
+               // from(components["release"])
+               //  artifact(sourcesJar.get())
+                // artifact(androidJavadocsJar.get())
                 logtagPom(project)
             }
         }
@@ -85,6 +91,6 @@ afterEvaluate {
     }
 
     signing {
-        sign(publishing.publications["libraryMaven"])
+        sign(publishing.publications[pubName])
     }
 }

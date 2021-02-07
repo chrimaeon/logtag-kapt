@@ -28,19 +28,6 @@ plugins {
     id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
-sourceSets {
-    named("main") {
-        java {
-
-        }
-    }
-}
-
 val functionalTestName = "functionalTest"
 
 configurations {
@@ -82,12 +69,6 @@ java {
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
-    }
-
     test {
         useJUnitPlatform()
         logEvents()
@@ -104,19 +85,6 @@ tasks {
     check {
         dependsOn(functionalTest)
     }
-
-    jar {
-        manifest {
-            attributes(
-                "Implementation-Title" to project.name,
-                "Implementation-Version" to project.version.toString(),
-                "Built-By" to System.getProperty("user.name"),
-                "Built-Date" to Date(),
-                "Built-JDK" to System.getProperty("java.version"),
-                "Built-Gradle" to gradle.gradleVersion
-            )
-        }
-    }
 }
 
 fun Test.logEvents() = testLogging {
@@ -125,7 +93,6 @@ fun Test.logEvents() = testLogging {
 
 val group: String by project
 val versionName: String by project
-val artifactId: String by project
 
 project.group = group
 project.version = versionName
@@ -140,15 +107,18 @@ val javadocJar by tasks.registering(Jar::class) {
     from(tasks.dokkaJavadoc)
 }
 
+val pubName = "processor"
+
 publishing {
     publications {
-        create<MavenPublication>("processor") {
+        create<MavenPublication>(pubName) {
 
             from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
 
             logtagPom(project)
+
         }
     }
 
@@ -158,7 +128,7 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["processor"])
+    sign(publishing.publications[pubName])
 }
 
 dependencies {

@@ -16,11 +16,11 @@
 
 package com.cmgapps.kotlin
 
-import com.google.auto.service.AutoService
+//import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 
-@AutoService(CommandLineProcessor::class)
+//@AutoService(CommandLineProcessor::class)
 class LogTagCommandLineProcessor : CommandLineProcessor {
     override val pluginId = "com.cmgapps.logtag.compiler"
 

@@ -1,4 +1,4 @@
-// Generated with dependencyUpdates on 2/12/21 6:38 PM
+// Generated with dependencyUpdates on 2/12/21 8:42 PM
 // DO NOT EDIT
 @file:Suppress(
     "SpellCheckingInspection",
@@ -16,6 +16,7 @@ private val versions: Map<String, String> = mapOf(
     "com.pinterest:ktlint" to "0.40.0",
     "com.squareup:javapoet" to "1.13.0",
     "com.squareup:kotlinpoet" to "1.7.2",
+    "io.arrow-kt:gradle-plugin" to "1.4.10-SNAPSHOT",
     "net.ltgt.gradle.incap:incap-processor" to "0.3",
     "org.hamcrest:hamcrest" to "2.2",
     "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin" to "1.4.20",
@@ -27,4 +28,4 @@ public fun String.version(): String = versions[this] ?: error("""No version foun
 
 public fun String.withVersion(): String = "$this:${this.version()}"
 
-public const val GRADLE_VERSION: String = "6.8.2"
+public const val GRADLE_VERSION: String = "5.6.4"
