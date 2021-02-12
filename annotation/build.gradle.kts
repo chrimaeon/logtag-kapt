@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import com.jfrog.bintray.gradle.BintrayExtension
 import java.util.Date
-import java.util.Properties
 
 plugins {
     `java-library`
     `maven-publish`
-    id("com.jfrog.bintray") version "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin".version()
+    signing
 }
 
 java {
@@ -59,70 +57,26 @@ val sourcesJar by tasks.registering(Jar::class) {
     from(sourceSets.main.get().allSource)
 }
 
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(tasks.javadoc)
+}
+
 publishing {
     publications {
         create<MavenPublication>("annotation") {
             from(components["java"])
             artifact(sourcesJar.get())
+            artifact(javadocJar.get())
 
-            val artifactId: String by project
-            val name: String by project
-            val description: String by project
-            val scmUrl: String by project
-            val connectionUrl: String by project
-            val developerConnectionUrl: String by project
-
-            this.groupId = project.group.toString()
-            this.artifactId = artifactId
-            this.version = project.version.toString()
-
-            pom {
-                this.name.set(name)
-                this.description.set(description)
-                developers {
-                    developer {
-                        this.id.set("cgrach")
-                        this.name.set("Christian Grach")
-                    }
-                }
-
-                scm {
-                    this.url.set(scmUrl)
-                    this.connection.set(connectionUrl)
-                    this.developerConnection.set(developerConnectionUrl)
-                }
-            }
+            logtagPom(project)
         }
     }
-}
-
-bintray {
-    val credentialProps = Properties()
-    val propsFile = project.rootDir.resolve("credentials.properties")
-
-    if (propsFile.exists()) {
-        credentialProps.load(propsFile.inputStream())
-        user = credentialProps.getProperty("user")
-        key = credentialProps.getProperty("key")
+    repositories {
+        sonatype(project)
     }
-
-    setPublications("annotation")
-
-    pkg(closureOf<BintrayExtension.PackageConfig> {
-        repo = "maven"
-        name = "${project.group}:$artifactId"
-        userOrg = user
-        setLicenses("Apache-2.0")
-        val projectUrl: String by project
-        vcsUrl = projectUrl
-        val issuesTrackerUrl: String by project
-        issueTrackerUrl = issuesTrackerUrl
-        githubRepo = projectUrl
-        version(closureOf<BintrayExtension.VersionConfig> {
-            name = versionName
-            vcsTag = versionName
-            released = Date().toString()
-        })
-    })
 }
 
+signing {
+    sign(publishing.publications["annotation"])
+}
