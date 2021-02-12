@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-import com.jfrog.bintray.gradle.BintrayExtension
-import java.util.Date
-import java.util.Properties
-
 plugins {
     id("com.android.library")
-    ktlint
     `maven-publish`
-    id("com.jfrog.bintray") version "com.jfrog.bintray:com.jfrog.bintray.gradle.plugin".version()
+    signing
 }
 
 android {
@@ -35,6 +30,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        buildConfig = false
+    }
 }
 
 dependencies {
@@ -44,7 +43,6 @@ dependencies {
 
 val group: String by project
 val versionName: String by project
-val artifactId: String by project
 
 project.group = group
 project.version = versionName
@@ -52,75 +50,36 @@ project.version = versionName
 val name: String by project
 val description: String by project
 
+val linterProject = project(":annotation")
+
+
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.srcDirs)
+    from(linterProject.sourceSets["main"].allSource)
+}
+
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(linterProject.tasks["javadoc"])
 }
 
 afterEvaluate {
     publishing {
         publications {
-            create<MavenPublication>("library") {
+            register<MavenPublication>("libraryMaven") {
                 from(components["release"])
                 artifact(sourcesJar.get())
-
-                val name: String by project
-                val description: String by project
-                val scmUrl: String by project
-                val connectionUrl: String by project
-                val developerConnectionUrl: String by project
-
-                this.groupId = project.group.toString()
-                this.artifactId = artifactId
-                this.version = project.version.toString()
-
-                pom {
-                    this.name.set(name)
-                    this.description.set(description)
-                    developers {
-                        developer {
-                            this.id.set("cgrach")
-                            this.name.set("Christian Grach")
-                        }
-                    }
-
-                    scm {
-                        this.url.set(scmUrl)
-                        this.connection.set(connectionUrl)
-                        this.developerConnection.set(developerConnectionUrl)
-                    }
-                }
+                artifact(javadocJar.get())
+                logtagPom(project)
             }
+        }
+
+        repositories {
+            sonatype(project)
         }
     }
 
-    bintray {
-        val credentialProps = Properties()
-        val propsFile = project.rootDir.resolve("credentials.properties")
-
-        if (propsFile.exists()) {
-            credentialProps.load(propsFile.inputStream())
-            user = credentialProps.getProperty("user")
-            key = credentialProps.getProperty("key")
-        }
-
-        setPublications("library")
-
-        pkg(closureOf<BintrayExtension.PackageConfig> {
-            repo = "maven"
-            name = "${project.group}:$artifactId"
-            userOrg = user
-            setLicenses("Apache-2.0")
-            val projectUrl: String by project
-            vcsUrl = projectUrl
-            val issuesTrackerUrl: String by project
-            issueTrackerUrl = issuesTrackerUrl
-            githubRepo = projectUrl
-            version(closureOf<BintrayExtension.VersionConfig> {
-                name = versionName
-                vcsTag = versionName
-                released = Date().toString()
-            })
-        })
+    signing {
+        sign(publishing.publications["libraryMaven"])
     }
 }

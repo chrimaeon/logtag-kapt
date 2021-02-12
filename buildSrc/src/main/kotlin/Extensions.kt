@@ -18,6 +18,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
@@ -34,6 +35,22 @@ fun RepositoryHandler.helixTeamHubRepo(project: Project): ArtifactRepository {
         }
         url =
             project.uri("https://helixteamhub.cloud/cmgapps/projects/cmgapp-libs/repositories/maven/libraries")
+    }
+}
+
+fun RepositoryHandler.sonatype(project: Project): ArtifactRepository = maven {
+    name = "sonatype"
+    val releaseUrl = project.uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+    val snapshotUrl = project.uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    val versionName: String by project
+    url = if (versionName.endsWith("SNAPSHOT")) snapshotUrl else releaseUrl
+
+    val username by project.credentials()
+    val password by project.credentials()
+
+    credentials {
+        this.username = username
+        this.password = password
     }
 }
 

@@ -17,11 +17,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `java-library`
     id("com.android.lint")
     kotlin("jvm")
     kotlin("kapt")
     ktlint
+    id("org.jetbrains.dokka") version "1.4.20"
 }
 
 tasks {

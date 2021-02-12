@@ -16,8 +16,8 @@
 
 rootProject.name = "logtag-kapt"
 include(
-    "annotation",
-    "processor",
-    "linter",
-    "library"
+    ":annotation",
+    ":processor",
+    ":linter",
+    ":library"
 )
