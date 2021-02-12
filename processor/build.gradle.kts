@@ -138,6 +138,7 @@ publishing {
 
             from(components["java"])
             artifact(sourcesJar.get())
+            artifact(javadocJar.get())
 
             logtagPom(project)
         }

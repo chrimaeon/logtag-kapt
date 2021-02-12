@@ -50,17 +50,15 @@ project.version = versionName
 val name: String by project
 val description: String by project
 
-val linterProject = project(":annotation")
-
-
+val annotationProject = project(":annotation")
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
-    from(linterProject.sourceSets["main"].allSource)
+    from(annotationProject.sourceSets["main"].allSource)
 }
 
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    from(linterProject.tasks["javadoc"])
+    from(annotationProject.tasks["javadoc"])
 }
 
 afterEvaluate {
