@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.file.Paths
 
 plugins {
     `java-library`
@@ -27,11 +27,10 @@ plugins {
     id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
 
-val group: String by project
-val versionName: String by project
-
-project.group = group
-project.version = versionName
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
@@ -47,22 +46,26 @@ val pubName = "compilerPlugin"
 
 publishing {
     publications {
-        create<MavenPublication>(pubName) {
-
+        register<MavenPublication>(pubName) {
             from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
-
-            logtagPom(project)
         }
-    }
-    repositories {
-        sonatype(project)
     }
 }
 
 signing {
     sign(publishing.publications[pubName])
+}
+
+tasks.jar {
+    from(
+        zipTree(sourceSets.main.get().compileClasspath.find {
+            it.absolutePath.contains(Paths.get("arrow-kt", "compiler-plugin").toString())
+        } ?: error("arrow not found"))
+    ) {
+        exclude("META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar")
+    }
 }
 
 dependencies {

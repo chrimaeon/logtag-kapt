@@ -88,7 +88,7 @@ tasks {
 }
 
 fun Test.logEvents() = testLogging {
-    events("PASSED", "SKIPPED", "FAILED")
+    this.events("PASSED", "SKIPPED", "FAILED")
 }
 
 val group: String by project
@@ -112,18 +112,10 @@ val pubName = "processor"
 publishing {
     publications {
         create<MavenPublication>(pubName) {
-
             from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
-
-            logtagPom(project)
-
         }
-    }
-
-    repositories {
-        sonatype(project)
     }
 }
 

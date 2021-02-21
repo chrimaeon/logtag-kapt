@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import java.util.Date
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.*
 
 buildscript {
     repositories {
@@ -37,12 +38,33 @@ buildscript {
 apply(plugin = "com.cmgapps.versions")
 
 subprojects {
+
+    val group: String by project
+    val versionName: String by project
+
+    this.group = group
+    this.version = versionName
+
     repositories {
         google()
         jcenter()
         mavenCentral()
         // arrow-kt snapshots
         bintraySnapshot()
+    }
+
+    pluginManager.withPlugin("maven-publish") {
+        val publishExtension = extensions.getByType<PublishingExtension>()
+        publishExtension.repositories {
+            sonatype(project)
+        }
+
+        publishExtension.publications.whenObjectAdded {
+            check(this is MavenPublication) {
+                "unexpected publication $this"
+            }
+            logtagPom(project)
+        }
     }
 }
 
@@ -53,21 +75,20 @@ gradle.projectsEvaluated {
                 options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xmaxerrs", "500"))
             }
 
-            // withType<KotlinCompile> {
-            //     kotlinOptions {
-            //         jvmTarget = JavaVersion.VERSION_1_8.toString()
-            //     }
-            // }
+            withType<KotlinCompile> {
+                kotlinOptions {
+                    jvmTarget = JavaVersion.VERSION_1_8.toString()
+                }
+            }
         }
 
         if (plugins.hasPlugin(JavaLibraryPlugin::class)) {
             tasks.named<Jar>("jar") {
                 manifest {
-                    val pomName: String by project
-                    val versionName: String by project
+                    val pomName: String? by project
                     attributes(
                         "Implementation-Title" to pomName,
-                        "Implementation-Version" to versionName,
+                        "Implementation-Version" to project.version,
                         "Built-By" to System.getProperty("user.name"),
                         "Built-Date" to Date(),
                         "Built-JDK" to System.getProperty("java.version"),

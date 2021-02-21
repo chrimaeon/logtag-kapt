@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.PropertySpec
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+buildscript {
+    dependencies {
+        classpath("com.squareup:kotlinpoet".withVersion())
+    }
+}
 
 plugins {
     `java-gradle-plugin`
@@ -25,13 +34,15 @@ plugins {
     id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 val group: String by project
 val versionName: String by project
 val pomName: String by project
 val pomDescription: String by project
-
-project.group = group
-project.version = versionName
 
 val pubName = "pluginMaven"
 
@@ -59,14 +70,9 @@ val javadocJar by tasks.registering(Jar::class) {
 publishing {
     publications {
         register<MavenPublication>(pubName) {
-
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
-            logtagPom(project)
         }
-    }
-    repositories {
-        sonatype(project)
     }
 }
 
@@ -81,28 +87,38 @@ dependencies {
 val generatedDirPath = "generated/source/build-properties/kotlin/main"
 
 sourceSets {
-    main.get().java.srcDirs("$buildDir/$generatedDirPath")
+    main {
+        java.srcDir(buildDir.resolve(generatedDirPath))
+    }
 }
 
 tasks {
     val generateBuildProperties by registering {
-        val buildPropertiesFile = project.buildDir.resolve(generatedDirPath).resolve("BuildProperties.kt")
+        val buildPropertiesDir = project.buildDir.resolve(generatedDirPath)
 
         inputs.property("version", versionName)
         inputs.property("group", project.group)
 
-        outputs.file(buildPropertiesFile)
+        outputs.dir(buildPropertiesDir)
 
         doLast {
-            buildPropertiesFile.parentFile.mkdirs()
-            buildPropertiesFile.writeText(
-                """
-                    package com.cmgapps.gradle
+            val modifier = listOf(KModifier.INTERNAL, KModifier.CONST)
+            val properties = mutableListOf<PropertySpec.Builder>()
+            properties += PropertySpec.builder("VERSION", String::class, modifier).apply {
+                mutable(false)
+                initializer("%S", versionName).build()
+            }
+            properties += PropertySpec.builder("GROUP", String::class, modifier).apply {
+                mutable(false)
+                initializer("%S", project.group).build()
+            }
 
-                    internal const val VERSION = "$versionName"
-                    internal const val GROUP = "${project.group}"
-                """.trimIndent()
-            )
+            FileSpec.builder("com.cmgapps.gradle", "BuildProperties").apply {
+                properties.forEach {
+                    addProperty(it.build())
+                }
+            }.build()
+                .writeTo(buildPropertiesDir)
         }
     }
 

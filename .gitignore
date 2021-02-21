@@ -13,4 +13,4 @@
 .DS_Store
 build/
 captures/
-credentials.properties
+sonatype.properties

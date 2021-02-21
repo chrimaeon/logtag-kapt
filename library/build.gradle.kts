@@ -45,12 +45,6 @@ dependencies {
     // lintPublish(project(":linter"))
 }
 
-val group: String by project
-val versionName: String by project
-
-project.group = group
-project.version = versionName
-
 // val sourcesJar by tasks.registering(Jar::class) {
 //     archiveClassifier.set("sources")
 //     from(android.sourceSets["main"].java.srcDirs)
@@ -81,12 +75,7 @@ afterEvaluate {
                // from(components["release"])
                //  artifact(sourcesJar.get())
                 // artifact(androidJavadocsJar.get())
-                logtagPom(project)
             }
-        }
-
-        repositories {
-            sonatype(project)
         }
     }
 

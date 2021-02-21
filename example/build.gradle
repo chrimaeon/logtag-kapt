@@ -26,18 +26,21 @@ buildscript {
 
 plugins {
     id 'application'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
-    id 'org.jetbrains.kotlin.kapt' version '1.4.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'org.jetbrains.kotlin.kapt' version '1.4.10'
 }
 
 application {
-    mainClass = 'test.pkg.TestClassKt'
+    mainClassName = 'test.pkg.TestClassKt'
 }
 
 apply plugin: 'com.cmgapps.kotlin.logtag'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://oss.jfrog.org/artifactory/oss-snapshot-local/'
+    }
 }
 
 java {
@@ -55,6 +58,7 @@ tasks {
 }
 
 dependencies {
+    compileOnly "io.arrow-kt:arrow-annotations:+"
     implementation 'com.cmgapps.logtag:runtime'
     kapt 'com.cmgapps.logtag:processor'
 

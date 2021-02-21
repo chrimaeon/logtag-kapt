@@ -19,10 +19,10 @@ package com.cmgapps.kotlin
 import arrow.meta.CliPlugin
 import arrow.meta.Meta
 import arrow.meta.phases.CompilerContext
-//import com.google.auto.service.AutoService
-//import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import com.google.auto.service.AutoService
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 
-//@AutoService(ComponentRegistrar::class)
+@AutoService(ComponentRegistrar::class)
 class LogTagPlugin : Meta {
     override fun intercept(ctx: CompilerContext): List<CliPlugin> = listOf(
         surroundWithBuildConfig

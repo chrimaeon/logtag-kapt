@@ -28,7 +28,7 @@ interface Log {
 @LogTagAnnotation("CustomTag")
 class TestClass : LogTag, Log {
     override fun log() {
-        Timber.tag(LOG_TAG).i("${this::class.java.simpleName}: info message with LOG_TAG")
+        timber.log.Timber.tag(LOG_TAG).i("${this::class.java.simpleName}: info message with LOG_TAG")
         Timber.tag("Custom").e("${this::class.java.simpleName}: error message with tag method")
         Timber.tag(logTag).i("${this::class.java.simpleName}: info message with logTag")
     }
@@ -46,10 +46,18 @@ class TestClassWithAFarTooLongNameForLogging : LogTag, Log {
     }
 }
 
+class TestDebugVerbose: LogTag, Log {
+    override fun log() {
+        Timber.tag(logTag).d("debug message with logTag and truncated tag")
+        Timber.v("verbose message with logTag and truncated tag")
+    }
+}
+
 fun main() {
-    Timber.plant(TimberTree());
+    Timber.plant(TimberTree())
     val loggable =
-        listOf<Log>(TestClass(), InternalTestClass(), TestClassWithAFarTooLongNameForLogging(), JavaTestClass())
+        listOf<Log>(TestClass(), InternalTestClass(), TestClassWithAFarTooLongNameForLogging(), JavaTestClass(), TestDebugVerbose())
+    println("BuildConfig.DEBUG = ${com.cmgapps.BuildConfig.DEBUG}")
     loggable.forEach {
         it.log()
     }

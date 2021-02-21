@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     // STOPSHIP
 //    id("com.android.lint")
@@ -23,6 +21,11 @@ plugins {
     kotlin("kapt")
     ktlint
     id("org.jetbrains.dokka") version "1.4.20"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks {

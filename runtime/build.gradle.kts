@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     `java-library`
     kotlin("jvm")
@@ -23,6 +21,11 @@ plugins {
     signing
     ktlint
     id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 val group: String by project
@@ -46,7 +49,7 @@ val pubName = "compilerRuntime"
 publishing {
     publications {
         register<MavenPublication>(pubName) {
-
+            from(components["java"])
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
         }

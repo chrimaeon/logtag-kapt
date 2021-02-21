@@ -21,6 +21,7 @@ import arrow.meta.Meta
 import arrow.meta.invoke
 import arrow.meta.quotes.Transform
 import arrow.meta.quotes.dotQualifiedExpression
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 
 val Meta.surroundWithBuildConfig: CliPlugin
     get() = "Surround Log call with BuildConfig" {
@@ -28,18 +29,22 @@ val Meta.surroundWithBuildConfig: CliPlugin
             dotQualifiedExpression(
                 this,
                 {
-                    messageCollector?.log(this.receiverExpression::class.java.canonicalName)
-                    true
+                    ".*Timber(\\.tag.+)?".toRegex().matches(receiverExpression.text) && ("^([dv]).*".toRegex()
+                        .matches(selectorExpression?.text ?: ""))
                 }
             ) { expression ->
-                messageCollector?.log(expression.toString())
+                messageCollector?.log("receiver ${receiverExpression}\n\tselector ${selectorExpression} ")
                 Transform.replace(
                     replacing = expression,
-                    newDeclaration = identity()
+                    newDeclaration = """
+                        if (com.cmgapps.BuildConfig.DEBUG) {
+                                ${receiverExpression}.${selectorExpression}
+                        }
+                    """.trimIndent().expression
                 )
-            }
+            },
         )
     }
 
 fun org.jetbrains.kotlin.cli.common.messages.MessageCollector.log(msg: String) =
-    report(org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO, msg)
+    report(CompilerMessageSeverity.INFO, msg)

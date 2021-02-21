@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+import org.gradle.api.Project
 import java.io.File
-import java.util.Properties
+import java.util.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-import org.gradle.api.Project
 
 class PropertiesEnvDelegate(propertiesFile: File) : ReadOnlyProperty<Any?, String?> {
 
     private val properties: Properties? = if (propertiesFile.exists()) {
         Properties().apply {
-            load(propertiesFile.inputStream())
+            propertiesFile.inputStream().use {
+                load(it)
+            }
         }
     } else {
         null
@@ -32,21 +34,15 @@ class PropertiesEnvDelegate(propertiesFile: File) : ReadOnlyProperty<Any?, Strin
 
     private var value: String? = null
 
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>): String? {
-        if (value != null) {
-            return value
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>): String? = when {
+        value != null -> value
+        properties != null -> properties.getProperty(property.name).also {
+            value = it
         }
-
-        if (properties != null) {
-            return properties.getProperty(property.name).also {
-                value = it
-            }
-        }
-
-        return System.getenv("SONATYPE_${property.name.toUpperCase()}").also {
+        else -> System.getenv("SONATYPE_${property.name.toUpperCase()}").also {
             value = it
         }
     }
 }
 
-fun Project.credentials() = PropertiesEnvDelegate(rootProject.file("credentials.properties"))
+fun Project.credentials() = PropertiesEnvDelegate(rootProject.file("sonatype.properties"))
