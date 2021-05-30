@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-rootProject.name = "logtag-kapt"
+rootProject.name = "Log-Tag"
 include(
     ":annotation",
     ":processor",

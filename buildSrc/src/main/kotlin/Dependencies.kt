@@ -18,62 +18,51 @@ import org.gradle.kotlin.dsl.project
  * limitations under the License.
  */
 
-private const val lintVersion = "27.1.1"
-
 private val autoService = "com.google.auto.service:auto-service".withVersion()
 private val autoServiceAnnotations =
-    "com.google.auto.service:auto-service-annotations:" + "com.google.auto.service:auto-service".version()
-private val hamcrest = "org.hamcrest:hamcrest".withVersion()
-private val inCap = "net.ltgt.gradle.incap:incap:" + "net.ltgt.gradle.incap:incap-processor".version()
-private val inCapProcessor = "net.ltgt.gradle.incap:incap-processor".withVersion()
-private val javaPoet = "com.squareup:javapoet".withVersion()
-private val jUnitBom = "org.junit:junit-bom".withVersion()
-private const val jUnitJupiter = "org.junit.jupiter:junit-jupiter"
-private val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing".withVersion()
-private val kotlinPoet = "com.squareup:kotlinpoet".withVersion()
-private val lint = "com.android.tools.lint:lint".withVersion()
-private const val lintApi = "com.android.tools.lint:lint-api:$lintVersion"
-private const val lintChecks = "com.android.tools.lint:lint-checks:$lintVersion"
-private val lintTests = "com.android.tools.lint:lint-tests".withVersion()
-private val mockitoJupiter = "org.mockito:mockito-junit-jupiter".withVersion()
-private val testUtils = "com.android.tools:testutils".withVersion()
+    "com.google.auto.service:auto-service-annotations".withVersion()
+
+private fun DependencyHandlerScope.junit(configurationName: String = "testImplementation") {
+    configurationName(platform("org.junit:junit-bom".withVersion()))
+    configurationName("org.junit.jupiter:junit-jupiter")
+}
 
 fun DependencyHandlerScope.addProcessorDependencies() {
     implementation(project(":annotation"))
 
-    implementation(kotlin("stdlib", KOTLIN_VERSION))
-    implementation(kotlinPoet)
-    implementation(javaPoet)
+    implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
+    compileOnly(kotlin("reflect", KOTLIN_VERSION))
+
+    implementation("com.squareup:kotlinpoet".withVersion())
+    implementation("com.squareup:javapoet".withVersion())
 
     compileOnly(autoServiceAnnotations)
     kapt(autoService)
 
-    compileOnly(inCap)
-    kapt(inCapProcessor)
+    compileOnly("net.ltgt.gradle.incap:incap".withVersion())
+    kapt("net.ltgt.gradle.incap:incap-processor".withVersion())
 
-    testImplementation(platform(jUnitBom))
-    testImplementation(jUnitJupiter)
-    testImplementation(mockitoJupiter)
-    testImplementation(hamcrest)
+    junit()
+    testImplementation("org.mockito:mockito-junit-jupiter".withVersion())
+    testImplementation("org.hamcrest:hamcrest".withVersion())
 
-    "functionalTestImplementation"(platform(jUnitBom))
-    "functionalTestImplementation"(jUnitJupiter)
-    "functionalTestImplementation"(kotlinCompileTesting)
+    junit("functionalTestImplementation")
+    "functionalTestImplementation"("com.github.tschuchortdev:kotlin-compile-testing".withVersion())
 }
 
 fun DependencyHandlerScope.addLinterDependencies() {
-    compileOnly(kotlin("stdlib", KOTLIN_VERSION))
+    compileOnly(kotlin("stdlib-jdk8", KOTLIN_VERSION))
+    compileOnly(kotlin("reflect", KOTLIN_VERSION))
 
-    compileOnly(lintApi)
-    compileOnly(lintChecks)
+    compileOnly("com.android.tools.lint:lint-api".withVersion())
+    compileOnly("com.android.tools.lint:lint-checks".withVersion())
 
     compileOnly(autoServiceAnnotations)
     kapt(autoService)
 
-    testImplementation(platform(jUnitBom))
-    testImplementation(jUnitJupiter)
+    junit()
 
-    testImplementation(lint)
-    testImplementation(lintTests)
-    testImplementation(testUtils)
+    testImplementation("com.android.tools.lint:lint".withVersion())
+    testImplementation("com.android.tools.lint:lint-tests".withVersion())
+    testImplementation("com.android.tools:testutils".withVersion())
 }
