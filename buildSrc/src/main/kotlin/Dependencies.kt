@@ -1,7 +1,3 @@
-import org.gradle.kotlin.dsl.DependencyHandlerScope
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.project
-
 /*
  * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
  *
@@ -18,6 +14,10 @@ import org.gradle.kotlin.dsl.project
  * limitations under the License.
  */
 
+import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.project
+
 private val autoService = "com.google.auto.service:auto-service".withVersion()
 private val autoServiceAnnotations =
     "com.google.auto.service:auto-service-annotations".withVersion()
@@ -29,6 +29,8 @@ private fun DependencyHandlerScope.junit(configurationName: String = "testImplem
 
 fun DependencyHandlerScope.addProcessorDependencies() {
     implementation(project(":annotation"))
+
+    compileOnly("com.google.devtools.ksp:symbol-processing-api".withVersion())
 
     implementation(kotlin("stdlib-jdk8", KOTLIN_VERSION))
     compileOnly(kotlin("reflect", KOTLIN_VERSION))
@@ -47,7 +49,11 @@ fun DependencyHandlerScope.addProcessorDependencies() {
     testImplementation("org.hamcrest:hamcrest".withVersion())
 
     junit("functionalTestImplementation")
-    "functionalTestImplementation"("com.github.tschuchortdev:kotlin-compile-testing".withVersion())
+    "functionalTestImplementation"(kotlin("reflect", KOTLIN_VERSION))
+    "functionalTestImplementation"("com.github.tschuchortdev:kotlin-compile-testing-ksp".withVersion())
+    "functionalTestImplementation"("com.google.devtools.ksp:symbol-processing-api".withVersion())
+    "functionalTestImplementation"("com.google.devtools.ksp:symbol-processing".withVersion())
+    "functionalTestImplementation"("org.jetbrains.kotlin:kotlin-compiler-embeddable:$KOTLIN_VERSION")
 }
 
 fun DependencyHandlerScope.addLinterDependencies() {
@@ -61,7 +67,6 @@ fun DependencyHandlerScope.addLinterDependencies() {
     kapt(autoService)
 
     junit()
-
     testImplementation("com.android.tools.lint:lint".withVersion())
     testImplementation("com.android.tools.lint:lint-tests".withVersion())
     testImplementation("com.android.tools:testutils".withVersion())
