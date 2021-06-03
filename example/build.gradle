@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-rootProject.name = "Log-Tag"
-include(
-    ":annotation",
-    ":processor",
-    ":linter",
-    ":library"
-)
+plugins {
+    id "application"
+    id "org.jetbrains.kotlin.jvm" version "1.5.10"
+    id "com.google.devtools.ksp" version "1.5.10-1.0.0-beta01"
+}
+
+application {
+    mainClass = "foo.bar.FooKt"
+}
+
+repositories {
+    mavenCentral()
+    google()
+    mavenLocal()
+}
+
+dependencies {
+    implementation("com.cmgapps.logtag:annotation:0.2.0-SNAPSHOT")
+    ksp("com.cmgapps.logtag:processor:0.2.0-SNAPSHOT")
+}

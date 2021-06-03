@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = "Log-Tag"
-include(
-    ":annotation",
-    ":processor",
-    ":linter",
-    ":library"
-)
+package foo.bar;
+
+@com.cmgapps.LogTag
+public class FooJava {
+    public String logging() {
+        return FooJavaLogTag.LOG_TAG;
+    }
+}

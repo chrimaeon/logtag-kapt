@@ -21,7 +21,7 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     ktlint
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
 
 tasks {

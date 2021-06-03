@@ -28,20 +28,11 @@ plugins {
     id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
 val functionalTestName = "functionalTest"
 
 configurations {
     create("${functionalTestName}Implementation") {
         extendsFrom(testImplementation.get())
-    }
-
-    create("${functionalTestName}Runtime") {
-        extendsFrom(testRuntime.get())
     }
 }
 
@@ -53,7 +44,7 @@ sourceSets {
 
         resources {
             srcDir("src/$functionalTestName/resources")
-            outputDir = file("$buildDir/resources/$functionalTestName")
+            destinationDirectory.set(file("$buildDir/resources/$functionalTestName"))
         }
 
         compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath.get()
@@ -71,6 +62,10 @@ idea {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+kotlin {
+    explicitApi()
 }
 
 tasks {

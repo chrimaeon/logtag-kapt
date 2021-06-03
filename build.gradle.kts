@@ -17,8 +17,9 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         helixTeamHubRepo(project)
+        gradlePluginPortal()
     }
 
     dependencies {
@@ -33,7 +34,6 @@ apply(plugin = "com.cmgapps.versions")
 subprojects {
     repositories {
         google()
-        jcenter()
         mavenCentral()
     }
 

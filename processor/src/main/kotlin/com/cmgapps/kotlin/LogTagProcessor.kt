@@ -44,7 +44,7 @@ import com.squareup.kotlinpoet.ClassName as KotlinClassName
 
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
 @AutoService(Processor::class)
-class LogTagProcessor : AbstractProcessor() {
+public class LogTagProcessor : AbstractProcessor() {
 
     private lateinit var filer: Filer
     private lateinit var messager: Messager
@@ -145,23 +145,23 @@ class LogTagProcessor : AbstractProcessor() {
         }
     }
 
-    inner class AnnotatedElement(val element: TypeElement) {
+    internal inner class AnnotatedElement(internal val element: TypeElement) {
         private val elementUtils: Elements = processingEnv.elementUtils
-        val kotlinClassName: KotlinClassName = KotlinClassName(
+        internal val kotlinClassName: KotlinClassName = KotlinClassName(
             elementUtils.getPackageOf(element).qualifiedName.toString(),
             element.simpleName.toString()
         )
 
-        val javaClassName: JavaClassName = JavaClassName.get(
+        internal val javaClassName: JavaClassName = JavaClassName.get(
             elementUtils.getPackageOf(element).qualifiedName.toString(),
             element.simpleName.toString()
         )
 
-        fun getLogTagAnnotation(): LogTag {
+        internal fun getLogTagAnnotation(): LogTag {
             return element.getAnnotation(LogTag::class.java)
         }
 
-        val isKotlin: Boolean
+        internal val isKotlin: Boolean
             get() {
                 val metaDataClass = Class.forName("kotlin.Metadata").asSubclass(Annotation::class.java)
                 return element.getAnnotation(metaDataClass) != null

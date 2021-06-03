@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = "Log-Tag"
-include(
-    ":annotation",
-    ":processor",
-    ":linter",
-    ":library"
-)
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+    }
+}
+
+//includeBuild('../processor')
