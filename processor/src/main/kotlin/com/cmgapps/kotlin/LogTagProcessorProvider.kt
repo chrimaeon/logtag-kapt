@@ -56,33 +56,25 @@ private class LogTagSymbolProcessor(environment: SymbolProcessorEnvironment) : S
     private val logger = environment.logger
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        resolver.getSymbolsWithAnnotation(LogTag::class.java.canonicalName).forEach { type ->
+        resolver.getSymbolsWithAnnotation(LOG_TAG_ANNOTATION_NAME).filterIsInstance(KSClassDeclaration::class.java)
+            .forEach { type ->
+                logger.check(type.getVisibility() !in INVALID_VISIBILITIES, type) {
+                    "@LogTag cannot be applied to private classes"
+                }
 
-            logger.check(type is KSClassDeclaration, type) {
-                "@LogTag can only be applied to class-like declarations"
+                when(type.origin) {
+                    Origin.KOTLIN -> resolver.generateKotlinProperty(type)
+                    Origin.JAVA -> resolver.generateJavaClass(type)
+                    else -> logger.error("@LogTag applied to a unknown origin ${type.origin.name}")
+                }
             }
-
-            type as KSClassDeclaration
-
-            logger.check(
-                type.getVisibility() !in listOf(
-                    Visibility.PRIVATE, Visibility.LOCAL
-                ),
-                type
-            ) {
-                "@LogTag cannot be applied to private classes"
-            }
-
-            if (type.origin == Origin.KOTLIN) {
-                resolver.generateKotlinExtensionFunction(type)
-            } else {
-                resolver.generateJavaClass(type)
-            }
+        resolver.getSymbolsWithAnnotation(LOG_TAG_ANNOTATION_NAME).filter { !KSClassDeclaration::class.java.isInstance(it) }.forEach {
+            logger.warn("@LogTag can only be applied to class-like declarations", it)
         }
         return emptyList()
     }
 
-    private fun Resolver.generateKotlinExtensionFunction(element: KSClassDeclaration) {
+    private fun Resolver.generateKotlinProperty(element: KSClassDeclaration) {
         val visibility = when (element.getVisibility()) {
             Visibility.PUBLIC -> KModifier.PUBLIC
             Visibility.INTERNAL -> KModifier.INTERNAL
@@ -143,26 +135,27 @@ private class LogTagSymbolProcessor(environment: SymbolProcessorEnvironment) : S
             }
         }
     }
+
+    companion object {
+        val LOG_TAG_ANNOTATION_NAME: String = LogTag::class.qualifiedName!!
+        val INVALID_VISIBILITIES = listOf(Visibility.PRIVATE, Visibility.LOCAL)
+    }
 }
 
-private inline fun KSPLogger.check(condition: Boolean, element: KSNode?, message: () -> String) {
+private inline fun KSPLogger.check(condition: Boolean, element: KSNode?, onFalseCondition: () -> String) {
     if (!condition) {
-        error(message(), element)
+        error(onFalseCondition(), element)
     }
 }
 
 private fun FileSpec.writeTo(codeGenerator: CodeGenerator, originatingFile: KSFile) {
     val dependencies = Dependencies(false, originatingFile)
     val file = codeGenerator.createNewFile(dependencies, packageName, name)
-    // Don't use writeTo(file) because that tries to handle directories under the hood
-    OutputStreamWriter(file, UTF_8)
-        .use(::writeTo)
+    OutputStreamWriter(file, UTF_8).use(::writeTo)
 }
 
 private fun JavaFile.writeTo(codeGenerator: CodeGenerator, originatingFile: KSFile) {
     val dependencies = Dependencies(false, originatingFile)
     val file = codeGenerator.createNewFile(dependencies, packageName, typeSpec.name, "java")
-    // Don't use writeTo(file) because that tries to handle directories under the hood
-    OutputStreamWriter(file, UTF_8)
-        .use(::writeTo)
+    OutputStreamWriter(file, UTF_8).use(::writeTo)
 }

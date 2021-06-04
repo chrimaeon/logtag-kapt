@@ -17,7 +17,8 @@
 package foo.bar;
 
 @com.cmgapps.LogTag
-public class FooJava {
+public class FooJava implements LogProvider {
+    @Override
     public String logging() {
         return FooJavaLogTag.LOG_TAG;
     }

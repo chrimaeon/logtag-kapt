@@ -15,30 +15,34 @@
  */
 package foo.bar
 
-@com.cmgapps.LogTag("Test")
-class Public {
-    fun logging(): String {
-        return LOG_TAG
-    }
+interface LogProvider {
+    fun logging(): String
 }
 
-@com.cmgapps.LogTag()
-internal class Internal {
-    fun logging(): String {
+@com.cmgapps.LogTag
+class Public : LogProvider {
+    override fun logging(): String {
         return LOG_TAG
     }
 }
 
 @com.cmgapps.LogTag
-class ThisIsAClassNameThatIsTooLong {
-    fun logging(): String {
+internal class Internal : LogProvider {
+    override fun logging(): String {
+        return LOG_TAG
+    }
+}
+
+@com.cmgapps.LogTag
+class ThisIsAClassThatWillBeTruncated : LogProvider {
+    override fun logging(): String {
         return LOG_TAG
     }
 }
 
 @com.cmgapps.LogTag("ShortTag")
-class ThisIsAClassNameThatIsTooLongWithTag {
-    fun logging(): String {
+class ThisIsAClassWithACustomLogTag : LogProvider {
+    override fun logging(): String {
         return LOG_TAG
     }
 }
@@ -49,34 +53,27 @@ fun tagging(): String {
 }
 
 // @com.cmgapps.LogTag("ShortTag")
-private class Private {
-    fun logging(): String {
-        return LOG_TAG
-    }
+// private class Private {
+//     fun logging(): String {
+//         return LOG_TAG
+//     }
+// }
+
+@com.cmgapps.LogTag
+enum class Works {
+    VALUE1,
+    VALUE2;
 }
 
 fun main() {
-    Public().run {
-        println(this.logging())
-    }
-
-    Internal().run {
-        println(this.logging())
-    }
-
-    ThisIsAClassNameThatIsTooLong().run {
-        println(this.logging())
-    }
-
-    ThisIsAClassNameThatIsTooLongWithTag().run {
-        println(this.logging())
-    }
-
-    FooJava().run {
-        println(this.logging())
-    }
-
-    PackageJava().run {
-        println(this.logging())
+    listOf<LogProvider>(
+        Public(),
+        Internal(),
+        ThisIsAClassThatWillBeTruncated(),
+        ThisIsAClassWithACustomLogTag(),
+        FooJava(),
+        PackageJava()
+    ).forEach {
+        println("${it::class.java.simpleName} -> ${it.logging()}")
     }
 }
