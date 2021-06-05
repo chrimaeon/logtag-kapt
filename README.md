@@ -10,7 +10,9 @@ This is an annotation processor that will generate an appropriate log tag for An
 
 ### Setup
 
-#### KAPT
+<details open>
+
+<summary>using KAPT</summary>
 
 Add the processor and annotation libraries to the projects dependencies
 
@@ -28,8 +30,10 @@ plugins {
     kotlin("kapt")
 }
 ```
+</details>
 
-#### KSP
+<details>
+<summary>using KSP</summary>
 
 The library also supports KSP ([Kotlin Symbol Processing API]), which is currently in a beta state, when you projects kotin version is `1.5.10` or higher
 
@@ -49,6 +53,7 @@ plugins {
     id("com.google.devtools.ksp") version "1.5.10-1.0.0-beta01"
 }
 ```
+</details>
 
 ### Code
 
