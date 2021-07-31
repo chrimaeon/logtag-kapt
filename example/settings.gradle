@@ -21,4 +21,4 @@ pluginManagement {
     }
 }
 
-//includeBuild('../processor')
+includeBuild('../')

@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-const val KOTLIN_VERSION = "1.5.10"
+const val KOTLIN_VERSION = "1.5.21"

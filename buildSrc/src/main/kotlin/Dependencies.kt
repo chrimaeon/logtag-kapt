@@ -46,6 +46,7 @@ fun DependencyHandlerScope.addProcessorDependencies() {
 
     junit()
     testImplementation("org.mockito:mockito-junit-jupiter".withVersion())
+    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
     testImplementation("org.hamcrest:hamcrest".withVersion())
 
     junit("functionalTestImplementation")

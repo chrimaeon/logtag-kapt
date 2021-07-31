@@ -30,12 +30,12 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.Origin
 import com.google.devtools.ksp.symbol.Visibility
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.TypeSpec
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
@@ -44,7 +44,10 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets.UTF_8
+import java.util.Locale
 import javax.lang.model.element.Modifier
+import com.squareup.javapoet.TypeSpec as JavaTypeSpec
+import com.squareup.kotlinpoet.TypeSpec as KotlinTypeSpec
 
 @AutoService(SymbolProcessorProvider::class)
 public class LogTagProcessorProvider : SymbolProcessorProvider {
@@ -56,33 +59,54 @@ private class LogTagSymbolProcessor(environment: SymbolProcessorEnvironment) : S
     private val logger = environment.logger
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        resolver.getSymbolsWithAnnotation(LogTag::class.java.canonicalName).forEach { type ->
+        resolver.getSymbolsWithAnnotation(LOG_TAG_ANNOTATION_NAME).apply {
+            filterIsInstance(KSClassDeclaration::class.java)
+                .forEach { type ->
+                    logger.check(type.getVisibility() !in INVALID_VISIBILITIES, type) {
+                        "@LogTag cannot be applied to private classes"
+                    }
 
-            logger.check(type is KSClassDeclaration, type) {
-                "@LogTag can only be applied to class-like declarations"
-            }
-
-            type as KSClassDeclaration
-
-            logger.check(
-                type.getVisibility() !in listOf(
-                    Visibility.PRIVATE, Visibility.LOCAL
-                ),
-                type
-            ) {
-                "@LogTag cannot be applied to private classes"
-            }
-
-            if (type.origin == Origin.KOTLIN) {
-                resolver.generateKotlinExtensionFunction(type)
-            } else {
-                resolver.generateJavaClass(type)
+                    when (type.origin) {
+                        Origin.KOTLIN -> resolver.generateKotlinProperty(type)
+                        Origin.JAVA -> resolver.generateJavaClass(type)
+                        else -> logger.error("@LogTag applied to a unknown origin ${type.origin.name}", type)
+                    }
+                }
+            filterIsInstance(KSFunctionDeclaration::class.java)
+                .forEach { function ->
+                    when (function.origin) {
+                        Origin.KOTLIN -> {
+                            if (
+                                function.annotations.any {
+                                    it.annotationType
+                                        .resolve()
+                                        .declaration
+                                        .qualifiedName
+                                        ?.asString() == "androidx.compose.runtime.Composable"
+                                }
+                            ) {
+                                resolver.generateComposableTag(function)
+                            } else {
+                                logger.warn(
+                                    "@LogTag can only be applied to Jetpack Compose @Composable functions",
+                                    function
+                                )
+                            }
+                        }
+                        else -> logger.warn(
+                            "@LogTag can only be applied to Jetpack Compose @Composable functions",
+                            function
+                        )
+                    }
+                }
+            filter { !(KSClassDeclaration::class.java.isInstance(it) || KSFunctionDeclaration::class.java.isInstance(it)) }.forEach {
+                logger.warn("@LogTag can only be applied to class-like declarations or functions", it)
             }
         }
         return emptyList()
     }
 
-    private fun Resolver.generateKotlinExtensionFunction(element: KSClassDeclaration) {
+    private fun Resolver.generateKotlinProperty(element: KSClassDeclaration) {
         val visibility = when (element.getVisibility()) {
             Visibility.PUBLIC -> KModifier.PUBLIC
             Visibility.INTERNAL -> KModifier.INTERNAL
@@ -115,10 +139,36 @@ private class LogTagSymbolProcessor(environment: SymbolProcessorEnvironment) : S
             FieldSpec.builder(String::class.java, "LOG_TAG", Modifier.STATIC, Modifier.FINAL)
                 .initializer("\$S", getTag(element)).build()
         val clazz =
-            TypeSpec.classBuilder("${element.simpleName.asString()}LogTag")
+            JavaTypeSpec.classBuilder("${element.simpleName.asString()}LogTag")
                 .addField(field).build()
 
         JavaFile.builder(element.packageName.asString(), clazz).build().writeTo(codeGenerator, element.containingFile!!)
+    }
+
+    private fun Resolver.generateComposableTag(element: KSFunctionDeclaration) {
+
+        val functionName = element.simpleName.asString()
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        val className = "Composable$functionName"
+
+        val companionObject = KotlinTypeSpec.companionObjectBuilder().addProperty(
+            PropertySpec.builder("LOG_TAG", String::class, KModifier.PUBLIC, KModifier.CONST)
+                .mutable(false)
+                .initializer("%S", getTag(element))
+                .build()
+        )
+
+        val classSpec = KotlinTypeSpec.classBuilder(className).addType(companionObject.build())
+
+        FileSpec.builder(element.packageName.asString(), className)
+            .addType(classSpec.build())
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class).addMember("%S", "SpellCheckingInspection")
+                    .addMember("%S", "RedundantVisibilityModifier")
+                    .addMember("%S", "unused")
+                    .build()
+            )
+            .build().writeTo(codeGenerator, element.containingFile!!)
     }
 
     private fun Resolver.getTag(element: KSClassDeclaration): String {
@@ -143,26 +193,56 @@ private class LogTagSymbolProcessor(environment: SymbolProcessorEnvironment) : S
             }
         }
     }
+
+    private fun Resolver.getTag(element: KSFunctionDeclaration): String {
+        val logTagType = this.getClassDeclarationByName<LogTag>()!!.asType(emptyList())
+
+        val logTagAnnotation = element.annotations.find { it.annotationType.resolve() == logTagType }
+        val logTag = logTagAnnotation?.arguments?.find { it.name?.asString() == "value" }?.value as? String
+
+        if (!logTag.isNullOrBlank()) {
+            return logTag
+        }
+
+        return element.simpleName.asString().let {
+            if (it.length > 23) {
+                logger.warn(
+                    "Class name \"$it\" is to long for a log tag. Max. length is 23. Class name will be truncated.",
+                    element
+                )
+                it.substring(0..22)
+            } else {
+                it
+            }
+        }
+    }
+
+    companion object {
+        val LOG_TAG_ANNOTATION_NAME: String = LogTag::class.qualifiedName!!
+        val INVALID_VISIBILITIES = listOf(Visibility.PRIVATE, Visibility.LOCAL)
+    }
 }
 
-private inline fun KSPLogger.check(condition: Boolean, element: KSNode?, message: () -> String) {
+private inline fun KSPLogger.check(condition: Boolean, element: KSNode?, onFalseCondition: () -> String) {
     if (!condition) {
-        error(message(), element)
+        error(onFalseCondition(), element)
     }
 }
 
 private fun FileSpec.writeTo(codeGenerator: CodeGenerator, originatingFile: KSFile) {
     val dependencies = Dependencies(false, originatingFile)
     val file = codeGenerator.createNewFile(dependencies, packageName, name)
-    // Don't use writeTo(file) because that tries to handle directories under the hood
-    OutputStreamWriter(file, UTF_8)
-        .use(::writeTo)
+    OutputStreamWriter(file, UTF_8).use(::writeTo)
 }
 
 private fun JavaFile.writeTo(codeGenerator: CodeGenerator, originatingFile: KSFile) {
     val dependencies = Dependencies(false, originatingFile)
     val file = codeGenerator.createNewFile(dependencies, packageName, typeSpec.name, "java")
-    // Don't use writeTo(file) because that tries to handle directories under the hood
-    OutputStreamWriter(file, UTF_8)
-        .use(::writeTo)
+    OutputStreamWriter(file, UTF_8).use(::writeTo)
+}
+
+public class ComposableTag {
+    public companion object {
+        public const val TAG: String = "ComposableTag"
+    }
 }

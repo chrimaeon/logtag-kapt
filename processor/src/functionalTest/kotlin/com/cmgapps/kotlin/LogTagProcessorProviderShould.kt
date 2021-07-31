@@ -18,11 +18,12 @@ package com.cmgapps.kotlin
 
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
+import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
 import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.symbolProcessorProviders
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.`is`
-import org.hamcrest.core.Is
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
@@ -30,7 +31,7 @@ class LogTagProcessorProviderShould {
 
     @Test
     fun `generate extension for kotlin class`() {
-        val compilation = SourceFile.kotlin(
+        val compilation = kotlin(
             "class.kt",
             """
               package cmgapps.test
@@ -66,7 +67,7 @@ class LogTagProcessorProviderShould {
 
     @Test
     fun `not generate for private class`() {
-        val compilation = SourceFile.kotlin(
+        val compilation = kotlin(
             "object.kt",
             """
               package cmgapps.test
@@ -81,7 +82,7 @@ class LogTagProcessorProviderShould {
 
     @Test
     fun `generate extension for object`() {
-        val compilation = SourceFile.kotlin(
+        val compilation = kotlin(
             "file1.kt",
             """
               package cmgapps.test
@@ -111,7 +112,7 @@ class LogTagProcessorProviderShould {
         assertThat(
             compilation.kotlinCompilation.kspSourcesDir.walkTopDown().find { it.name == "TestObjectLogTag.kt" }
                 ?.readText(),
-            Is.`is`(expected)
+            `is`(expected)
         )
     }
 
@@ -143,13 +144,13 @@ class LogTagProcessorProviderShould {
         assertThat(
             compilation.kotlinCompilation.kspSourcesDir.walkTopDown().find { it.name == "TestJavaLogTag.java" }
                 ?.readText(),
-            Is.`is`(expected)
+            `is`(expected)
         )
     }
 
     @Test
     fun `use custom logtag for kotlin class`() {
-        val compilation = SourceFile.kotlin(
+        val compilation = kotlin(
             "class.kt",
             """
               package cmgapps.test
@@ -179,7 +180,7 @@ class LogTagProcessorProviderShould {
         assertThat(
             compilation.kotlinCompilation.kspSourcesDir.walkTopDown().find { it.name == "TestClassLogTag.kt" }
                 ?.readText(),
-            Is.`is`(expected)
+            `is`(expected)
         )
     }
 
@@ -217,7 +218,7 @@ class LogTagProcessorProviderShould {
 
     @Test
     fun `generate for internal class`() {
-        val compilation = SourceFile.kotlin(
+        val compilation = kotlin(
             "class.kt",
             """
               package cmgapps.test
@@ -247,7 +248,75 @@ class LogTagProcessorProviderShould {
         assertThat(
             compilation.kotlinCompilation.kspSourcesDir.walkTopDown().find { it.name == "TestClassLogTag.kt" }
                 ?.readText(),
-            Is.`is`(expected)
+            `is`(expected)
+        )
+    }
+
+    @Test
+    fun `fail for not class-like declarations`() {
+        val compilation = kotlin(
+            "class.kt",
+            """
+              package cmgapps.test
+
+              @com.cmgapps.LogTag
+              fun test() {}
+            """
+        ).compile()
+
+        val warning =
+            "w: [ksp] ${compilation.kotlinCompilation.workingDir}/sources/class.kt:4: @LogTag can only be applied to Jetpack Compose @Composable functions"
+        assertThat(compilation.result.messages, containsString(warning))
+    }
+
+    @Test
+    fun `create composable TAG`() {
+        val compilation = listOf(
+            kotlin(
+                "class.kt",
+                """
+                package cmgapps.test
+
+                @com.cmgapps.LogTag
+                @androidx.compose.runtime.Composable
+                fun Test() {}
+                """
+            ),
+            kotlin(
+                "composable.kt",
+                """
+                package androidx.compose.runtime
+
+                annotation class Composable
+                """.trimIndent()
+            )
+        ).compile()
+
+        @Language("kotlin")
+        val expected = """
+        @file:Suppress(
+          "SpellCheckingInspection",
+          "RedundantVisibilityModifier",
+          "unused"
+        )
+
+        package cmgapps.test
+
+        import kotlin.String
+        import kotlin.Suppress
+
+        public class ComposableTest {
+          public companion object {
+            public const val LOG_TAG: String = "Test"
+          }
+        }
+
+        """.trimIndent()
+
+        assertThat(
+            compilation.kotlinCompilation.kspSourcesDir.walkTopDown().find { it.name == "ComposableTest.kt" }
+                ?.readText(),
+            `is`(expected)
         )
     }
 }
@@ -256,11 +325,13 @@ private class PreparedCompilation(val kotlinCompilation: KotlinCompilation) {
     val result: KotlinCompilation.Result = kotlinCompilation.compile()
 }
 
-private fun SourceFile.compile() = PreparedCompilation(
+private fun SourceFile.compile() = listOf(this).compile()
+
+private fun List<SourceFile>.compile() = PreparedCompilation(
     KotlinCompilation()
         .apply {
             inheritClassPath = true
             symbolProcessorProviders = listOf(LogTagProcessorProvider())
-            sources = listOf(this@compile)
+            sources = this@compile
         }
 )
