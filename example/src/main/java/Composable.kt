@@ -14,18 +14,6 @@
  * limitations under the License.
  */
 
-package com.cmgapps;
+package androidx.compose.runtime
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.SOURCE)
-@Target({
-    ElementType.TYPE,
-    ElementType.METHOD
-})
-public @interface LogTag {
-    String value() default "";
-}
+annotation class Composable

@@ -65,6 +65,13 @@ enum class Works {
     VALUE2;
 }
 
+@androidx.compose.runtime.Composable
+@com.cmgapps.LogTag
+fun Test() {}
+
+@com.cmgapps.LogTag
+fun WontWorkTest() {}
+
 fun main() {
     listOf<LogProvider>(
         Public(),
@@ -76,4 +83,6 @@ fun main() {
     ).forEach {
         println("${it::class.java.simpleName} -> ${it.logging()}")
     }
+
+    println("@Composable Test -> ${ComposableTest.LOG_TAG}")
 }

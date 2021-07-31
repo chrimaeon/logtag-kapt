@@ -17,9 +17,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.lint")
     kotlin("jvm")
     kotlin("kapt")
+    id("com.android.lint")
     ktlint
     id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
 }
