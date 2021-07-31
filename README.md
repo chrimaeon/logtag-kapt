@@ -1,6 +1,5 @@
 # Log TAG Annotation Processor [![CircleCI](https://circleci.com/gh/chrimaeon/logtag-kapt.svg?style=svg)](https://circleci.com/gh/chrimaeon/logtag-kapt)
 
-
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
 [![MavenCentral](https://img.shields.io/maven-central/v/com.cmgapps.logtag/log-tag?style=for-the-badge)](https://repo1.maven.org/maven2/com/cmgapps/logtag/)
 
@@ -18,8 +17,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:0.2.0")
-    kapt("com.cmgapps:log-tag-processor:0.2.0")
+    implementation("com.cmgapps:log-tag:0.3.0")
+    kapt("com.cmgapps:log-tag-processor:0.3.0")
 }
 ```
 
@@ -41,8 +40,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:0.2.0")
-    ksp("com.cmgapps:log-tag-processor:0.2.0")
+    implementation("com.cmgapps:log-tag:0.3.0")
+    ksp("com.cmgapps:log-tag-processor:0.3.0")
 }
 ```
 
@@ -50,7 +49,7 @@ also get sure to apply the KSP Gradle Plugin
 
 ```kotlin
 plugins {
-    id("com.google.devtools.ksp") version "1.5.10-1.0.0-beta01"
+    id("com.google.devtools.ksp") version "<latest version>"
 }
 ```
 </details>
@@ -65,11 +64,14 @@ In your source file add the `com.cmgapps.LogTag` annotation to the class file yo
 class SuperImportantClass
 ```
 
-For _Kotlin_ classes this will generate an extension property to you class called `LOG_TAG`
+* For **Kotlin** classes this will generate an extension property to you class called `LOG_TAG`
 you can then use as the tag for your android log messages.
 
-For _Java_ it will generate a class called &lt;Classname&gt;LogTag which has a constant field called `LOG_TAG` you can
+* For **Java** it will generate a class called &lt;Classname&gt;LogTag which has a constant field called `LOG_TAG` you can
 then import to tag your android log messages
+
+* For **Jetpack Compose** you can annotate the `@Composable` function for the processor to generate a class called
+`Composable<Composable function name>` with a companion object property `LOG_TAG`
 
 ## License
 
