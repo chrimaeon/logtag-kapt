@@ -38,7 +38,7 @@ jobs:
         run: ./gradlew dependencies
 
       - name: Build & Test
-        run: ./gradlew check
+        run: ./gradlew check koverReport koverVerify
 
       - name: Archive Test results
         if: ${{ failure() }}
@@ -48,3 +48,5 @@ jobs:
           path: |
             **/build/reports/*
             **/build/test-results/*
+      - name: Upload Codecov
+        uses: codecov/codecov-action@v2
