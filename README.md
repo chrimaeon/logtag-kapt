@@ -19,8 +19,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:0.3.0")
-    ksp("com.cmgapps:log-tag-processor:0.3.0")
+    implementation("com.cmgapps:log-tag:1.0.0")
+    ksp("com.cmgapps:log-tag-processor:1.0.0")
 }
 ```
 
@@ -41,8 +41,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:0.3.0")
-    kapt("com.cmgapps:log-tag-processor:0.3.0")
+    implementation("com.cmgapps:log-tag:1.0.0")
+    kapt("com.cmgapps:log-tag-processor:1.0.0")
 }
 ```
 
