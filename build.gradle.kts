@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
+import com.cmgapps.gradle.VersionsExtension
+import com.cmgapps.gradle.VersionsPlugin
+import kotlinx.kover.api.CoverageEngine.JACOCO
+
 buildscript {
     repositories {
         google()
         mavenCentral()
-        helixTeamHubRepo(project)
+        helixTeamHubRepo {
+            if (project.hasProperty("DEVEO_USERNAME")) {
+                username = project.property("DEVEO_USERNAME") as String
+                password = project.property("DEVEO_PASSWORD") as String
+            } else {
+                username = System.getenv("DEVEO_USERNAME")
+                password = System.getenv("DEVEO_PASSWORD")
+            }
+        }
         gradlePluginPortal()
     }
 
