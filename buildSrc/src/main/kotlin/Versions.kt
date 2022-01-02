@@ -1,15 +1,9 @@
-// Generated with dependencyUpdates on 1/2/22, 3:44 PM
+// Generated with dependencyUpdates on 1/2/22, 4:44 PM
 // DO NOT EDIT
 @file:Suppress(
     "SpellCheckingInspection",
     "RedundantVisibilityModifier"
 )
-
-import kotlin.String
-import kotlin.Suppress
-import kotlin.collections.Map
-import kotlin.collections.mapOf
-import kotlin.error
 
 private val versions: Map<String, String> = mapOf(
     "com.android.tools.build:gradle" to "7.0.4",
@@ -31,14 +25,13 @@ private val versions: Map<String, String> = mapOf(
     "net.ltgt.gradle.incap:incap" to "0.3",
     "net.ltgt.gradle.incap:incap-processor" to "0.3",
     "org.hamcrest:hamcrest" to "2.2",
-    "org.jacoco:org.jacoco.ant" to "0.8.7",
     "org.jetbrains.dokka:dokka-base" to "1.6.10",
     "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin" to "1.6.10",
+    "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin" to "0.4.4",
     "org.junit:junit-bom" to "5.8.2",
-    "org.mockito.kotlin:mockito-kotlin" to  "4.0.0",
-    "org.mockito:mockito-junit-jupiter" to  "4.2.0",
+    "org.mockito.kotlin:mockito-kotlin" to "4.0.0",
+    "org.mockito:mockito-junit-jupiter" to "4.2.0"
 )
-
 
 public fun String.version(): String = versions[this] ?: error("""No version found for $this""")
 
