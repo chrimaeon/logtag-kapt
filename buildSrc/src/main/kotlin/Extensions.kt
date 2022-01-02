@@ -17,24 +17,19 @@
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.artifacts.repositories.PasswordCredentials
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
+import java.net.URI
 
-fun RepositoryHandler.helixTeamHubRepo(project: Project): ArtifactRepository {
+fun RepositoryHandler.helixTeamHubRepo(credentials: PasswordCredentials.() -> Unit): ArtifactRepository {
     return maven {
         credentials {
-            if (project.hasProperty("DEVEO_USERNAME")) {
-                username = project.property("DEVEO_USERNAME") as String
-                password = project.property("DEVEO_PASSWORD") as String
-            } else {
-                username = System.getenv("DEVEO_USERNAME")
-                password = System.getenv("DEVEO_PASSWORD")
-            }
+            credentials(this)
         }
-        url =
-            project.uri("https://helixteamhub.cloud/cmgapps/projects/cmgapp-libs/repositories/maven/libraries")
+        url = URI("https://helixteamhub.cloud/cmgapps/projects/cmgapp-libs/repositories/maven/libraries")
     }
 }
 

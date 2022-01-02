@@ -1,4 +1,4 @@
-# Log TAG Annotation Processor [![CircleCI](https://circleci.com/gh/chrimaeon/logtag-kapt.svg?style=svg)](https://circleci.com/gh/chrimaeon/logtag-kapt)
+# Log TAG Annotation Processor [![Build & Test](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/chrimaeon/logtag-kapt/branch/main/graph/badge.svg?token=QH5OYAQUX3)](https://codecov.io/gh/chrimaeon/logtag-kapt)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
 [![MavenCentral](https://img.shields.io/maven-central/v/com.cmgapps.logtag/log-tag?style=for-the-badge)](https://repo1.maven.org/maven2/com/cmgapps/logtag/)
@@ -11,37 +11,16 @@ This is an annotation processor that will generate an appropriate log tag for An
 
 <details open>
 
-<summary>using KAPT</summary>
-
-Add the processor and annotation libraries to the projects dependencies
-
-```kotlin
-dependencies {
-    implementation("com.cmgapps:log-tag:0.3.0")
-    kapt("com.cmgapps:log-tag-processor:0.3.0")
-}
-```
-
-also get sure to apply the Annotation Processor Plugin
-
-```kotlin
-plugins {
-    kotlin("kapt")
-}
-```
-</details>
-
-<details>
 <summary>using KSP</summary>
 
-The library also supports KSP ([Kotlin Symbol Processing API]), which is currently in a beta state, when you projects kotin version is `1.5.10` or higher
+The library supports KSP ([Kotlin Symbol Processing API])
 
 Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:0.3.0")
-    ksp("com.cmgapps:log-tag-processor:0.3.0")
+    implementation("com.cmgapps:log-tag:1.0.0")
+    ksp("com.cmgapps:log-tag-processor:1.0.0")
 }
 ```
 
@@ -52,6 +31,30 @@ plugins {
     id("com.google.devtools.ksp") version "<latest version>"
 }
 ```
+
+</details>
+
+<details>
+
+<summary>using KAPT</summary>
+
+Add the processor and annotation libraries to the projects dependencies
+
+```kotlin
+dependencies {
+    implementation("com.cmgapps:log-tag:1.0.0")
+    kapt("com.cmgapps:log-tag-processor:1.0.0")
+}
+```
+
+also get sure to apply the Annotation Processor Plugin
+
+```kotlin
+plugins {
+    kotlin("kapt")
+}
+```
+
 </details>
 
 ### Code
@@ -65,13 +68,13 @@ class SuperImportantClass
 ```
 
 * For **Kotlin** classes this will generate an extension property to you class called `LOG_TAG`
-you can then use as the tag for your android log messages.
+  you can then use as the tag for your android log messages.
 
-* For **Java** it will generate a class called &lt;Classname&gt;LogTag which has a constant field called `LOG_TAG` you can
-then import to tag your android log messages
+* For **Java** it will generate a class called `<Classname>LogTag` which has a constant field called `LOG_TAG` you can
+  then import to tag your android log messages
 
 * For **Jetpack Compose** you can annotate the `@Composable` function for the processor to generate a class called
-`Composable<Composable function name>` with a companion object property `LOG_TAG`
+  `Composable<Composable function name>` with a companion object property `LOG_TAG`
 
 ## License
 

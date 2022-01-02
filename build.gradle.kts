@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
+import com.cmgapps.gradle.VersionsExtension
+import com.cmgapps.gradle.VersionsPlugin
+import kotlinx.kover.api.CoverageEngine.JACOCO
+
 buildscript {
     repositories {
         google()
         mavenCentral()
-        helixTeamHubRepo(project)
+        helixTeamHubRepo {
+            if (project.hasProperty("DEVEO_USERNAME")) {
+                username = project.property("DEVEO_USERNAME") as String
+                password = project.property("DEVEO_PASSWORD") as String
+            } else {
+                username = System.getenv("DEVEO_USERNAME")
+                password = System.getenv("DEVEO_PASSWORD")
+            }
+        }
         gradlePluginPortal()
     }
 
@@ -29,7 +41,25 @@ buildscript {
     }
 }
 
-apply(plugin = "com.cmgapps.versions")
+repositories {
+    google()
+    mavenCentral()
+}
+
+apply<VersionsPlugin>()
+
+plugins {
+    id("org.jetbrains.kotlinx.kover") version
+        "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin".version()
+}
+
+extensions.configure(VersionsExtension::class.java) {
+    skipGroups.addAll("org.jetbrains.kotlin", "org.junit.jupiter", "org.jetbrains.intellij.deps", "org.jacoco")
+}
+
+kover {
+    coverageEngine.set(JACOCO)
+}
 
 subprojects {
     repositories {

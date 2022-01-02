@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Date
 
@@ -102,6 +103,16 @@ tasks {
                 "Built-JDK" to System.getProperty("java.version"),
                 "Built-Gradle" to gradle.gradleVersion
             )
+        }
+    }
+
+    koverVerify {
+        rule {
+            name = "Minimal line coverage"
+            bound {
+                minValue = 80
+                valueType = COVERED_LINES_PERCENTAGE
+            }
         }
     }
 }

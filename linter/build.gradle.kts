@@ -43,6 +43,16 @@ tasks {
             attributes("Lint-Registry-v2" to "com.cmgapps.lint.IssueRegistry")
         }
     }
+
+    koverVerify {
+        rule {
+            name = "Minimal line coverage"
+            bound {
+                minValue = 80
+                valueType = kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
+            }
+        }
+    }
 }
 
 java {
