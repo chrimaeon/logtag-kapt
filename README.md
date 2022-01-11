@@ -19,8 +19,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:1.0.0")
-    ksp("com.cmgapps:log-tag-processor:1.0.0")
+    implementation("com.cmgapps:log-tag:1.1.0")
+    ksp("com.cmgapps:log-tag-processor:1.1.0")
 }
 ```
 
@@ -28,7 +28,7 @@ also get sure to apply the KSP Gradle Plugin
 
 ```kotlin
 plugins {
-    id("com.google.devtools.ksp") version "<latest version>"
+    id("com.google.devtools.ksp") version "1.1.0"
 }
 ```
 
@@ -42,8 +42,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:1.0.0")
-    kapt("com.cmgapps:log-tag-processor:1.0.0")
+    implementation("com.cmgapps:log-tag:1.1.0")
+    kapt("com.cmgapps:log-tag-processor:1.1.0")
 }
 ```
 
