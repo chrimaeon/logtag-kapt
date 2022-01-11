@@ -21,10 +21,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 30
     defaultConfig {
-        minSdkVersion(15)
-        targetSdkVersion(30)
+        minSdk = 15
+        targetSdk = 30
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -50,15 +50,14 @@ project.version = versionName
 val name: String by project
 val description: String by project
 
-val annotationProject = project(":annotation")
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
-    from(annotationProject.sourceSets["main"].allSource)
+    from(projectDir.resolve("README.md"))
 }
 
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
-    from(annotationProject.tasks["javadoc"])
+    from(projectDir.resolve("README.md"))
 }
 
 afterEvaluate {
@@ -66,8 +65,8 @@ afterEvaluate {
         publications {
             register<MavenPublication>("libraryMaven") {
                 from(components["release"])
-                artifact(sourcesJar.get())
-                artifact(javadocJar.get())
+                artifact(sourcesJar)
+                artifact(javadocJar)
                 logtagPom(project)
             }
         }

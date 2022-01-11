@@ -68,6 +68,7 @@ fun DependencyHandlerScope.addLinterDependencies() {
     kapt(autoService)
 
     junit()
+    testImplementation("org.hamcrest:hamcrest".withVersion())
     testImplementation("com.android.tools.lint:lint".withVersion())
     testImplementation("com.android.tools.lint:lint-tests".withVersion())
     testImplementation("com.android.tools:testutils".withVersion())
