@@ -66,8 +66,8 @@ publishing {
     publications {
         create<MavenPublication>("annotation") {
             from(components["java"])
-            artifact(sourcesJar.get())
-            artifact(javadocJar.get())
+            artifact(sourcesJar)
+            artifact(javadocJar)
 
             logtagPom(project)
         }

@@ -143,8 +143,8 @@ publishing {
         create<MavenPublication>("processor") {
 
             from(components["java"])
-            artifact(sourcesJar.get())
-            artifact(javadocJar.get())
+            artifact(sourcesJar)
+            artifact(javadocJar)
 
             logtagPom(project)
         }
