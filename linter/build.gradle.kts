@@ -15,6 +15,8 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.div
 
 plugins {
     kotlin("jvm")
@@ -22,6 +24,15 @@ plugins {
     id("com.android.lint")
     ktlint
     id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
+}
+
+@OptIn(ExperimentalPathApi::class)
+val buildConfigDirPath = buildDir.toPath() / "generated" / "source" / "buildConfig"
+
+sourceSets {
+    main {
+        java.srcDir(buildConfigDirPath)
+    }
 }
 
 tasks {
@@ -32,10 +43,39 @@ tasks {
         }
     }
 
+    val generateBuildConfig by registering {
+        val outputDir = buildConfigDirPath
+
+        val projectArtifactId = "log-tag"
+        inputs.property("projectArtifactId", projectArtifactId)
+
+        val issuesTrackerUrl: String by project
+        inputs.property("issuesTrackerUrl", issuesTrackerUrl)
+
+        val packageName = "com.cmgapps.lint"
+        inputs.property("packageName", packageName)
+
+        outputs.dir(outputDir)
+
+        doLast {
+            outputDir.toFile().mkdirs()
+            file(outputDir.resolve("BuildConfig.kt")).bufferedWriter().use {
+                it.write(
+                    """
+                        |package $packageName
+                        |const val ISSUES_TRACKER_URL = "$issuesTrackerUrl"
+                        |const val PROJECT_ARTIFACT = "$projectArtifactId"
+                    """.trimMargin()
+                )
+            }
+        }
+    }
+
     withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+        dependsOn(generateBuildConfig)
     }
 
     jar {

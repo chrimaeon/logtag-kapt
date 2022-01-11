@@ -21,10 +21,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 30
     defaultConfig {
-        minSdkVersion(15)
-        targetSdkVersion(30)
+        minSdk = 15
+        targetSdk = 30
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

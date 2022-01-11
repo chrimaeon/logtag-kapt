@@ -17,6 +17,7 @@
 package com.cmgapps.lint
 
 import com.android.tools.lint.client.api.IssueRegistry
+import com.android.tools.lint.client.api.Vendor
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
 import com.google.auto.service.AutoService
@@ -24,8 +25,12 @@ import com.google.auto.service.AutoService
 @Suppress("UnstableApiUsage")
 @AutoService(IssueRegistry::class)
 class IssueRegistry : IssueRegistry() {
-
     override val api = CURRENT_API
-
     override val issues: List<Issue> = listOf(LogTagDetector.ISSUE)
+    override val vendor = Vendor(
+        vendorName = "CMG Mobile Apps",
+        identifier = PROJECT_ARTIFACT,
+        feedbackUrl = ISSUES_TRACKER_URL,
+        contact = ISSUES_TRACKER_URL,
+    )
 }
