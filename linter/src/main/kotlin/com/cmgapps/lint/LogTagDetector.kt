@@ -30,16 +30,17 @@ import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UElement
 
-@Suppress("UnstableApiUsage", "unused")
-class LogTagDetector : Detector(), Detector.UastScanner {
-
-    override fun getApplicableUastTypes(): List<Class<out UElement>> =
-        listOf(UClass::class.java)
+@Suppress("unused")
+class LogTagDetector :
+    Detector(),
+    Detector.UastScanner {
+    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(UClass::class.java)
 
     override fun createUastHandler(context: JavaContext): UElementHandler = UastHandler(context)
 
-    private class UastHandler(private val context: JavaContext) : UElementHandler() {
-
+    private class UastHandler(
+        private val context: JavaContext,
+    ) : UElementHandler() {
         override fun visitClass(node: UClass) {
             val allAnnotations = context.evaluator.getAllAnnotations(node as UAnnotated, false)
             val annotation = allAnnotations.firstOrNull { it.qualifiedName == "com.cmgapps.LogTag" } ?: return
@@ -49,10 +50,12 @@ class LogTagDetector : Detector(), Detector.UastScanner {
             if (className.length <= 23) return
 
             val valueAttribute = annotation.findAttributeValue("value")
-            val hasValue = valueAttribute != null && run {
-                val value = ConstantEvaluator.evaluate(context, valueAttribute) as? String
-                value != null && value.isNotBlank()
-            }
+            val hasValue =
+                valueAttribute != null &&
+                    run {
+                        val value = ConstantEvaluator.evaluate(context, valueAttribute) as? String
+                        value != null && value.isNotBlank()
+                    }
 
             if (hasValue) return
 
@@ -62,7 +65,8 @@ class LogTagDetector : Detector(), Detector.UastScanner {
                 context.getNameLocation(node),
                 "Log tags are only allowed to be at most 23 characters long. " +
                     "You should set a custom log tag in the annotation or it will be truncated.",
-                LintFix.create()
+                LintFix
+                    .create()
                     .name("Add custom log tag")
                     .replace()
                     .text(annotation.asSourceString())
@@ -71,24 +75,25 @@ class LogTagDetector : Detector(), Detector.UastScanner {
                     .reformat(true)
                     .with("""@${annotation.qualifiedName}("")""")
                     .select("""@${annotation.qualifiedName}\("()"\)""")
-                    .build()
+                    .build(),
             )
         }
     }
 
     companion object {
         @JvmField
-        val ISSUE = Issue.create(
-            id = "LogTagClassNameTooLong",
-            briefDescription = "Log tag too long",
-            explanation = """
+        val ISSUE =
+            Issue.create(
+                id = "LogTagClassNameTooLong",
+                briefDescription = "Log tag too long",
+                explanation = """
                 Checks if the class' name annotated with @com.cmgapps.LogTag is at most 23 characters long
                  and does not have a custom log tag specified.
             """,
-            category = Category.CORRECTNESS,
-            priority = 6,
-            severity = Severity.WARNING,
-            implementation = Implementation(LogTagDetector::class.java, Scope.JAVA_FILE_SCOPE)
-        )
+                category = Category.CORRECTNESS,
+                priority = 6,
+                severity = Severity.WARNING,
+                implementation = Implementation(LogTagDetector::class.java, Scope.JAVA_FILE_SCOPE),
+            )
     }
 }

@@ -16,23 +16,27 @@
 
 plugins {
     id("com.android.library")
-    `maven-publish`
-    signing
+    id("com.cmgapps.publish")
 }
 
 android {
-    compileSdk = 30
+    namespace = "com.cmgapps.logtag"
+    compileSdk = 35
     defaultConfig {
         minSdk = 15
-        targetSdk = 30
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
         buildConfig = false
+    }
+
+    publishing {
+        singleVariant("release")
     }
 }
 
@@ -40,15 +44,6 @@ dependencies {
     api(project(":annotation"))
     lintPublish(project(":linter"))
 }
-
-val group: String by project
-val versionName: String by project
-
-project.group = group
-project.version = versionName
-
-val name: String by project
-val description: String by project
 
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
@@ -60,23 +55,11 @@ val javadocJar by tasks.registering(Jar::class) {
     from(projectDir.resolve("README.md"))
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            register<MavenPublication>("libraryMaven") {
-                from(components["release"])
-                artifact(sourcesJar)
-                artifact(javadocJar)
-                logtagPom(project)
-            }
+publishing {
+    publications {
+        named<MavenPublication>("libs") {
+            artifact(sourcesJar)
+            artifact(javadocJar)
         }
-
-        repositories {
-            sonatype(project)
-        }
-    }
-
-    signing {
-        sign(publishing.publications["libraryMaven"])
     }
 }

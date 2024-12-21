@@ -18,13 +18,14 @@ import java.util.Date
 
 plugins {
     `java-library`
-    `maven-publish`
-    signing
+    id("com.cmgapps.publish")
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
 }
 
 tasks {
@@ -36,47 +37,8 @@ tasks {
                 "Built-By" to System.getProperty("user.name"),
                 "Built-Date" to Date(),
                 "Built-JDK" to System.getProperty("java.version"),
-                "Built-Gradle" to gradle.gradleVersion
+                "Built-Gradle" to gradle.gradleVersion,
             )
         }
     }
-}
-
-val group: String by project
-val versionName: String by project
-val artifactId: String by project
-
-project.group = group
-project.version = versionName
-
-val name: String by project
-val description: String by project
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("annotation") {
-            from(components["java"])
-            artifact(sourcesJar)
-            artifact(javadocJar)
-
-            logtagPom(project)
-        }
-    }
-    repositories {
-        sonatype(project)
-    }
-}
-
-signing {
-    sign(publishing.publications["annotation"])
 }

@@ -27,7 +27,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class IssueRegistryShould {
-
     private lateinit var registry: IssueRegistry
 
     @Suppress("UnstableApiUsage")
@@ -55,8 +54,8 @@ internal class IssueRegistryShould {
                 hasProperty("vendorName", `is`("CMG Mobile Apps")),
                 hasProperty("identifier", `is`("log-tag")),
                 hasProperty("feedbackUrl", `is`("https://github.com/chrimaeon/logtag-kapt/issues")),
-                hasProperty("contact", `is`("https://github.com/chrimaeon/logtag-kapt/issues"))
-            )
+                hasProperty("contact", `is`("https://github.com/chrimaeon/logtag-kapt/issues")),
+            ),
         )
     }
 }

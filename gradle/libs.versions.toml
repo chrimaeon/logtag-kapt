@@ -1,0 +1,47 @@
+[versions]
+kotlin = "2.1.0"
+ksp = "2.1.0-1.0.29"
+autoservice = "1.1.1"
+incap = "1.0.0"
+androidLint = "31.7.3"
+mockito = "5.12.0"
+gradle = "8.12"
+
+[libraries]
+google-ksp-processor = { module = "com.google.devtools.ksp:symbol-processing", version.ref = "ksp" }
+google-ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+google-autoservice-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoservice" }
+google-autoservice-autoservice = { module = "com.google.auto.service:auto-service", version.ref = "autoservice" }
+
+squareup-javapoet = "com.squareup:javapoet:1.13.0"
+squareup-kotlinpoet = "com.squareup:kotlinpoet:2.0.0"
+
+ltgt-incap-incap = { module = "net.ltgt.gradle.incap:incap", version.ref = "incap" }
+ltgt-incap-processor = { module = "net.ltgt.gradle.incap:incap-processor", version.ref = "incap" }
+
+junit-bom = { module = "org.junit:junit-bom", version = "5.11.3" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+hamcrest = "org.hamcrest:hamcrest:3.0"
+
+android-lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "androidLint" }
+android-lint-checks = { module = "com.android.tools.lint:lint-checks", version.ref = "androidLint" }
+android-lint-lint = { module = "com.android.tools.lint:lint", version.ref = "androidLint" }
+android-lint-test = { module = "com.android.tools.lint:lint-tests", version.ref = "androidLint" }
+android-testutils = { module = "com.android.tools:testutils", version.ref = "androidLint" }
+
+mockito-junit = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version = "5.4.0" }
+
+tschuchortdev-compile-testing-ksp = "com.github.tschuchortdev:kotlin-compile-testing-ksp:1.6.0"
+
+jetbrains-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
+
+ktlint-cli = "com.pinterest.ktlint:ktlint-cli:1.5.0"
+
+[plugins]
+
+kover = "org.jetbrains.kotlinx.kover:0.8.3"
+android-library = "com.android.library:8.7.3"
+dokka = "org.jetbrains.dokka:1.9.20"
+versions = "com.github.ben-manes.versions:0.51.0"
+

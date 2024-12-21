@@ -24,89 +24,86 @@ import org.junit.jupiter.api.Test
 
 @Suppress("UnstableApiUsage")
 class LogTagDetectorShould : LintDetectorTest() {
-
     @Test
     fun `detect no warnings in java file`() {
-        lint().files(
-            java(
-                """
+        lint()
+            .files(
+                java(
+                    """
                     package com.test;
 
                     @com.cmgapps.LogTag
                     public class JavaClassWithAnnotation {}
-                """
-            ).indented()
-        )
-            .run()
+                """,
+                ).indented(),
+            ).run()
             .expectClean()
     }
 
     @Test
     fun `detect no warnings in java file with custom tag`() {
-        lint().files(
-            java(
-                """
+        lint()
+            .files(
+                java(
+                    """
                     package com.test;
 
                     @com.cmgapps.LogTag("MyCustomTag")
                     public class JavaClassWithAnnotationTooLongName {}
-                """
-            ).indented()
-        )
-            .run()
+                """,
+                ).indented(),
+            ).run()
             .expectClean()
     }
 
     @Ignore("Kotlin files are not processed properly")
     @Test
     fun `detect no warnings in kotlin file`() {
-        lint().files(
-            kotlin(
-                """
+        lint()
+            .files(
+                kotlin(
+                    """
                     package com.test
 
                     @com.cmgapps.LogTag
                     class KotlinClassWithAnn
-                """
-            ).indented()
-        )
-            .run()
+                """,
+                ).indented(),
+            ).run()
             .expectClean()
     }
 
     @Test
     fun `detect too long name`() {
-        lint().files(
-            java(
-                """
+        lint()
+            .files(
+                java(
+                    """
                     package com.test;
 
                     @com.cmgapps.LogTag
                     public class JavaClassWithAnnotationTooLong {}
-                """
-            ).indented()
-        )
-            .run()
+                """,
+                ).indented(),
+            ).run()
             .expect(
                 """
                 src/com/test/JavaClassWithAnnotationTooLong.java:4: Warning: Log tags are only allowed to be at most 23 characters long. You should set a custom log tag in the annotation or it will be truncated. [LogTagClassNameTooLong]
                 public class JavaClassWithAnnotationTooLong {}
                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warnings
-                """.trimIndent()
+                """.trimIndent(),
             ).expectFixDiffs(
                 """
                 Fix for src/com/test/JavaClassWithAnnotationTooLong.java line 4: Add custom log tag:
                 @@ -3 +3
                 - @com.cmgapps.LogTag
                 + @com.cmgapps.LogTag("|")
-                """.trimIndent()
+                """.trimIndent(),
             )
     }
 
     override fun getDetector(): Detector = LogTagDetector()
 
-    override fun getIssues(): List<Issue> {
-        return listOf(LogTagDetector.ISSUE)
-    }
+    override fun getIssues(): List<Issue> = listOf(LogTagDetector.ISSUE)
 }

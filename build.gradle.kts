@@ -1,3 +1,6 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import com.github.benmanes.gradle.versions.updates.gradle.GradleReleaseChannel
+
 /*
  * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
  *
@@ -14,61 +17,26 @@
  * limitations under the License.
  */
 
-import com.cmgapps.gradle.VersionsExtension
-import com.cmgapps.gradle.VersionsPlugin
-import kotlinx.kover.api.CoverageEngine.JACOCO
-
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        helixTeamHubRepo {
-            if (project.hasProperty("DEVEO_USERNAME")) {
-                username = project.property("DEVEO_USERNAME") as String
-                password = project.property("DEVEO_PASSWORD") as String
-            } else {
-                username = System.getenv("DEVEO_USERNAME")
-                password = System.getenv("DEVEO_PASSWORD")
-            }
-        }
-        gradlePluginPortal()
-    }
-
-    dependencies {
-        classpath("com.android.tools.build:gradle".withVersion())
-        classpath(kotlin("gradle-plugin", KOTLIN_VERSION))
-        classpath("com.cmgapps.gradle:gradle-dependencies-versions-plugin".withVersion())
-    }
-}
-
 repositories {
     google()
     mavenCentral()
 }
 
-apply<VersionsPlugin>()
-
 plugins {
-    id("org.jetbrains.kotlinx.kover") version
-        "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin".version()
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kover)
+    alias(libs.plugins.versions)
 }
 
-extensions.configure(VersionsExtension::class.java) {
-    skipGroups.addAll("org.jetbrains.kotlin", "org.junit.jupiter", "org.jetbrains.intellij.deps", "org.jacoco")
-}
-
-kover {
-    coverageEngine.set(JACOCO)
-}
+//
+// kover {
+//     coverageEngine.set(JACOCO)
+// }
 
 subprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
     gradle.projectsEvaluated {
-        tasks.withType<JavaCompile>()
+        tasks
+            .withType<JavaCompile>()
             .configureEach {
                 options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xmaxerrs", "500"))
             }
@@ -76,12 +44,21 @@ subprojects {
 }
 
 tasks {
-    register<Delete>("clean") {
-        delete(rootProject.buildDir)
-    }
-
     named<Wrapper>("wrapper") {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = GRADLE_VERSION
+        gradleVersion = libs.versions.gradle.get()
+    }
+
+    named<DependencyUpdatesTask>("dependencyUpdates") {
+        revision = "release"
+        gradleReleaseChannel = GradleReleaseChannel.CURRENT.id
+
+        rejectVersionIf {
+            listOf("alpha", "beta", "rc", "cr", "m", "eap").any { qualifier ->
+                """(?i).*[.-]?$qualifier[.\d-]*"""
+                    .toRegex()
+                    .containsMatchIn(candidate.version)
+            }
+        }
     }
 }

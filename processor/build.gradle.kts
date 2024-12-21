@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-import kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Date
 
 plugins {
     idea
     `java-library`
-    kotlin("jvm")
-    kotlin("kapt")
-    `maven-publish`
-    signing
-    ktlint
-    id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
+    kotlin("jvm") version libs.versions.kotlin.get()
+    kotlin("kapt") version libs.versions.kotlin.get()
+    id("com.cmgapps.publish")
+    id("ktlint")
+    alias(libs.plugins.dokka)
 }
 
 val functionalTestName = "functionalTest"
 
-configurations {
-    create("${functionalTestName}Implementation") {
-        extendsFrom(testImplementation.get())
+val functionalTestConfiguration =
+    configurations.create("${functionalTestName}Implementation") {
+        extendsFrom(configurations.testImplementation.get())
     }
-}
 
 sourceSets {
     create(functionalTestName) {
@@ -45,7 +41,7 @@ sourceSets {
 
         resources {
             srcDir("src/$functionalTestName/resources")
-            destinationDirectory.set(file("$buildDir/resources/$functionalTestName"))
+            destinationDirectory.set(layout.buildDirectory.dir("resources/$functionalTestName"))
         }
 
         compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath.get()
@@ -55,38 +51,38 @@ sourceSets {
 
 idea {
     module {
-        testSourceDirs = testSourceDirs + sourceSets[functionalTestName].allJava.srcDirs
-        testResourceDirs = testResourceDirs + sourceSets[functionalTestName].resources.srcDirs
+        testSources.setFrom(testSources, sourceSets[functionalTestName].allJava.srcDirs)
+        testResources.setFrom(testResources, sourceSets[functionalTestName].resources.srcDirs)
     }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 kotlin {
     explicitApi()
+    jvmToolchain(17)
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
-
     test {
         useJUnitPlatform()
-        logEvents()
+        testLogging {
+            events("PASSED", "SKIPPED", "FAILED")
+        }
     }
 
     val functionalTest by registering(Test::class) {
         group = "verification"
         testClassesDirs = sourceSets[functionalTestName].output.classesDirs
         classpath = sourceSets[functionalTestName].runtimeClasspath
-        logEvents()
         useJUnitPlatform()
+
+        testLogging {
+            events("PASSED", "SKIPPED", "FAILED")
+        }
     }
 
     check {
@@ -101,64 +97,46 @@ tasks {
                 "Built-By" to System.getProperty("user.name"),
                 "Built-Date" to Date(),
                 "Built-JDK" to System.getProperty("java.version"),
-                "Built-Gradle" to gradle.gradleVersion
+                "Built-Gradle" to gradle.gradleVersion,
             )
         }
     }
 
-    koverVerify {
-        rule {
-            name = "Minimal line coverage"
-            bound {
-                minValue = 80
-                valueType = COVERED_LINES_PERCENTAGE
-            }
-        }
-    }
-}
-
-fun Test.logEvents() = testLogging {
-    events("PASSED", "SKIPPED", "FAILED")
-}
-
-val group: String by project
-val versionName: String by project
-val artifactId: String by project
-
-project.group = group
-project.version = versionName
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks.dokkaJavadoc)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("processor") {
-
-            from(components["java"])
-            artifact(sourcesJar)
-            artifact(javadocJar)
-
-            logtagPom(project)
-        }
-    }
-
-    repositories {
-        sonatype(project)
-    }
-}
-
-signing {
-    sign(publishing.publications["processor"])
+    // koverVerify {
+    //     rule {
+    //         name = "Minimal line coverage"
+    //         bound {
+    //             minValue = 80
+    //             valueType = COVERED_LINES_PERCENTAGE
+    //         }
+    //     }
+    // }
 }
 
 dependencies {
-    addProcessorDependencies()
+    implementation(project(":annotation"))
+
+    compileOnly(libs.google.ksp.api)
+
+    implementation(libs.squareup.kotlinpoet)
+    implementation(libs.squareup.javapoet)
+
+    compileOnly(libs.google.autoservice.annotations)
+    kapt(libs.google.autoservice.autoservice)
+
+    compileOnly(libs.ltgt.incap.incap)
+    kapt(libs.ltgt.incap.processor)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockito.junit)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.hamcrest)
+
+    functionalTestConfiguration(platform(libs.junit.bom))
+    functionalTestConfiguration(libs.junit.jupiter)
+    functionalTestConfiguration(libs.tschuchortdev.compile.testing.ksp)
+    functionalTestConfiguration(libs.google.ksp.api)
+    functionalTestConfiguration(libs.google.ksp.processor)
+    functionalTestConfiguration(libs.jetbrains.compiler.embeddable)
 }

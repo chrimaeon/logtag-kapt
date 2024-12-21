@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
+ * Copyright (c) 2024. Christian Grach <christian.grach@cmgapps.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,12 @@
  * limitations under the License.
  */
 
-const val KOTLIN_VERSION = "1.6.10"
+plugins {
+    `kotlin-dsl`
+}
+
+group = "com.cmgapps.gradle.buildlogic.convention"
+
+kotlin {
+    jvmToolchain(17)
+}

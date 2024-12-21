@@ -45,7 +45,6 @@ import com.squareup.kotlinpoet.ClassName as KotlinClassName
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
 @AutoService(Processor::class)
 public class LogTagProcessor : AbstractProcessor() {
-
     private lateinit var filer: Filer
     private lateinit var messager: Messager
 
@@ -57,73 +56,89 @@ public class LogTagProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedAnnotationTypes(): Set<String> = setOf(LogTag::class.java.canonicalName)
+
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 
-    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
+    override fun process(
+        annotations: MutableSet<out TypeElement>,
+        roundEnv: RoundEnvironment,
+    ): Boolean {
         if (annotations.isEmpty() || annotations.find { it.qualifiedName.contentEquals(LogTag::class.java.canonicalName) } == null) {
             return false
         }
 
-        roundEnv.getElementsAnnotatedWith(LogTag::class.java).map {
-            if (!(it.kind.isClass || it.kind.isInterface)) {
-                messager.printMessage(
-                    Diagnostic.Kind.ERROR,
-                    "LogTag annotation can only be applied to a class/interface"
-                )
+        roundEnv
+            .getElementsAnnotatedWith(LogTag::class.java)
+            .map {
+                if (!(it.kind.isClass || it.kind.isInterface)) {
+                    messager.printMessage(
+                        Diagnostic.Kind.ERROR,
+                        "LogTag annotation can only be applied to a class/interface",
+                    )
 
-                // consume the annotation anyway
-                return true
+                    // consume the annotation anyway
+                    return true
+                }
+
+                if (!it.modifiers.contains(Modifier.PUBLIC)) {
+                    messager.printMessage(
+                        Diagnostic.Kind.ERROR,
+                        "LogTag annotation can only be applied to public classes",
+                    )
+
+                    // consume the annotation anyway
+                    return true
+                }
+                AnnotatedElement(it as TypeElement)
+            }.forEach { element ->
+                if (element.isKotlin) generateKotlinExtensionFunction(element) else generateJavaClass(element)
             }
-
-            if (!it.modifiers.contains(Modifier.PUBLIC)) {
-                messager.printMessage(
-                    Diagnostic.Kind.ERROR,
-                    "LogTag annotation can only be applied to public classes"
-                )
-
-                // consume the annotation anyway
-                return true
-            }
-            AnnotatedElement(it as TypeElement)
-        }.forEach { element ->
-            if (element.isKotlin) generateKotlinExtensionFunction(element) else generateJavaClass(element)
-        }
 
         return true
     }
 
     private fun generateJavaClass(element: AnnotatedElement) {
         val field =
-            FieldSpec.builder(String::class.java, "LOG_TAG", Modifier.STATIC, Modifier.FINAL)
-                .initializer("\$S", getTag(element)).build()
+            FieldSpec
+                .builder(String::class.java, "LOG_TAG", Modifier.STATIC, Modifier.FINAL)
+                .initializer("\$S", getTag(element))
+                .build()
         val clazz =
-            TypeSpec.classBuilder("${element.kotlinClassName.simpleName}LogTag")
+            TypeSpec
+                .classBuilder("${element.kotlinClassName.simpleName}LogTag")
                 .addOriginatingElement(element.element)
-                .addField(field).build()
+                .addField(field)
+                .build()
 
         JavaFile.builder(element.kotlinClassName.packageName, clazz).build().writeTo(filer)
     }
 
     private fun generateKotlinExtensionFunction(element: AnnotatedElement) {
-        val propertySpec = PropertySpec.builder("LOG_TAG", String::class)
-            .receiver(element.kotlinClassName)
-            .addOriginatingElement(element.element)
-            .getter(
-                FunSpec.getterBuilder()
-                    .addModifiers(KModifier.INLINE)
-                    .addStatement("return %S", getTag(element))
-                    .build()
-            ).build()
+        val propertySpec =
+            PropertySpec
+                .builder("LOG_TAG", String::class)
+                .receiver(element.kotlinClassName)
+                .addOriginatingElement(element.element)
+                .getter(
+                    FunSpec
+                        .getterBuilder()
+                        .addModifiers(KModifier.INLINE)
+                        .addStatement("return %S", getTag(element))
+                        .build(),
+                ).build()
 
-        FileSpec.builder(element.kotlinClassName.packageName, "${element.kotlinClassName.simpleName}LogTag")
+        FileSpec
+            .builder(element.kotlinClassName.packageName, "${element.kotlinClassName.simpleName}LogTag")
             .addProperty(propertySpec)
             .addAnnotation(
-                AnnotationSpec.builder(Suppress::class).addMember("%S", "SpellCheckingInspection")
+                AnnotationSpec
+                    .builder(Suppress::class)
+                    .addMember("%S", "SpellCheckingInspection")
                     .addMember("%S", "RedundantVisibilityModifier")
                     .addMember("%S", "unused")
-                    .build()
-            )
-            .build().writeTo(filer)
+                    .build(),
+            ).build()
+            .writeTo(filer)
     }
 
     private fun getTag(element: AnnotatedElement): String {
@@ -136,7 +151,7 @@ public class LogTagProcessor : AbstractProcessor() {
             if (it.length > 23) {
                 messager.printMessage(
                     Diagnostic.Kind.WARNING,
-                    "Class name \"$it\" is to long for a log tag. Max. length is 23. Class name will be truncated."
+                    "Class name \"$it\" is to long for a log tag. Max. length is 23. Class name will be truncated.",
                 )
                 it.substring(0..22)
             } else {
@@ -145,21 +160,23 @@ public class LogTagProcessor : AbstractProcessor() {
         }
     }
 
-    internal inner class AnnotatedElement(internal val element: TypeElement) {
+    internal inner class AnnotatedElement(
+        internal val element: TypeElement,
+    ) {
         private val elementUtils: Elements = processingEnv.elementUtils
-        internal val kotlinClassName: KotlinClassName = KotlinClassName(
-            elementUtils.getPackageOf(element).qualifiedName.toString(),
-            element.simpleName.toString()
-        )
+        internal val kotlinClassName: KotlinClassName =
+            KotlinClassName(
+                elementUtils.getPackageOf(element).qualifiedName.toString(),
+                element.simpleName.toString(),
+            )
 
-        internal val javaClassName: JavaClassName = JavaClassName.get(
-            elementUtils.getPackageOf(element).qualifiedName.toString(),
-            element.simpleName.toString()
-        )
+        internal val javaClassName: JavaClassName =
+            JavaClassName.get(
+                elementUtils.getPackageOf(element).qualifiedName.toString(),
+                element.simpleName.toString(),
+            )
 
-        internal fun getLogTagAnnotation(): LogTag {
-            return element.getAnnotation(LogTag::class.java)
-        }
+        internal fun getLogTagAnnotation(): LogTag = element.getAnnotation(LogTag::class.java)
 
         internal val isKotlin: Boolean
             get() {

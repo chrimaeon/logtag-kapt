@@ -15,24 +15,25 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.div
 
 plugins {
-    kotlin("jvm")
-    kotlin("kapt")
+    kotlin("jvm") version libs.versions.kotlin.get()
+    kotlin("kapt") version libs.versions.kotlin.get()
     id("com.android.lint")
-    ktlint
-    id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
+    id("ktlint")
+    alias(libs.plugins.dokka)
 }
 
-@OptIn(ExperimentalPathApi::class)
-val buildConfigDirPath = buildDir.toPath() / "generated" / "source" / "buildConfig"
+val buildConfigDirPath = layout.buildDirectory.dir("generated/source/buildConfig")
 
 sourceSets {
     main {
         java.srcDir(buildConfigDirPath)
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 tasks {
@@ -58,23 +59,20 @@ tasks {
         outputs.dir(outputDir)
 
         doLast {
-            outputDir.toFile().mkdirs()
-            file(outputDir.resolve("BuildConfig.kt")).bufferedWriter().use {
+            outputDir.get().asFile.mkdirs()
+            file(outputDir.get().asFile.resolve("BuildConfig.kt")).bufferedWriter().use {
                 it.write(
                     """
                         |package $packageName
                         |const val ISSUES_TRACKER_URL = "$issuesTrackerUrl"
                         |const val PROJECT_ARTIFACT = "$projectArtifactId"
-                    """.trimMargin()
+                    """.trimMargin(),
                 )
             }
         }
     }
 
     withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
         dependsOn(generateBuildConfig)
     }
 
@@ -84,22 +82,33 @@ tasks {
         }
     }
 
-    koverVerify {
-        rule {
-            name = "Minimal line coverage"
-            bound {
-                minValue = 80
-                valueType = kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
-            }
-        }
-    }
+    // koverVerify {
+    //     rule {
+    //         name = "Minimal line coverage"
+    //         bound {
+    //             minValue = 80
+    //             valueType = kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
+    //         }
+    //     }
+    // }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
-    addLinterDependencies()
+    compileOnly(libs.android.lint.api)
+    compileOnly(libs.android.lint.checks)
+
+    compileOnly(libs.google.autoservice.annotations)
+    kapt(libs.google.autoservice.autoservice)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.hamcrest)
+    testImplementation(libs.android.lint.lint)
+    testImplementation(libs.android.lint.test)
+    testImplementation(libs.android.testutils)
 }

@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
+package com.cmgapps.gradle
+
+import org.gradle.api.Project
 import java.io.File
 import java.util.Properties
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-import org.gradle.api.Project
 
-class PropertiesEnvDelegate(propertiesFile: File) : ReadOnlyProperty<Any?, String?> {
-
-    private val properties: Properties? = if (propertiesFile.exists()) {
-        Properties().apply {
-            load(propertiesFile.inputStream())
+class PropertiesEnvDelegate(
+    propertiesFile: File,
+) : ReadOnlyProperty<Any?, String?> {
+    private val properties: Properties? =
+        if (propertiesFile.exists()) {
+            Properties().apply {
+                load(propertiesFile.inputStream())
+            }
+        } else {
+            null
         }
-    } else {
-        null
-    }
 
     private var value: String? = null
 
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>): String? {
+    override operator fun getValue(
+        thisRef: Any?,
+        property: KProperty<*>,
+    ): String? {
         if (value != null) {
             return value
         }
@@ -43,7 +50,7 @@ class PropertiesEnvDelegate(propertiesFile: File) : ReadOnlyProperty<Any?, Strin
             }
         }
 
-        return System.getenv("SONATYPE_${property.name.toUpperCase()}").also {
+        return System.getenv("SONATYPE_${property.name.uppercase()}").also {
             value = it
         }
     }
