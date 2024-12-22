@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package foo.bar;
-
-@com.cmgapps.LogTag
-public class FooJava implements LogProvider {
-    @Override
-    public String logging() {
-        return "LOG_TAG";
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
     }
 }
+
+includeBuild('../')

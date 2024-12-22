@@ -16,6 +16,8 @@
 
 @file:Suppress("UnstableApiUsage")
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "Log-Tag"
 
 pluginManagement {
@@ -39,4 +41,9 @@ include(
     ":processor",
     ":linter",
     ":library",
+    ":compiler-plugin:log-tag-gradle-plugin",
+    ":compiler-plugin:common",
+    ":compiler-plugin:cli",
+    ":compiler-plugin:backend",
+    ":compiler-plugin:k2",
 )

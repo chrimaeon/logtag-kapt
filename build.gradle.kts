@@ -17,13 +17,10 @@ import com.github.benmanes.gradle.versions.updates.gradle.GradleReleaseChannel
  * limitations under the License.
  */
 
-repositories {
-    google()
-    mavenCentral()
-}
-
 plugins {
     alias(libs.plugins.android.library) apply false
+    kotlin("jvm") version libs.versions.kotlin.get() apply false
+    kotlin("kapt") version libs.versions.kotlin.get() apply false
     alias(libs.plugins.kover)
     alias(libs.plugins.versions)
 }

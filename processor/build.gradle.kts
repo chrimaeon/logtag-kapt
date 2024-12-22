@@ -19,8 +19,8 @@ import java.util.Date
 plugins {
     idea
     `java-library`
-    kotlin("jvm") version libs.versions.kotlin.get()
-    kotlin("kapt") version libs.versions.kotlin.get()
+    kotlin("jvm")
+    kotlin("kapt")
     id("com.cmgapps.publish")
     id("ktlint")
     alias(libs.plugins.dokka)

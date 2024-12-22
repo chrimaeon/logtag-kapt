@@ -87,6 +87,7 @@ internal fun Project.configurePublish() {
             }
 
             extensions.configure<SigningExtension> {
+                isRequired = !versionName.endsWith("SNAPSHOT")
                 sign(publications)
             }
         }

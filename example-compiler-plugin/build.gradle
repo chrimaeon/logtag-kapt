@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package foo.bar;
+plugins {
+    id "application"
+    id "org.jetbrains.kotlin.jvm" version "2.1.0"
+    id "com.cmgapps.logtag" version "2.0.0-SNAPSHOT"
+}
 
-@com.cmgapps.LogTag
-public class FooJava implements LogProvider {
-    @Override
-    public String logging() {
-        return "LOG_TAG";
-    }
+application {
+    mainClass = "foo.bar.FooKt"
+}
+
+repositories {
+    mavenCentral()
+    google()
+    mavenLocal()
 }

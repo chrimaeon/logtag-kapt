@@ -52,10 +52,7 @@ class LogTagDetector :
             val valueAttribute = annotation.findAttributeValue("value")
             val hasValue =
                 valueAttribute != null &&
-                    run {
-                        val value = ConstantEvaluator.evaluate(context, valueAttribute) as? String
-                        value != null && value.isNotBlank()
-                    }
+                    !(ConstantEvaluator.evaluate(context, valueAttribute) as? String).isNullOrBlank()
 
             if (hasValue) return
 

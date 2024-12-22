@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-package foo.bar;
+package androidx.compose.runtime
 
-@com.cmgapps.LogTag
-public class FooJava implements LogProvider {
-    @Override
-    public String logging() {
-        return "LOG_TAG";
-    }
-}
+annotation class Composable

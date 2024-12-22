@@ -42,12 +42,10 @@ class ThisIsAClassWithACustomLogTag : LogProvider {
 // @com.cmgapps.LogTag
 fun tagging(): String = ""
 
-// @com.cmgapps.LogTag("ShortTag")
-// private class Private {
-//     fun logging(): String {
-//         return LOG_TAG
-//     }
-// }
+@com.cmgapps.LogTag("PRIVATE")
+private class Private : LogProvider {
+    override fun logging(): String = LOG_TAG
+}
 
 @com.cmgapps.LogTag
 enum class Works {
@@ -57,22 +55,23 @@ enum class Works {
 
 @androidx.compose.runtime.Composable
 @com.cmgapps.LogTag
-fun Test() {}
+fun Test() {
+}
 
 @com.cmgapps.LogTag
-fun wontWorkTest() {}
+fun wontWorkTest() {
+}
 
 fun main() {
     listOf<LogProvider>(
         Public(),
         Internal(),
+        Private(),
         ThisIsAClassThatWillBeTruncated(),
         ThisIsAClassWithACustomLogTag(),
-        FooJava(),
-        PackageJava(),
     ).forEach {
         println("${it::class.java.simpleName} -> ${it.logging()}")
     }
 
-    println("@Composable Test -> ${ComposableTest.LOG_TAG}")
+    // println("@Composable Test -> ${ComposableTest.LOG_TAG}")
 }
