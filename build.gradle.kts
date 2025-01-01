@@ -21,18 +21,17 @@ plugins {
     alias(libs.plugins.android.library) apply false
     kotlin("jvm") version libs.versions.kotlin.get() apply false
     kotlin("kapt") version libs.versions.kotlin.get() apply false
-    alias(libs.plugins.kover)
     alias(libs.plugins.versions)
+    alias(libs.plugins.jetbrains.changelog)
 }
 
-subprojects {
-    gradle.projectsEvaluated {
-        tasks
-            .withType<JavaCompile>()
-            .configureEach {
-                options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xmaxerrs", "500"))
-            }
-    }
+val versionName: String by project
+
+project.version = versionName
+
+changelog {
+    header = provider { version.get() }
+    repositoryUrl = providers.gradleProperty("projectUrl")
 }
 
 tasks {
@@ -52,5 +51,29 @@ tasks {
                     .containsMatchIn(candidate.version)
             }
         }
+    }
+
+    val updateReadme by registering {
+        val readmeFile = rootDir.resolve("README.md")
+
+        inputs.property("libVersion", version)
+        outputs.file(readmeFile)
+
+        doLast {
+            val content = readmeFile.readText()
+            val oldVersion =
+                """id\("com.cmgapps.logtag"\) version "(.*)"""".toRegex(RegexOption.MULTILINE).find(content)?.let {
+                    it.groupValues[1]
+                } ?: error("Cannot find oldVersion")
+
+            logger.info("Updating README.md version $oldVersion to $version")
+
+            val newContent = content.replace(oldVersion, version as String)
+            readmeFile.writeText(newContent)
+        }
+    }
+
+    patchChangelog {
+        finalizedBy(updateReadme)
     }
 }

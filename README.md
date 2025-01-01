@@ -1,13 +1,42 @@
-# Log TAG Annotation Processor [![Build & Test](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/chrimaeon/logtag-kapt/branch/main/graph/badge.svg?token=QH5OYAQUX3)](https://codecov.io/gh/chrimaeon/logtag-kapt)
+# Log TAG Generator [![Build & Test](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/chrimaeon/logtag-kapt/branch/main/graph/badge.svg?token=QH5OYAQUX3)](https://codecov.io/gh/chrimaeon/logtag-kapt)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
 [![MavenCentral](https://img.shields.io/maven-central/v/com.cmgapps.logtag/log-tag?style=for-the-badge)](https://repo1.maven.org/maven2/com/cmgapps/logtag/)
 
 This is an annotation processor that will generate an appropriate log tag for Android Log messages
 
-## Usage
+You can use the library with either the [Kotlin Compiler Plugin](#Using-Kotlin-Compiler-Plugin) or
+an [Annotation Processor](#Using-Annotation-Processors)
 
-### Setup
+## Using Kotlin Compiler Plugin
+
+> [!NOTE]
+> Currently this feature is experimental.
+> Jetbrains IDEs will not recognize the generated property as a valid property for the class.
+
+Apply the compiler plugin with Gradle
+
+```kotlin
+plugins {
+    id("com.cmgapps.logtag") version "2.0.0-SNAPSHOT"
+}
+```
+
+Now you can use the `@LogTag` annotation in your source files
+
+```kotlin
+@com.cmgapps.LogTag
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(LOG_TAG, "onCreate")
+    }
+}
+```
+
+The compiler will generate a private property `LOG_TAG` with the class' name that you can use as the tag for your
+android log messages.
+
+## Using Annotation Processors
 
 <details open>
 
@@ -19,8 +48,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps.logtag:log-tag:1.1.0")
-    ksp("com.cmgapps.logtag:processor:1.1.0")
+    implementation("com.cmgapps.logtag:log-tag:2.0.0-SNAPSHOT")
+    ksp("com.cmgapps.logtag:processor:2.0.0-SNAPSHOT")
 }
 ```
 
@@ -28,7 +57,7 @@ also get sure to apply the KSP Gradle Plugin
 
 ```kotlin
 plugins {
-    id("com.google.devtools.ksp") version "1.1.0"
+    id("com.google.devtools.ksp") version "<ksp-version>"
 }
 ```
 
@@ -42,8 +71,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps.logtag:log-tag:1.1.0")
-    kapt("com.cmgapps.logtag:processor:1.1.0")
+    implementation("com.cmgapps.logtag:log-tag:2.0.0-SNAPSHOT")
+    kapt("com.cmgapps.logtag:processor:2.0.0-SNAPSHOT")
 }
 ```
 
