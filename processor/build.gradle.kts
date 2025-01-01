@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import java.util.Date
 
 plugins {
@@ -24,35 +26,41 @@ plugins {
     id("com.cmgapps.publish")
     id("ktlint")
     alias(libs.plugins.dokka)
+    alias(libs.plugins.kover)
 }
 
-val functionalTestName = "functionalTest"
-
-val functionalTestConfiguration =
-    configurations.create("${functionalTestName}Implementation") {
-        extendsFrom(configurations.testImplementation.get())
-    }
-
-sourceSets {
-    create(functionalTestName) {
-        java {
-            srcDir("src/$functionalTestName/kotlin")
+testing {
+    @Suppress("UnstableApiUsage")
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                implementation(platform(libs.junit.bom))
+                implementation(libs.junit.jupiter)
+                implementation(libs.mockito.junit)
+                implementation(libs.mockito.kotlin)
+                implementation(libs.hamcrest)
+                runtimeOnly(libs.junit.platform)
+            }
         }
 
-        resources {
-            srcDir("src/$functionalTestName/resources")
-            destinationDirectory.set(layout.buildDirectory.dir("resources/$functionalTestName"))
+        register<JvmTestSuite>("functionalTest") {
+            useJUnitJupiter()
+            dependencies {
+                implementation(platform(libs.junit.bom))
+                implementation(libs.junit.jupiter)
+                implementation(project())
+                implementation(libs.hamcrest)
+                implementation(libs.tschuchortdev.compile.testing.ksp)
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
         }
-
-        compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath.get()
-        runtimeClasspath += output + compileClasspath
-    }
-}
-
-idea {
-    module {
-        testSources.setFrom(testSources, sourceSets[functionalTestName].allJava.srcDirs)
-        testResources.setFrom(testResources, sourceSets[functionalTestName].resources.srcDirs)
     }
 }
 
@@ -68,18 +76,12 @@ java {
 
 tasks {
     test {
-        useJUnitPlatform()
         testLogging {
             events("PASSED", "SKIPPED", "FAILED")
         }
     }
 
-    val functionalTest by registering(Test::class) {
-        group = "verification"
-        testClassesDirs = sourceSets[functionalTestName].output.classesDirs
-        classpath = sourceSets[functionalTestName].runtimeClasspath
-        useJUnitPlatform()
-
+    val functionalTest by getting(Test::class) {
         testLogging {
             events("PASSED", "SKIPPED", "FAILED")
         }
@@ -101,16 +103,21 @@ tasks {
             )
         }
     }
+}
 
-    // koverVerify {
-    //     rule {
-    //         name = "Minimal line coverage"
-    //         bound {
-    //             minValue = 80
-    //             valueType = COVERED_LINES_PERCENTAGE
-    //         }
-    //     }
-    // }
+kover {
+    useJacoco()
+    reports {
+        verify {
+            rule("Minimal line coverage") {
+                bound {
+                    minValue = 80
+                    coverageUnits = CoverageUnit.LINE
+                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -126,17 +133,4 @@ dependencies {
 
     compileOnly(libs.ltgt.incap.incap)
     kapt(libs.ltgt.incap.processor)
-
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.mockito.junit)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.hamcrest)
-
-    functionalTestConfiguration(platform(libs.junit.bom))
-    functionalTestConfiguration(libs.junit.jupiter)
-    functionalTestConfiguration(libs.tschuchortdev.compile.testing.ksp)
-    functionalTestConfiguration(libs.google.ksp.api)
-    functionalTestConfiguration(libs.google.ksp.processor)
-    functionalTestConfiguration(libs.jetbrains.compiler.embeddable)
 }

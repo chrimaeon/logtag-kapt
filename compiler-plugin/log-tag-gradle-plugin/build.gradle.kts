@@ -26,6 +26,7 @@ kotlin {
 buildConfig {
     packageName.set("com.cmgapps.logtag.gradle")
     buildConfigField("String", "LIBRARY_VERSION", "\"${project.version}\"")
+    buildConfigField("String", "KOTLIN_VERSION", "\"${libs.versions.kotlin.get()}\"")
 }
 
 gradlePlugin {
@@ -44,6 +45,8 @@ publishing {
 }
 
 dependencies {
-    implementation(projects.compilerPlugin.common)
-    implementation(libs.jetbrains.kotlin.gradle.plugin)
+    compileOnly(projects.compilerPlugin.common)
+    compileOnly(libs.jetbrains.kotlin.gradle.plugin.api)
+    compileOnly(libs.jetbrains.kotlin.gradle.plugin)
+    implementation(libs.maven.artifact)
 }

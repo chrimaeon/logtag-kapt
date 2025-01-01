@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 
 plugins {
     kotlin("jvm") version libs.versions.kotlin.get()
@@ -22,14 +23,8 @@ plugins {
     id("com.android.lint")
     id("ktlint")
     alias(libs.plugins.dokka)
-}
-
-val buildConfigDirPath = layout.buildDirectory.dir("generated/source/buildConfig")
-
-sourceSets {
-    main {
-        java.srcDir(buildConfigDirPath)
-    }
+    alias(libs.plugins.kover)
+    alias(libs.plugins.buildconfig)
 }
 
 kotlin {
@@ -44,53 +39,35 @@ tasks {
         }
     }
 
-    val generateBuildConfig by registering {
-        val outputDir = buildConfigDirPath
-
-        val projectArtifactId = "log-tag"
-        inputs.property("projectArtifactId", projectArtifactId)
-
-        val issuesTrackerUrl: String by project
-        inputs.property("issuesTrackerUrl", issuesTrackerUrl)
-
-        val packageName = "com.cmgapps.lint"
-        inputs.property("packageName", packageName)
-
-        outputs.dir(outputDir)
-
-        doLast {
-            outputDir.get().asFile.mkdirs()
-            file(outputDir.get().asFile.resolve("BuildConfig.kt")).bufferedWriter().use {
-                it.write(
-                    """
-                        |package $packageName
-                        |const val ISSUES_TRACKER_URL = "$issuesTrackerUrl"
-                        |const val PROJECT_ARTIFACT = "$projectArtifactId"
-                    """.trimMargin(),
-                )
-            }
-        }
-    }
-
-    withType<KotlinCompile> {
-        dependsOn(generateBuildConfig)
-    }
-
     jar {
         manifest {
             attributes("Lint-Registry-v2" to "com.cmgapps.lint.IssueRegistry")
         }
     }
+}
 
-    // koverVerify {
-    //     rule {
-    //         name = "Minimal line coverage"
-    //         bound {
-    //             minValue = 80
-    //             valueType = kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
-    //         }
-    //     }
-    // }
+buildConfig {
+    packageName("com.cmgapps.lint")
+
+    val issuesTrackerUrl: String by project
+
+    buildConfigField(String::class.java, "ISSUES_TRACKER_URL", issuesTrackerUrl)
+    buildConfigField(String::class.java, "PROJECT_ARTIFACT", "log-tag")
+}
+
+kover {
+    useJacoco()
+    reports {
+        verify {
+            rule("Minimal line coverage") {
+                bound {
+                    minValue = 80
+                    coverageUnits = CoverageUnit.LINE
+                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
+                }
+            }
+        }
+    }
 }
 
 java {
@@ -111,4 +88,5 @@ dependencies {
     testImplementation(libs.android.lint.lint)
     testImplementation(libs.android.lint.test)
     testImplementation(libs.android.testutils)
+    testRuntimeOnly(libs.junit.platform)
 }

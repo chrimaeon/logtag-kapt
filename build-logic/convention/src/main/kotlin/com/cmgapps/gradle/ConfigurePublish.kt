@@ -80,7 +80,7 @@ internal fun Project.configurePublish() {
                     licenses {
                         license {
                             this.name.set("Apache License, Version 2.0")
-                            this.url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                            this.url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                         }
                     }
                 }

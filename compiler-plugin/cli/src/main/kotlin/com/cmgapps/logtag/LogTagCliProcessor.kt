@@ -66,7 +66,7 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
 
         val message =
             buildString {
-                append("XOR compiler plugin is ")
+                append("LOG-TAG plugin is ")
                 if (enabled) {
                     append("enabled")
                     if (useFir) {

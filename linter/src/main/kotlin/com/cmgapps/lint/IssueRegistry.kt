@@ -29,8 +29,8 @@ class IssueRegistry : IssueRegistry() {
     override val vendor =
         Vendor(
             vendorName = "CMG Mobile Apps",
-            identifier = PROJECT_ARTIFACT,
-            feedbackUrl = ISSUES_TRACKER_URL,
-            contact = ISSUES_TRACKER_URL,
+            identifier = BuildConfig.PROJECT_ARTIFACT,
+            feedbackUrl = BuildConfig.ISSUES_TRACKER_URL,
+            contact = BuildConfig.ISSUES_TRACKER_URL,
         )
 }

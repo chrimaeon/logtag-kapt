@@ -6,7 +6,6 @@
 
 package com.cmgapps.logtag
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -18,5 +17,4 @@ object LogTagPluginNames {
 
     val LOG_TAG_ANNOTATION_ID = ClassId(FqName("com.cmgapps"), Name.identifier("LogTag"))
     val LOG_TAG_PROPERTY_NAME = Name.identifier("LOG_TAG")
-    val FIELD_ORIGIN = IrDeclarationOrigin.GeneratedByPlugin(LogTagPluginKey)
 }

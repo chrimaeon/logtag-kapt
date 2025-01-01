@@ -8,6 +8,7 @@ package com.cmgapps.gradle
 
 import com.cmgapps.logtag.LogTagPluginNames
 import com.cmgapps.logtag.gradle.BuildConfig
+import org.apache.maven.artifact.versioning.ComparableVersion
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import javax.inject.Inject
 
 abstract class LogTagExtension
@@ -60,7 +62,26 @@ class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
             version = BuildConfig.LIBRARY_VERSION,
         )
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
+        val project = kotlinCompilation.target.project
+        val requiredKotlinVersion = ComparableVersion(BuildConfig.KOTLIN_VERSION)
+        val kotlinVersion = ComparableVersion(project.getKotlinPluginVersion())
+
+        if (requiredKotlinVersion < kotlinVersion) {
+            project.logger.warn(
+                "logtag-${BuildConfig.LIBRARY_VERSION} is too old for kotlin-$kotlinVersion. " +
+                    "Please upgrade logtag or downgrade kotlin-gradle-plugin to $requiredKotlinVersion.",
+            )
+        }
+        if (requiredKotlinVersion > kotlinVersion) {
+            project.logger.warn(
+                "logtag-${BuildConfig.LIBRARY_VERSION} is too new for kotlin-$kotlinVersion. " +
+                    "Please upgrade kotlin-gradle-plugin to $requiredKotlinVersion.",
+            )
+        }
+
+        return true
+    }
 
     override fun apply(target: Project) {
         with(target) {

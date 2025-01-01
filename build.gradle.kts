@@ -25,11 +25,6 @@ plugins {
     alias(libs.plugins.versions)
 }
 
-//
-// kover {
-//     coverageEngine.set(JACOCO)
-// }
-
 subprojects {
     gradle.projectsEvaluated {
         tasks

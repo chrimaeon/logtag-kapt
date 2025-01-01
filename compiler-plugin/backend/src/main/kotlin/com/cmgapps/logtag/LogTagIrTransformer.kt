@@ -6,17 +6,16 @@
 
 package com.cmgapps.logtag
 
-import com.cmgapps.logtag.LogTagPluginNames.FIELD_ORIGIN
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.getAnnotationValueOrNull
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -27,18 +26,19 @@ class LogTagIrTransformer(
     private val messageCollector: MessageCollector,
 ) : IrElementTransformerVoid() {
     override fun visitProperty(declaration: IrProperty): IrStatement {
-        if (declaration.origin != FIELD_ORIGIN && declaration.name != LogTagPluginNames.LOG_TAG_PROPERTY_NAME) {
+        val origin = declaration.origin
+
+        if (origin !is IrDeclarationOrigin.GeneratedByPlugin || origin.pluginKey != LogTagPluginKey) {
+            return super.visitProperty(declaration)
+        }
+
+        if (declaration.name != LogTagPluginNames.LOG_TAG_PROPERTY_NAME) {
             return super.visitProperty(declaration)
         }
 
         val annotation =
             declaration.annotations.findAnnotation(LogTagPluginNames.LOG_TAG_ANNOTATION_ID.asSingleFqName())
                 ?: return super.visitProperty(declaration)
-
-        messageCollector.report(
-            CompilerMessageSeverity.INFO,
-            "Setting property ${declaration.name} with annotation ${annotation.dumpKotlinLike()}",
-        )
 
         val logTag: String =
             annotation
@@ -49,6 +49,14 @@ class LogTagIrTransformer(
                         .asString()
                         .take(23)
                 }
+
+        messageCollector.report(
+            CompilerMessageSeverity.INFO,
+            """
+            |Creating property
+            |   private val ${declaration.name} =  "logTag"
+            """.trimMargin(),
+        )
 
         declaration.backingField =
             context.irFactory
