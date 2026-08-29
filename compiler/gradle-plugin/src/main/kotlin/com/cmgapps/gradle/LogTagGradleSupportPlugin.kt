@@ -7,7 +7,6 @@
 package com.cmgapps.gradle
 
 import com.cmgapps.logtag.gradle.BuildConfig
-import org.apache.maven.artifact.versioning.ComparableVersion
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -27,6 +26,17 @@ abstract class LogTagExtension {
 
 @Suppress("unused")
 class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
+    lateinit var kotlinVersion: String
+
+    override fun apply(target: Project) {
+        with(target) {
+            kotlinVersion = getKotlinPluginVersion()
+            extensions.create("logTag", LogTagExtension::class.java)
+        }
+    }
+
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
+
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         kotlinCompilation.defaultSourceSet.dependencies {
             implementation(BuildConfig.ANNOTATIONS_LIBRARY_COORDINATES)
@@ -48,33 +58,6 @@ class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         SubpluginArtifact(
             groupId = BuildConfig.KOTLIN_PLUGIN_GROUP,
             artifactId = BuildConfig.KOTLIN_PLUGIN_NAME,
-            version = BuildConfig.LIBRARY_VERSION,
+            version = "$kotlinVersion-${BuildConfig.LIBRARY_VERSION}",
         )
-
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
-        val project = kotlinCompilation.target.project
-        val requiredKotlinVersion = ComparableVersion(BuildConfig.KOTLIN_VERSION)
-        val kotlinVersion = ComparableVersion(project.getKotlinPluginVersion())
-
-        if (requiredKotlinVersion < kotlinVersion) {
-            project.logger.warn(
-                "logtag-${BuildConfig.LIBRARY_VERSION} is too old for kotlin-$kotlinVersion. " +
-                    "Please upgrade logtag or downgrade kotlin-gradle-plugin to $requiredKotlinVersion.",
-            )
-        }
-        if (requiredKotlinVersion > kotlinVersion) {
-            project.logger.warn(
-                "logtag-${BuildConfig.LIBRARY_VERSION} is too new for kotlin-$kotlinVersion. " +
-                    "Please upgrade kotlin-gradle-plugin to $requiredKotlinVersion.",
-            )
-        }
-
-        return true
-    }
-
-    override fun apply(target: Project) {
-        with(target) {
-            extensions.create("logTag", LogTagExtension::class.java)
-        }
-    }
 }

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import java.util.Properties
 
 plugins {
@@ -14,7 +15,7 @@ plugins {
 }
 
 val versionName: String = project.findProperty("versionName") as String
-project.version = versionName
+project.version = "${getKotlinPluginVersion()}-$versionName"
 
 java {
     withSourcesJar()

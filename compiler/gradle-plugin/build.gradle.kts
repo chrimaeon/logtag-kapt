@@ -64,5 +64,4 @@ publishing {
 dependencies {
     compileOnly(libs.jetbrains.kotlin.gradle.plugin.api)
     compileOnly(libs.jetbrains.kotlin.gradle.plugin)
-    implementation(libs.maven.artifact)
 }
