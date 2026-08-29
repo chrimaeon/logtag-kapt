@@ -14,5 +14,5 @@ ktlint_function_naming_ignore_when_annotated_with=Composable
 [*.{json,yml}]
 indent_size=2
 
-[**/META-INF/services/**]
+[**/META-INF/{services,gradle}/**]
 insert_final_newline=false

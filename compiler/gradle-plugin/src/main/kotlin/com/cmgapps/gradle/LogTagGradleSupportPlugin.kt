@@ -11,8 +11,6 @@ import org.apache.maven.artifact.versioning.ComparableVersion
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.vcs.VersionControlSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -35,7 +33,7 @@ class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         }
 
         return with(kotlinCompilation.target.project) {
-            val extension = extensions.getByType<LogTagExtension>()
+            val extension = extensions.getByType(LogTagExtension::class.java)
             objects.listProperty(SubpluginOption::class.java).apply {
                 add(
                     extension.enabled.map { SubpluginOption("enabled", it.toString()) },

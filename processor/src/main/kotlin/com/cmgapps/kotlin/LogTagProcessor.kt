@@ -1,23 +1,12 @@
 /*
  * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package com.cmgapps.kotlin
 
 import com.cmgapps.LogTag
-import com.google.auto.service.AutoService
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
@@ -26,13 +15,10 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
-import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
-import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
 import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment
-import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Modifier
@@ -42,8 +28,6 @@ import javax.tools.Diagnostic
 import com.squareup.javapoet.ClassName as JavaClassName
 import com.squareup.kotlinpoet.ClassName as KotlinClassName
 
-@IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
-@AutoService(Processor::class)
 public class LogTagProcessor : AbstractProcessor() {
     private lateinit var filer: Filer
     private lateinit var messager: Messager
@@ -63,7 +47,7 @@ public class LogTagProcessor : AbstractProcessor() {
         annotations: MutableSet<out TypeElement>,
         roundEnv: RoundEnvironment,
     ): Boolean {
-        if (annotations.isEmpty() || annotations.find { it.qualifiedName.contentEquals(LogTag::class.java.canonicalName) } == null) {
+        if (annotations.isEmpty() || annotations.none { it.qualifiedName.contentEquals(LogTag::class.java.canonicalName) }) {
             return false
         }
 
@@ -176,7 +160,10 @@ public class LogTagProcessor : AbstractProcessor() {
                 element.simpleName.toString(),
             )
 
-        internal fun getLogTagAnnotation(): LogTag = element.getAnnotation(LogTag::class.java)
+        internal fun getLogTagAnnotation(): LogTag =
+            checkNotNull(element.getAnnotation(LogTag::class.java)) {
+                "No @LogTag annotation found on ${element.simpleName}"
+            }
 
         internal val isKotlin: Boolean
             get() {

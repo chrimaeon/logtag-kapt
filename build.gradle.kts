@@ -6,7 +6,7 @@
 
 plugins {
     alias(libs.plugins.android.library) apply false
-    kotlin("jvm") version embeddedKotlinVersion apply false
+    alias(libs.plugins.kotlin.jvm) apply false
     kotlin("kapt") version embeddedKotlinVersion apply false
     alias(libs.plugins.jetbrains.changelog)
 }

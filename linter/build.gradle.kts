@@ -18,8 +18,7 @@ import kotlinx.kover.gradle.plugin.dsl.AggregationType
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 
 plugins {
-    kotlin("jvm") version embeddedKotlinVersion
-    kotlin("kapt") version embeddedKotlinVersion
+    alias(libs.plugins.kotlin.jvm)
     id("com.android.lint")
     id("ktlint")
     alias(libs.plugins.dokka)
@@ -76,9 +75,6 @@ java {
 dependencies {
     compileOnly(libs.android.lint.api)
     compileOnly(libs.android.lint.checks)
-
-    compileOnly(libs.google.autoservice.annotations)
-    kapt(libs.google.autoservice.autoservice)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)

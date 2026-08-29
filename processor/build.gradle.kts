@@ -113,15 +113,9 @@ kover {
 }
 
 dependencies {
-    implementation(project(":annotation"))
+    implementation(projects.annotation)
     implementation(libs.squareup.kotlinpoet)
     implementation(libs.squareup.javapoet)
 
     compileOnly(libs.google.ksp.api)
-
-    compileOnly(libs.google.autoservice.annotations)
-    kapt(libs.google.autoservice.autoservice)
-
-    compileOnly(libs.ltgt.incap.incap)
-    kapt(libs.ltgt.incap.processor)
 }

@@ -5,9 +5,8 @@
  */
 
 plugins {
-    `kotlin-dsl`
-    kotlin("jvm")
-    `java-gradle-plugin`
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.gradle.plugin)
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.gradle.pluginPublish)
 }
