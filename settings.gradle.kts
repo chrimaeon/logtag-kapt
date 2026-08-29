@@ -16,6 +16,9 @@
 
 @file:Suppress("UnstableApiUsage")
 
+import de.fayard.refreshVersions.core.FeatureFlag
+import de.fayard.refreshVersions.core.StabilityLevel
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "Log-Tag"
@@ -29,6 +32,20 @@ pluginManagement {
     }
 }
 
+plugins {
+    id("de.fayard.refreshVersions") version "0.60.6"
+}
+
+refreshVersions {
+    featureFlags {
+        enable(FeatureFlag.GRADLE_UPDATES)
+    }
+
+    rejectVersionIf {
+        candidate.stabilityLevel != StabilityLevel.Stable
+    }
+}
+
 dependencyResolutionManagement {
     repositories {
         google()
@@ -36,14 +53,17 @@ dependencyResolutionManagement {
     }
 }
 
+val isJetBrains = System.getProperty("idea.vendor.name") == "JetBrains"
+
 include(
     ":annotation",
     ":processor",
     ":linter",
-    ":library",
-    ":compiler-plugin:log-tag-gradle-plugin",
-    ":compiler-plugin:common",
-    ":compiler-plugin:cli",
-    ":compiler-plugin:backend",
-    ":compiler-plugin:k2",
+    ":compiler:gradle-plugin",
+    ":compiler:compiler-plugin",
 )
+
+// TODO disable until AGP 9.x is supported by IntelliJ IDEA
+if (!isJetBrains) {
+    include(":library")
+}

@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test
 internal class IssueRegistryShould {
     private lateinit var registry: IssueRegistry
 
-    @Suppress("UnstableApiUsage")
     @BeforeEach
     fun setUp() {
         LintClient.clientName = LintClient.CLIENT_UNIT_TESTS

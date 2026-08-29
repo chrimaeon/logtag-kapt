@@ -21,7 +21,7 @@ plugins {
 
 android {
     namespace = "com.cmgapps.logtag"
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
         minSdk = 15
     }
@@ -45,15 +45,21 @@ dependencies {
     lintPublish(project(":linter"))
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(projectDir.resolve("README.md"))
-}
+val sourcesJar =
+    tasks.register("sourcesJar", Jar::class) {
+        description = "Generate an empty sources jar for the library."
+        group = "docs"
+        archiveClassifier.set("sources")
+        from(projectDir.resolve("README.md"))
+    }
 
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(projectDir.resolve("README.md"))
-}
+val javadocJar =
+    tasks.register("javadocJar", Jar::class) {
+        description = "Generate an empty javadoc jar for the library."
+        group = "docs"
+        archiveClassifier.set("javadoc")
+        from(projectDir.resolve("README.md"))
+    }
 
 publishing {
     publications {

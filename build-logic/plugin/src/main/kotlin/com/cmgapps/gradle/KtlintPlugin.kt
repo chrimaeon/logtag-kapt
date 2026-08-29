@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2022. Christian Grach <christian.grach@cmgapps.com>
+ *
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package com.cmgapps.gradle
@@ -12,7 +14,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.named
 
-@Suppress("UnstableApiUsage", "unused")
+@Suppress("unused")
 class KtlintPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
@@ -23,7 +25,7 @@ class KtlintPlugin : Plugin<Project> {
                     include("**/*.kt")
                     exclude("**/test/resources/Generated.kt")
                 }
-            val outputDir = layout.buildDirectory.dir("reports")
+            val outputDir = layout.buildDirectory.dir("reports/ktlint")
 
             tasks.register("ktlintFormat", JavaExec::class.java) {
                 inputs.files(inputFiles)

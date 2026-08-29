@@ -95,14 +95,16 @@ private class LogTagSymbolProcessor(
                                 )
                             }
                         }
-                        else ->
+
+                        else -> {
                             logger.warn(
                                 "@LogTag can only be applied to Jetpack Compose @Composable functions",
                                 function,
                             )
+                        }
                     }
                 }
-            filter { !(KSClassDeclaration::class.java.isInstance(it) || KSFunctionDeclaration::class.java.isInstance(it)) }.forEach {
+            filter { !(it is KSClassDeclaration || it is KSFunctionDeclaration) }.forEach {
                 logger.warn("@LogTag can only be applied to class-like declarations or functions", it)
             }
         }

@@ -13,65 +13,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package foo.bar
 
-interface LogProvider {
-    fun logging(): String
+import com.cmgapps.LogTag
+
+fun interface Logger {
+    fun log(message: String): Unit
 }
 
-@com.cmgapps.LogTag
-class Public : LogProvider {
-    override fun logging(): String = LOG_TAG
+@LogTag
+class Public : Logger {
+    override fun log(message: String) {
+        println("$LOG_TAG -> $message")
+    }
 }
 
-@com.cmgapps.LogTag
-internal class Internal : LogProvider {
-    override fun logging(): String = LOG_TAG
+@LogTag
+internal class Internal : Logger {
+    override fun log(message: String) {
+        println("$LOG_TAG -> $message")
+    }
 }
 
-@com.cmgapps.LogTag
-class ThisIsAClassThatWillBeTruncated : LogProvider {
-    override fun logging(): String = LOG_TAG
+@LogTag
+class ThisIsAClassThatWillBeTruncated : Logger {
+    override fun log(message: String) {
+        println("$LOG_TAG -> $message")
+    }
 }
 
-@com.cmgapps.LogTag("ShortTag")
-class ThisIsAClassWithACustomLogTag : LogProvider {
-    override fun logging(): String = LOG_TAG
+@LogTag("ShortTag")
+class ThisIsAClassWithACustomLogTag : Logger {
+    override fun log(message: String) = println("$LOG_TAG -> $message")
 }
 
-// @com.cmgapps.LogTag
+@LogTag
 fun tagging(): String = ""
 
-@com.cmgapps.LogTag("PRIVATE")
-private class Private : LogProvider {
-    override fun logging(): String = LOG_TAG
+@LogTag("PRIVATE")
+private data class Private(
+    private val unused: String,
+) : Logger {
+    override fun log(message: String) {
+        println("$LOG_TAG:$unused -> $message")
+    }
 }
 
-@com.cmgapps.LogTag
+@LogTag
+class ClassWithCompanion : Logger {
+    override fun log(message: String) {
+        println("$LOG_TAG -> $message")
+        println("$MY_TAG -> $message")
+    }
+
+    companion object {
+        private const val MY_TAG = "My Log Tag"
+    }
+}
+
+class Plain : Logger {
+    override fun log(message: String) = println("$LOG_TAG -> $message")
+
+    companion object {
+        private const val LOG_TAG = "Plain"
+    }
+}
+
 enum class Works {
     VALUE1,
     VALUE2,
 }
 
 @androidx.compose.runtime.Composable
-@com.cmgapps.LogTag
+@LogTag
 fun Test() {
 }
 
-@com.cmgapps.LogTag
+@LogTag
 fun wontWorkTest() {
 }
 
 fun main() {
-    listOf<LogProvider>(
+    listOf(
         Public(),
         Internal(),
-        Private(),
+        Private(unused = "unused"),
         ThisIsAClassThatWillBeTruncated(),
         ThisIsAClassWithACustomLogTag(),
+        Plain(),
+        ClassWithCompanion(),
     ).forEach {
-        println("${it::class.java.simpleName} -> ${it.logging()}")
+        it.log("Hello, World!")
     }
 
-    // println("@Composable Test -> ${ComposableTest.LOG_TAG}")
+//    println("@Composable Test -> ${ComposableTest.LOG_TAG}")
 }

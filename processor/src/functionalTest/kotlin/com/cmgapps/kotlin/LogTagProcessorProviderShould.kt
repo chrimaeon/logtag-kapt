@@ -50,7 +50,7 @@ class LogTagProcessorProviderShould {
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
-              "unused"
+              "unused",
             )
 
             package cmgapps.test
@@ -58,8 +58,8 @@ class LogTagProcessorProviderShould {
             import kotlin.String
             import kotlin.Suppress
 
-            public val TestClass.LOG_TAG: String
-              inline get() = "TestClass"
+            public inline val TestClass.LOG_TAG: String
+              get() = "TestClass"
 
             """.trimIndent()
         assertThat(
@@ -106,7 +106,7 @@ class LogTagProcessorProviderShould {
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
-              "unused"
+              "unused",
             )
 
             package cmgapps.test
@@ -114,8 +114,8 @@ class LogTagProcessorProviderShould {
             import kotlin.String
             import kotlin.Suppress
 
-            public val TestObject.LOG_TAG: String
-              inline get() = "TestObject"
+            public inline val TestObject.LOG_TAG: String
+              get() = "TestObject"
 
             """.trimIndent()
         assertThat(
@@ -183,7 +183,7 @@ class LogTagProcessorProviderShould {
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
-              "unused"
+              "unused",
             )
 
             package cmgapps.test
@@ -191,8 +191,8 @@ class LogTagProcessorProviderShould {
             import kotlin.String
             import kotlin.Suppress
 
-            public val TestClass.LOG_TAG: String
-              inline get() = "MyCustomTag"
+            public inline val TestClass.LOG_TAG: String
+              get() = "MyCustomTag"
 
             """.trimIndent()
         assertThat(
@@ -260,7 +260,7 @@ class LogTagProcessorProviderShould {
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
-              "unused"
+              "unused",
             )
 
             package cmgapps.test
@@ -268,8 +268,8 @@ class LogTagProcessorProviderShould {
             import kotlin.String
             import kotlin.Suppress
 
-            internal val TestClass.LOG_TAG: String
-              inline get() = "TestClass"
+            internal inline val TestClass.LOG_TAG: String
+              get() = "TestClass"
 
             """.trimIndent()
         assertThat(
@@ -329,7 +329,7 @@ class LogTagProcessorProviderShould {
             @file:Suppress(
               "SpellCheckingInspection",
               "RedundantVisibilityModifier",
-              "unused"
+              "unused",
             )
 
             package cmgapps.test

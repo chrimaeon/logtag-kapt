@@ -19,10 +19,8 @@ package com.cmgapps.lint
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import org.junit.Ignore
 import org.junit.jupiter.api.Test
 
-@Suppress("UnstableApiUsage")
 class LogTagDetectorShould : LintDetectorTest() {
     @Test
     fun `detect no warnings in java file`() {
@@ -56,7 +54,6 @@ class LogTagDetectorShould : LintDetectorTest() {
             .expectClean()
     }
 
-    @Ignore("Kotlin files are not processed properly")
     @Test
     fun `detect no warnings in kotlin file`() {
         lint()

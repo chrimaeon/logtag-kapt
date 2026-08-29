@@ -18,8 +18,8 @@ import kotlinx.kover.gradle.plugin.dsl.AggregationType
 import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 
 plugins {
-    kotlin("jvm") version libs.versions.kotlin.get()
-    kotlin("kapt") version libs.versions.kotlin.get()
+    kotlin("jvm") version embeddedKotlinVersion
+    kotlin("kapt") version embeddedKotlinVersion
     id("com.android.lint")
     id("ktlint")
     alias(libs.plugins.dokka)
@@ -49,9 +49,7 @@ tasks {
 buildConfig {
     packageName("com.cmgapps.lint")
 
-    val issuesTrackerUrl: String by project
-
-    buildConfigField(String::class.java, "ISSUES_TRACKER_URL", issuesTrackerUrl)
+    buildConfigField(String::class.java, "ISSUES_TRACKER_URL", providers.gradleProperty("issuesTrackerUrl"))
     buildConfigField(String::class.java, "PROJECT_ARTIFACT", "log-tag")
 }
 
