@@ -25,8 +25,8 @@ import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.plugins.signing.SigningExtension
 
 internal fun Project.configurePublish() {
-    val group: String by project
-    val versionName: String by project
+    val group: String = project.findProperty("group") as String
+    val versionName: String = project.findProperty("version") as String
 
     project.group = group
     project.version = versionName
@@ -43,13 +43,13 @@ internal fun Project.configurePublish() {
                 }
 
                 pom {
-                    val artifactId: String by project
-                    val name: String by project
-                    val description: String by project
-                    val scmUrl: String by project
-                    val connectionUrl: String by project
-                    val developerConnectionUrl: String by project
-                    val projectUrl: String by project
+                    val artifactId: String = project.findProperty("artifactId") as String
+                    val name: String = project.findProperty("name") as String
+                    val description: String = project.findProperty("description") as String
+                    val scmUrl: String = project.findProperty("scmUrl") as String
+                    val connectionUrl: String = project.findProperty("connectionUrl") as String
+                    val developerConnectionUrl: String = project.findProperty("developerConnectionUrl") as String
+                    val projectUrl: String = project.findProperty("projectUrl") as String
 
                     groupId = project.group.toString()
                     setArtifactId(artifactId)

@@ -62,6 +62,5 @@ publishing {
 }
 
 dependencies {
-    compileOnly(libs.jetbrains.kotlin.gradle.plugin.api)
-    compileOnly(libs.jetbrains.kotlin.gradle.plugin)
+    compileOnly(libs.kotlin.gradle.plugin.api)
 }

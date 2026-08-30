@@ -16,3 +16,6 @@ indent_size=2
 
 [**/META-INF/{services,gradle}/**]
 insert_final_newline=false
+
+[compiler/compiler-plugin/testData/**/*.kt]
+ktlint_standard_filename=disabled

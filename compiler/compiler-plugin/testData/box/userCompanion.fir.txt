@@ -1,0 +1,42 @@
+FILE: userCompanion.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() public final class Foo : R|kotlin/Any| {
+        public constructor(): R|foo/bar/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun log(message: R|kotlin/String|): R|kotlin/String| {
+            ^log this@R|foo/bar/Foo.Companion|.R|foo/bar/Foo.Companion.LOG_TAG|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|foo/bar/Foo.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final const val MY_TAG: R|kotlin/String| = String(MY_TAG)
+                public get(): R|kotlin/String|
+
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/Foo.Foo|().R|foo/bar/Foo.log|(String(Hello World))
+        when () {
+            !=(Q|foo/bar/Foo|.R|foo/bar/Foo.Companion.MY_TAG|, String(MY_TAG)) ->  {
+                ^box <strcat>(String(Fail: Companion Tag different -> ), Q|foo/bar/Foo|.R|foo/bar/Foo.Companion.MY_TAG|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/result|, String(Foo)) ->  {
+                ^box <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
+        ^box String(OK)
+    }

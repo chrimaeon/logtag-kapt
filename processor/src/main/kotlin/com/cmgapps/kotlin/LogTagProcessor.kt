@@ -28,6 +28,7 @@ import javax.tools.Diagnostic
 import com.squareup.javapoet.ClassName as JavaClassName
 import com.squareup.kotlinpoet.ClassName as KotlinClassName
 
+@Deprecated("LogTag's KAPT will be removed in the next major release")
 public class LogTagProcessor : AbstractProcessor() {
     private lateinit var filer: Filer
     private lateinit var messager: Messager
@@ -37,6 +38,11 @@ public class LogTagProcessor : AbstractProcessor() {
         super.init(processingEnv)
         filer = processingEnv.filer
         messager = processingEnv.messager
+
+        messager.printMessage(
+            Diagnostic.Kind.WARNING,
+            "LogTag's KAPT will be removed in the next major release; change to the KSP version",
+        )
     }
 
     override fun getSupportedAnnotationTypes(): Set<String> = setOf(LogTag::class.java.canonicalName)

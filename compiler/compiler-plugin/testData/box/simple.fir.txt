@@ -1,0 +1,35 @@
+FILE: simple.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() public final class Foo : R|kotlin/Any| {
+        public constructor(): R|foo/bar/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun log(message: R|kotlin/String|): R|kotlin/String| {
+            ^log this@R|foo/bar/Foo.Companion|.R|foo/bar/Foo.Companion.LOG_TAG|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/Foo.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/Foo.Foo|().R|foo/bar/Foo.log|(String(Hello World))
+        ^box when () {
+            ==(R|<local>/result|, String(Foo)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
+    }

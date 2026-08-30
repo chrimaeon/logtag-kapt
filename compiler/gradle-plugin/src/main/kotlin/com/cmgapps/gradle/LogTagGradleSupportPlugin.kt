@@ -10,11 +10,13 @@ import com.cmgapps.logtag.gradle.BuildConfig
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 abstract class LogTagExtension {
     abstract val enabled: Property<Boolean>
@@ -26,11 +28,12 @@ abstract class LogTagExtension {
 
 @Suppress("unused")
 class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
-    lateinit var kotlinVersion: String
+    lateinit var kotlinVersion: Property<String>
 
+    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     override fun apply(target: Project) {
         with(target) {
-            kotlinVersion = getKotlinPluginVersion()
+            kotlinVersion = extensions.getByType(KotlinBaseExtension::class.java).compilerVersion
             extensions.create("logTag", LogTagExtension::class.java)
         }
     }
@@ -58,6 +61,6 @@ class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         SubpluginArtifact(
             groupId = BuildConfig.KOTLIN_PLUGIN_GROUP,
             artifactId = BuildConfig.KOTLIN_PLUGIN_NAME,
-            version = "$kotlinVersion-${BuildConfig.LIBRARY_VERSION}",
+            version = "${kotlinVersion.get()}-${BuildConfig.LIBRARY_VERSION}",
         )
 }

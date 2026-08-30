@@ -9,9 +9,9 @@ import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
 import java.util.Date
 
 plugins {
-    idea
+    alias(libs.plugins.gradle.idea)
     `java-library`
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
     kotlin("kapt")
     id("com.cmgapps.publish")
     id("ktlint")

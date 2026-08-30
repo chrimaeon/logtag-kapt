@@ -18,7 +18,7 @@ import java.util.Date
 
 plugins {
     `java-library`
-    id("com.cmgapps.publish")
+    // id("com.cmgapps.publish")
 }
 
 java {
