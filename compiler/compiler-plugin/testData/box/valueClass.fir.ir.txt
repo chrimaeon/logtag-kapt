@@ -1,0 +1,126 @@
+FILE fqName:foo.bar fileName:/valueClass.kt
+  CLASS CLASS name:MyValueClass modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
+    annotations:
+      LogTag(value = <null>)
+      JvmInline
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.MyValueClass
+    PROPERTY name:value visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'value: kotlin.String declared in foo.bar.MyValueClass.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:private modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyValueClass
+        correspondingProperty: PROPERTY name:value visibility:private modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-value> (): kotlin.String declared in foo.bar.MyValueClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: foo.bar.MyValueClass declared in foo.bar.MyValueClass.<get-value>' type=foo.bar.MyValueClass origin=null
+    CLASS GENERATED[com.cmgapps.logtag.LogTagPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.MyValueClass.Companion
+      PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:private modality:FINAL [val]
+        FIELD name:LOG_TAG type:kotlin.String visibility:private [final]
+          EXPRESSION_BODY
+            CONST String type=kotlin.String value="MyValueClass"
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LOG_TAG> visibility:private modality:FINAL returnType:kotlin.String
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyValueClass.Companion
+          correspondingProperty: PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:private modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='private final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar.MyValueClass.Companion'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:LOG_TAG type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                receiver: GET_VAR '<this>: foo.bar.MyValueClass.Companion declared in foo.bar.MyValueClass.Companion.<get-LOG_TAG>' type=foo.bar.MyValueClass.Companion origin=null
+      CONSTRUCTOR GENERATED[com.cmgapps.logtag.LogTagPluginKey] visibility:private returnType:foo.bar.MyValueClass.Companion [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[com.cmgapps.logtag.LogTagPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+    CONSTRUCTOR visibility:public returnType:foo.bar.MyValueClass [primary]
+      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyValueClass modality:FINAL visibility:public [value] superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyValueClass
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=foo.bar.MyValueClass
+              GET_VAR 'other: kotlin.Any? declared in foo.bar.MyValueClass.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.MyValueClass'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:foo.bar.MyValueClass [val]
+          TYPE_OP type=foo.bar.MyValueClass origin=IMPLICIT_CAST typeOperand=foo.bar.MyValueClass
+            GET_VAR 'other: kotlin.Any? declared in foo.bar.MyValueClass.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                  receiver: GET_VAR '<this>: foo.bar.MyValueClass declared in foo.bar.MyValueClass.equals' type=foo.bar.MyValueClass origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+                  receiver: GET_VAR 'val tmp_0: foo.bar.MyValueClass declared in foo.bar.MyValueClass.equals' type=foo.bar.MyValueClass origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.MyValueClass'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.MyValueClass'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyValueClass
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in foo.bar.MyValueClass'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: foo.bar.MyValueClass declared in foo.bar.MyValueClass.hashCode' type=foo.bar.MyValueClass origin=null
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyValueClass
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in foo.bar.MyValueClass'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="MyValueClass("
+            CONST String type=kotlin.String value="value="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: foo.bar.MyValueClass declared in foo.bar.MyValueClass.toString' type=foo.bar.MyValueClass origin=null
+            CONST String type=kotlin.String value=")"
+    FUN name:log visibility:public modality:FINAL returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyValueClass
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun log (): kotlin.String declared in foo.bar.MyValueClass'
+          CALL 'private final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar.MyValueClass.Companion' type=kotlin.String origin=GET_PROPERTY
+            ARG <this>: GET_OBJECT 'CLASS GENERATED[com.cmgapps.logtag.LogTagPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=foo.bar.MyValueClass.Companion
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:result type:kotlin.String [val]
+        CALL 'public final fun log (): kotlin.String declared in foo.bar.MyValueClass' type=kotlin.String origin=null
+          ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) declared in foo.bar.MyValueClass' type=foo.bar.MyValueClass origin=null
+            ARG value: CONST String type=kotlin.String value="Hello, World!"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
+        WHEN type=kotlin.String origin=IF
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              ARG arg0: GET_VAR 'val result: kotlin.String declared in foo.bar.box' type=kotlin.String origin=null
+              ARG arg1: CONST String type=kotlin.String value="MyValueClass"
+            then: BLOCK type=kotlin.String origin=null
+              CONST String type=kotlin.String value="OK"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: BLOCK type=kotlin.String origin=null
+              STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="Failure: "
+                GET_VAR 'val result: kotlin.String declared in foo.bar.box' type=kotlin.String origin=null

@@ -16,6 +16,7 @@ plugins {
     signing
     alias(libs.plugins.gradle.java.test.fixtures)
     alias(libs.plugins.gradle.idea)
+    id("ktlint")
 }
 
 val versionName: String = project.findProperty("versionName") as String

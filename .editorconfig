@@ -19,3 +19,8 @@ insert_final_newline=false
 
 [compiler/compiler-plugin/testData/**/*.kt]
 ktlint_standard_filename=disabled
+
+[compiler/compiler-plugin/testData/diagnostics/*.kt]
+ktlint_standard=disabled
+
+

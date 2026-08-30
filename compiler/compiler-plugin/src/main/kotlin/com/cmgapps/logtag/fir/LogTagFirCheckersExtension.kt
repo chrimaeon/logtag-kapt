@@ -7,7 +7,6 @@
 package com.cmgapps.logtag.fir
 
 import com.cmgapps.logtag.LOG_TAG_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
@@ -19,10 +18,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
@@ -34,29 +33,23 @@ internal class LogTagFirCheckersExtension(
 ) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers =
         object : DeclarationCheckers() {
-            override val regularClassCheckers: Set<FirRegularClassChecker> =
-                setOf(LogTagFirRegularClassChecker)
+            override val functionCheckers: Set<FirFunctionChecker> =
+                setOf(LogTagFirFunctionChecker)
         }
 
-    private object LogTagFirRegularClassChecker : FirRegularClassChecker(
+    private object LogTagFirFunctionChecker : FirFunctionChecker(
         mppKind = MppCheckerKind.Common,
     ) {
         context(
             context: CheckerContext,
-            reporter: DiagnosticReporter
+            reporter: DiagnosticReporter,
         )
-        override fun check(declaration: FirRegularClass) {
-            if (!declaration.hasAnnotation(ClassId.topLevel(LOG_TAG_ANNOTATION_FQ_NAME))) return
-
+        override fun check(declaration: FirFunction) {
             val errorFactory =
-                when {
-                    declaration.classKind != ClassKind.CLASS -> {
-                        Diagnostics.LogTagOnNonClass
-                    }
-
-                    else -> {
-                        null
-                    }
+                if (declaration.hasAnnotation(ClassId.topLevel(LOG_TAG_ANNOTATION_FQ_NAME))) {
+                    Diagnostics.LogTagOnNonClass
+                } else {
+                    null
                 }
 
             if (errorFactory != null) {

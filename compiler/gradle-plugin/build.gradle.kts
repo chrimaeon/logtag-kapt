@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.gradle.plugin)
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.gradle.pluginPublish)
+    id("ktlint")
 }
 
 val versionName = project.findProperty("versionName") as String

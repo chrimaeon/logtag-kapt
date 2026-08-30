@@ -48,9 +48,6 @@ class ThisIsAClassWithACustomLogTag : Logger {
     override fun log(message: String) = println("$LOG_TAG -> $message")
 }
 
-@LogTag
-fun tagging(): String = ""
-
 @LogTag("PRIVATE")
 private data class Private(
     private val unused: String,
@@ -80,19 +77,23 @@ class Plain : Logger {
     }
 }
 
+@LogTag
 enum class Works {
     VALUE1,
     VALUE2,
+    ;
+
+    fun log() = println("$LOG_TAG -> $name")
 }
 
-@androidx.compose.runtime.Composable
-@LogTag
-fun Test() {
-}
-
-@LogTag
-fun wontWorkTest() {
-}
+// @androidx.compose.runtime.Composable
+// @LogTag
+// fun Test() {
+// }
+//
+// @LogTag
+// fun wontWorkTest() {
+// }
 
 fun main() {
     listOf(
@@ -107,5 +108,5 @@ fun main() {
         it.log("Hello, World!")
     }
 
-//    println("@Composable Test -> ${ComposableTest.LOG_TAG}")
+    Works.entries.forEach { it.log() }
 }
