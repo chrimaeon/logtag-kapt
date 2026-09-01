@@ -13,3 +13,6 @@
 build/
 captures/
 credentials.properties
+.kotlin/
+.codex
+.claude/*.local.json

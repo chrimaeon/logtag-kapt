@@ -3,6 +3,7 @@
 [plugins]
 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 gradle-java-test-fixtures = { id = "java-test-fixtures" }
 gradle-idea = { id = "idea" }
 gradle-plugin = { id = "java-gradle-plugin" }
@@ -12,6 +13,9 @@ dokka = "org.jetbrains.dokka:2.2.0"
 buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.0.10" }
 gradle-pluginPublish = "com.gradle.plugin-publish:2.1.1"
 jetbrains-changelog = "org.jetbrains.changelog:2.5.0"
+node-gradle = { id = "com.github.node-gradle.node", version = "7.1.0" }
+signing = { id = "signing" }
+maven-publish = { id = "maven-publish" }
 
 [versions]
 
@@ -57,7 +61,7 @@ kotlin-test-framework = { group = "org.jetbrains.kotlin", name = "kotlin-compile
 kotlin-annotations-jvm = { group = "org.jetbrains.kotlin", name = "kotlin-annotations-jvm", version.ref = "kotlin" }
 kotlin-compiler = { group = "org.jetbrains.kotlin", name = "kotlin-compiler", version.ref = "kotlin" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
-kotlin-gradle-plugin-api  = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin-api", version.ref = "kotlin" }
+kotlin-gradle-plugin-api = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin-api", version.ref = "kotlin" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 

@@ -9,11 +9,9 @@ package com.cmgapps.logtag.fir
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
-internal class LogTagFirExtensionRegistrar(
-    private val messageCollector: MessageCollector,
-) : FirExtensionRegistrar() {
+internal class LogTagFirExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::LogTagFirCheckersExtension
-        +::LogTagFirDeclarationGenerator.bind(messageCollector)
+        +::LogTagFirDeclarationGenerator
     }
 }

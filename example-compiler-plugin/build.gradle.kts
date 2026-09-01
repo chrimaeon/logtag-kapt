@@ -18,12 +18,8 @@ import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
 
 plugins {
     id("application")
-    id("org.jetbrains.kotlin.jvm") version "2.4.0"
+    id("org.jetbrains.kotlin.jvm") version "2.4.10"
     id("com.cmgapps.logtag") version "2.0.0-SNAPSHOT"
-}
-
-application {
-    mainClass = "foo.bar.FooKt"
 }
 
 repositories {
@@ -35,7 +31,17 @@ logTag {
     enabled = true
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+kotlin {
+
+    jvmToolchain(17)
+
+    jvm {
+        mainRun {
+            mainClass.set("foo.bar.FooKt")
+        }
+    }
+    js {
+        nodejs()
+        binaries.executable()
+    }
 }

@@ -91,8 +91,8 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
             message,
         )
 
-        FirExtensionRegistrarAdapter.registerExtension(LogTagFirExtensionRegistrar(messageCollector = messageCollector))
+        FirExtensionRegistrarAdapter.registerExtension(LogTagFirExtensionRegistrar())
 
-        IrGenerationExtension.registerExtension(LogTagIrGenerationExtension(messageCollector = messageCollector))
+        IrGenerationExtension.registerExtension(LogTagIrGenerationExtension())
     }
 }

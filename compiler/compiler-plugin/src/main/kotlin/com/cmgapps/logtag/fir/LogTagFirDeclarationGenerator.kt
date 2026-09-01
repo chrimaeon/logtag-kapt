@@ -10,9 +10,6 @@ import com.cmgapps.logtag.LOG_TAG_ANNOTATION_FQ_NAME
 import com.cmgapps.logtag.LOG_TAG_PROPERTY_NAME
 import com.cmgapps.logtag.LogTagPluginKey
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -38,7 +35,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 internal class LogTagFirDeclarationGenerator(
     session: FirSession,
-    private val messageCollector: MessageCollector,
 ) : FirDeclarationGenerationExtension(session) {
     private val predicate = LookupPredicate.create { annotated(LOG_TAG_ANNOTATION_FQ_NAME) }
 
@@ -79,11 +75,6 @@ internal class LogTagFirDeclarationGenerator(
         context: MemberGenerationContext?,
     ): List<FirPropertySymbol> {
         val owner = context?.owner ?: return emptyList()
-
-        messageCollector.report(
-            CompilerMessageSeverity.INFO,
-            "Declaring property $LOG_TAG_PROPERTY_NAME on ${owner.classId.asSingleFqName()}",
-        )
 
         val property =
             when (callableId.callableName) {

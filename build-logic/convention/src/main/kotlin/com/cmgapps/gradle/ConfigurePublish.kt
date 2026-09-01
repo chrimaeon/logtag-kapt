@@ -79,8 +79,8 @@ internal fun Project.configurePublish() {
 
                     licenses {
                         license {
-                            this.name.set("Apache License, Version 2.0")
-                            this.url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                            this.name.set("Apache-2.0")
+                            this.url.set("https://spdx.org/licenses/Apache-2.0.html")
                         }
                     }
                 }
@@ -93,20 +93,7 @@ internal fun Project.configurePublish() {
         }
 
         repositories {
-            maven {
-                name = "sonatype"
-                val releaseUrl = project.uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-                val snapshotUrl = project.uri("https://oss.sonatype.org/content/repositories/snapshots/")
-                url = if (versionName.endsWith("SNAPSHOT")) snapshotUrl else releaseUrl
-
-                val username by project.credentials()
-                val password by project.credentials()
-
-                credentials {
-                    this.username = username
-                    this.password = password
-                }
-            }
+            // TODO setup central sonatype
             mavenLocal()
         }
     }

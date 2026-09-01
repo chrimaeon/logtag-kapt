@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
+@Suppress("kotlin:S6526")
 abstract class LogTagExtension {
     abstract val enabled: Property<Boolean>
 
@@ -35,6 +36,8 @@ class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         with(target) {
             kotlinVersion = extensions.getByType(KotlinBaseExtension::class.java).compilerVersion
             extensions.create("logTag", LogTagExtension::class.java)
+
+            // TODO: check if android project and apply the linter library
         }
     }
 

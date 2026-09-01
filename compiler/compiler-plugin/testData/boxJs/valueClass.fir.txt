@@ -1,0 +1,38 @@
+FILE: valueClass.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() public final value class MyValueClass : R|kotlin/Any| {
+        public constructor(value: R|kotlin/String|): R|foo/bar/MyValueClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val value: R|kotlin/String| = R|<local>/value|
+            private get(): R|kotlin/String|
+
+        public final fun log(): R|kotlin/String| {
+            ^log this@R|foo/bar/MyValueClass.Companion|.R|foo/bar/MyValueClass.Companion.LOG_TAG|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/MyValueClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/MyValueClass.MyValueClass|(String(Hello, World!)).R|foo/bar/MyValueClass.log|()
+        ^box when () {
+            ==(R|<local>/result|, String(MyValueClass)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Failure: ), R|<local>/result|)
+            }
+        }
+
+    }

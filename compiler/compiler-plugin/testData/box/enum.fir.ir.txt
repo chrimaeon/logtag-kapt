@@ -20,8 +20,7 @@ FILE fqName:foo.bar fileName:/enum.kt
           correspondingProperty: PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:private modality:FINAL [val]
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='private final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar.MyEnum.Companion'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:LOG_TAG type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-                receiver: GET_VAR '<this>: foo.bar.MyEnum.Companion declared in foo.bar.MyEnum.Companion.<get-LOG_TAG>' type=foo.bar.MyEnum.Companion origin=null
+              CONST String type=kotlin.String value="MyEnum"
       CONSTRUCTOR GENERATED[com.cmgapps.logtag.LogTagPluginKey] visibility:private returnType:foo.bar.MyEnum.Companion [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'

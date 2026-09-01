@@ -17,6 +17,7 @@
 package foo.bar
 
 import com.cmgapps.LogTag
+import kotlin.jvm.JvmInline
 
 fun interface Logger {
     fun log(message: String): Unit
@@ -86,6 +87,14 @@ enum class Works {
     fun log() = println("$LOG_TAG -> $name")
 }
 
+@JvmInline
+@LogTag
+value class ValueClass(
+    private val value: Int,
+) : Logger {
+    override fun log(message: String) = println("$LOG_TAG:$value -> $message")
+}
+
 // @androidx.compose.runtime.Composable
 // @LogTag
 // fun Test() {
@@ -104,9 +113,8 @@ fun main() {
         ThisIsAClassWithACustomLogTag(),
         Plain(),
         ClassWithCompanion(),
-    ).forEach {
-        it.log("Hello, World!")
-    }
+        ValueClass(42),
+    ).forEach { it.log("Hello, World!") }
 
     Works.entries.forEach { it.log() }
 }

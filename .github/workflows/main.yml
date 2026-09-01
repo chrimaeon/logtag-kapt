@@ -11,9 +11,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    env:
-      DEVEO_USERNAME: ${{ secrets.DEVEO_USERNAME }}
-      DEVEO_PASSWORD: ${{ secrets.DEVEO_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v2
@@ -38,7 +35,7 @@ jobs:
         run: ./gradlew dependencies
 
       - name: Build & Test
-        run: ./gradlew check koverReport koverVerify
+        run: ./gradlew check koverHtmlReport koverVerify
 
       - name: Archive Test results
         if: ${{ failure() }}

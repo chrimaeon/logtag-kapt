@@ -9,7 +9,6 @@ package foo.bar
 import com.cmgapps.LogTag
 
 @LogTag
-@JvmInline
 value class MyValueClass(
     private val value: String,
 ) {
