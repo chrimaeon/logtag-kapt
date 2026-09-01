@@ -3,7 +3,8 @@
  */
 
 plugins {
-    `kotlin-dsl`
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.gradle.plugin)
 }
 
 group = "com.cmgapps.gradle.buildlogic.plugin"

@@ -15,7 +15,7 @@
  */
 
 plugins {
-    `kotlin-dsl`
+    alias(libs.plugins.kotlin.jvm)
     `java-gradle-plugin`
 }
 
@@ -27,9 +27,13 @@ kotlin {
 
 gradlePlugin {
     plugins {
-        register("kover") {
+        register("koverConvention") {
             id = "com.cmgapps.kover"
             implementationClass = "com.cmgapps.gradle.Kover"
+        }
+        register("publishConvention") {
+            id = "com.cmgapps.publish"
+            implementationClass = "com.cmgapps.gradle.PublishConvention"
         }
     }
 }

@@ -6,13 +6,13 @@
 
 package com.cmgapps.gradle
 
+import groovy.lang.Closure
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.attributes.Bundling
 import org.gradle.api.tasks.JavaExec
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.named
 
 @Suppress("unused")
 class KtlintPlugin : Plugin<Project> {
@@ -21,64 +21,72 @@ class KtlintPlugin : Plugin<Project> {
             val ktlintConfiguration = configurations.create("ktlint")
 
             val inputFiles =
-                fileTree("src") {
-                    include("**/*.kt")
-                    exclude("**/test/resources/Generated.kt")
+                fileTree("src") { tree ->
+                    tree.include("**/*.kt")
+                    tree.exclude("**/build/**")
                 }
             val outputDir = layout.buildDirectory.dir("reports/ktlint")
 
-            tasks.register("ktlintFormat", JavaExec::class.java) {
-                inputs.files(inputFiles)
-                outputs.dir(outputDir)
+            tasks.register("ktlintFormat", JavaExec::class.java) { task ->
+                task.inputs.files(inputFiles)
+                task.inputs.dir(outputDir)
 
-                group = "Formatting"
-                description = "Fix Kotlin code style deviations."
-                mainClass.set("com.pinterest.ktlint.Main")
-                classpath = ktlintConfiguration
-                jvmArgs = listOf("--add-opens=java.base/java.lang=ALL-UNNAMED")
-                args =
+                task.group = "Formatting"
+                task.description = "Fix Kotlin code style deviations."
+                task.mainClass.set("com.pinterest.ktlint.Main")
+                task.classpath = ktlintConfiguration
+                task.jvmArgs = listOf("--add-opens=java.base/java.lang=ALL-UNNAMED")
+                task.args =
                     listOf(
                         "-F",
                         "src/**/*.kt",
-                        "!**/test/resources/Generated.kt",
+                        "!src/**/build/**",
                     )
             }
 
             val ktlintTask =
-                tasks.register("ktlint", JavaExec::class.java) {
-                    inputs.files(inputFiles)
-                    outputs.dir(outputDir)
+                tasks.register("ktlint", JavaExec::class.java) { task ->
+                    task.inputs.files(inputFiles)
+                    task.outputs.dir(outputDir)
 
-                    group = "Verification"
-                    description = "Check Kotlin code style."
-                    mainClass.set("com.pinterest.ktlint.Main")
-                    classpath = ktlintConfiguration
-                    args =
+                    task.group = "Verification"
+                    task.description = "Check Kotlin code style."
+                    task.mainClass.set("com.pinterest.ktlint.Main")
+                    task.classpath = ktlintConfiguration
+                    task.args =
                         listOf(
                             "src/**/*.kt",
-                            "!**/test/resources/Generated.kt",
+                            "!src/**/build/**",
                             "--reporter=plain",
                             "--reporter=html,output=${outputDir.get().asFile.absolutePath}/ktlint.html",
                         )
                 }
 
-            tasks.named("check") {
-                dependsOn(ktlintTask)
+            tasks.named("check") { task ->
+                task.dependsOn(ktlintTask)
             }
 
             val libs = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 
-            dependencies {
-                ktlintConfiguration(
-                    libs
-                        .findLibrary("ktlint-cli")
-                        .orElseThrow { NoSuchElementException("ktlint-cli not found in version catalog") },
-                ) {
-                    attributes {
-                        attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
+            val closure =
+                object : Closure<Unit>(this) {
+                    fun doCall(dependency: ModuleDependency) {
+                        dependency.attributes {
+                            it.attribute(
+                                Bundling.BUNDLING_ATTRIBUTE,
+                                objects.named(Bundling::class.java, Bundling.EXTERNAL),
+                            )
+                        }
                     }
                 }
-            }
+
+            dependencies.add(
+                ktlintConfiguration.name,
+                libs
+                    .findLibrary("ktlint-cli")
+                    .orElseThrow { NoSuchElementException("ktlint-cli not found in version catalog") },
+                closure,
+            )
         }
     }
 }

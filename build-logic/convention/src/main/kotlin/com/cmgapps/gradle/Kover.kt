@@ -14,33 +14,34 @@ import kotlinx.kover.gradle.plugin.dsl.KoverProjectExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+@Suppress("unused")
 class Kover : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             plugins.apply(KoverGradlePlugin::class.java)
 
-            extensions.configure(KoverProjectExtension::class.java) {
-                useJacoco()
+            extensions.configure(KoverProjectExtension::class.java) { extension ->
+                extension.useJacoco()
 
-                reports {
-                    verify {
-                        rule("Minimal line coverage") {
-                            bound {
-                                minValue.set(80)
-                                coverageUnits.set(CoverageUnit.LINE)
-                                aggregationForGroup.set(AggregationType.COVERED_PERCENTAGE)
+                extension.reports { reportsConfig ->
+                    reportsConfig.verify { verify ->
+                        verify.rule("Minimal line coverage") { rule ->
+                            rule.bound { bound ->
+                                bound.minValue.set(80)
+                                bound.coverageUnits.set(CoverageUnit.LINE)
+                                bound.aggregationForGroup.set(AggregationType.COVERED_PERCENTAGE)
                             }
                         }
                     }
 
-                    total {
-                        log {
-                            onCheck.set(true)
-                            header.set("Total Test Line Coverage")
-                            groupBy.set(GroupingEntityType.APPLICATION)
-                            aggregationForGroup.set(AggregationType.COVERED_PERCENTAGE)
-                            coverageUnits.set(CoverageUnit.LINE)
-                            format.set("<value>% total line coverage")
+                    reportsConfig.total { total ->
+                        total.log { logTaskConfig ->
+                            logTaskConfig.onCheck.set(true)
+                            logTaskConfig.header.set("Total Test Line Coverage")
+                            logTaskConfig.groupBy.set(GroupingEntityType.APPLICATION)
+                            logTaskConfig.aggregationForGroup.set(AggregationType.COVERED_PERCENTAGE)
+                            logTaskConfig.coverageUnits.set(CoverageUnit.LINE)
+                            logTaskConfig.format.set("<value>% total line coverage")
                         }
                     }
                 }

@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.signing)
     alias(libs.plugins.maven.publish)
+    id("ktlint")
 }
 
 val group: String = project.findProperty("group") as String
