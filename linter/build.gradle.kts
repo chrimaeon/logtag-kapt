@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import kotlinx.kover.gradle.plugin.dsl.AggregationType
-import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     id("com.android.lint")
     id("ktlint")
     alias(libs.plugins.dokka)
-    alias(libs.plugins.kover)
+    id("com.cmgapps.kover")
     alias(libs.plugins.buildconfig)
 }
 
@@ -50,21 +47,6 @@ buildConfig {
 
     buildConfigField(String::class.java, "ISSUES_TRACKER_URL", providers.gradleProperty("issuesTrackerUrl"))
     buildConfigField(String::class.java, "PROJECT_ARTIFACT", "log-tag")
-}
-
-kover {
-    useJacoco()
-    reports {
-        verify {
-            rule("Minimal line coverage") {
-                bound {
-                    minValue = 80
-                    coverageUnits = CoverageUnit.LINE
-                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
-                }
-            }
-        }
-    }
 }
 
 java {

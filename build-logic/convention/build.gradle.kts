@@ -16,10 +16,24 @@
 
 plugins {
     `kotlin-dsl`
+    `java-gradle-plugin`
 }
 
 group = "com.cmgapps.gradle.buildlogic.convention"
 
 kotlin {
     jvmToolchain(17)
+}
+
+gradlePlugin {
+    plugins {
+        register("kover") {
+            id = "com.cmgapps.kover"
+            implementationClass = "com.cmgapps.gradle.Kover"
+        }
+    }
+}
+
+dependencies {
+    implementation(libs.kover)
 }

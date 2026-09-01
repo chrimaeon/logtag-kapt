@@ -26,7 +26,7 @@ plugins {
     alias(libs.plugins.gradle.idea)
     id("ktlint")
     alias(libs.plugins.node.gradle)
-    alias(libs.plugins.kover)
+    id("com.cmgapps.kover")
 }
 
 project.plugins.apply(D8Plugin::class.java)
@@ -183,34 +183,10 @@ tasks.test {
 }
 
 kover {
-    useJacoco()
 
     currentProject {
         sources {
             excludedSourceSets.addAll("testFixtures")
-        }
-    }
-
-    reports {
-        verify {
-            rule("Minimal line coverage") {
-                bound {
-                    minValue = 80
-                    coverageUnits = CoverageUnit.LINE
-                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
-                }
-            }
-        }
-
-        total {
-            log {
-                onCheck = true
-                header = "Total Test Line Coverage"
-                groupBy = GroupingEntityType.APPLICATION
-                aggregationForGroup = AggregationType.COVERED_PERCENTAGE
-                coverageUnits = CoverageUnit.LINE
-                format = "<value>% total line coverage"
-            }
         }
     }
 }

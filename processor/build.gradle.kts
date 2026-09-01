@@ -16,7 +16,7 @@ plugins {
     id("com.cmgapps.publish")
     id("ktlint")
     alias(libs.plugins.dokka)
-    alias(libs.plugins.kover)
+    id("com.cmgapps.kover")
 }
 
 testing {
@@ -93,21 +93,6 @@ tasks {
                 "Built-JDK" to System.getProperty("java.version"),
                 "Built-Gradle" to gradle.gradleVersion,
             )
-        }
-    }
-}
-
-kover {
-    useJacoco()
-    reports {
-        verify {
-            rule("Minimal line coverage") {
-                bound {
-                    minValue = 80
-                    coverageUnits = CoverageUnit.LINE
-                    aggregationForGroup = AggregationType.COVERED_PERCENTAGE
-                }
-            }
         }
     }
 }

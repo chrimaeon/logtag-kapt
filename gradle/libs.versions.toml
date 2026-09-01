@@ -7,7 +7,6 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 gradle-java-test-fixtures = { id = "java-test-fixtures" }
 gradle-idea = { id = "idea" }
 gradle-plugin = { id = "java-gradle-plugin" }
-kover = "org.jetbrains.kotlinx.kover:0.9.9"
 android-library = "com.android.library:9.3.2"
 dokka = "org.jetbrains.dokka:2.2.0"
 buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.0.10" }
@@ -26,6 +25,8 @@ ksp = "2.3.11"
 androidLint = "32.3.2"
 mockito = "5.23.0"
 junit = "4.13.2"
+
+kover = "0.9.9"
 
 [libraries]
 
@@ -66,3 +67,5 @@ kotlin-gradle-plugin-api = { group = "org.jetbrains.kotlin", name = "kotlin-grad
 junit = { module = "junit:junit", version.ref = "junit" }
 
 ktlint-cli = "com.pinterest.ktlint:ktlint-cli:1.8.0"
+
+kover = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin", version.ref = "kover" }
