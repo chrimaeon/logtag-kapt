@@ -1,6 +1,20 @@
 # Changelog
 
-## Unreleased
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.0.0-alpha.1]
 
 ### Added
 
@@ -14,8 +28,5 @@
 
 - LogTag's KAPT will be removed in the next major release; change to the KSP version
 
-### Removed
-
-### Fixed
-
-### Security
+[Unreleased]: https://github.com/chrimaeon/logtag-kapt/compare/v2.0.0-alpha.1...HEAD
+[2.0.0-alpha.1]: https://github.com/chrimaeon/logtag-kapt/commits/v2.0.0-alpha.1

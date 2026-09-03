@@ -35,8 +35,9 @@ tasks {
         register("updateReadme") {
             description = "Update the Readme with the current version"
             val readmeFile = rootDir.resolve("README.md")
+            val projectVersion = project.version
 
-            inputs.property("libVersion", version)
+            inputs.property("libVersion", projectVersion)
             outputs.file(readmeFile)
 
             doLast {
@@ -46,9 +47,7 @@ tasks {
                         it.groupValues[1]
                     } ?: error("Cannot find oldVersion")
 
-                logger.info("Updating README.md version $oldVersion to $version")
-
-                val newContent = content.replace(oldVersion, version as String)
+                val newContent = content.replace(oldVersion, projectVersion as String)
                 readmeFile.writeText(newContent)
             }
         }
