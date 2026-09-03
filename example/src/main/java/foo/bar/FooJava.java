@@ -20,6 +20,6 @@ package foo.bar;
 public class FooJava implements LogProvider {
     @Override
     public String logging() {
-        return FooJavaLogTag.LOG_TAG;
+        return "LOG_TAG";
     }
 }

@@ -1,0 +1,4 @@
+public abstract interface annotation class com/cmgapps/LogTag : java/lang/annotation/Annotation {
+	public abstract fun value ()Ljava/lang/String;
+}
+

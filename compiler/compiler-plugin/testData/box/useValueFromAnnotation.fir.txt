@@ -1,0 +1,35 @@
+FILE: useValueFromAnnotation.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|(value = String(ShortTag) [evaluated = String(ShortTag)]) public final class ThisIsAClassWithACustomLogTag : R|kotlin/Any| {
+        public constructor(): R|foo/bar/ThisIsAClassWithACustomLogTag| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun log(message: R|kotlin/String|): R|kotlin/String| {
+            ^log this@R|foo/bar/ThisIsAClassWithACustomLogTag.Companion|.R|foo/bar/ThisIsAClassWithACustomLogTag.Companion.LOG_TAG|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/ThisIsAClassWithACustomLogTag.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/ThisIsAClassWithACustomLogTag.ThisIsAClassWithACustomLogTag|().R|foo/bar/ThisIsAClassWithACustomLogTag.log|(String(Hello World))
+        ^box when () {
+            ==(R|<local>/result|, String(ShortTag)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
+    }

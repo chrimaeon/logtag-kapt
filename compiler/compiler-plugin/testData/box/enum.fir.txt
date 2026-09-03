@@ -1,0 +1,53 @@
+FILE: enum.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() public final enum class MyEnum : R|kotlin/Enum<foo/bar/MyEnum>| {
+        private constructor(): R|foo/bar/MyEnum| {
+            super<R|kotlin/Enum<foo/bar/MyEnum>|>()
+        }
+
+        public final static enum entry VALUE1: R|foo/bar/MyEnum|
+        public final static enum entry VALUE2: R|foo/bar/MyEnum|
+        public final fun log(): R|kotlin/String| {
+            ^log <strcat>(this@R|foo/bar/MyEnum.Companion|.R|foo/bar/MyEnum.Companion.LOG_TAG|, String( ), this@R|foo/bar/MyEnum|.R|SubstitutionOverride<foo/bar/MyEnum.name: R|kotlin/String|>|)
+        }
+
+        public final static fun values(): R|kotlin/Array<foo/bar/MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|foo/bar/MyEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<foo/bar/MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<foo/bar/MyEnum>|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/MyEnum.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval results: R|kotlin/collections/List<kotlin/Boolean>| = Q|foo/bar/MyEnum|.R|foo/bar/MyEnum.entries*s|.R|kotlin/collections/map|<R|foo/bar/MyEnum|, R|kotlin/Boolean|>(<L> = map@fun <anonymous>(it: R|foo/bar/MyEnum|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            lval result: R|kotlin/String| = R|<local>/it|.R|foo/bar/MyEnum.log|()
+            ^ ==(R|<local>/result|, <strcat>(String(MyEnum ), R|<local>/it|.R|SubstitutionOverride<foo/bar/MyEnum.name: R|kotlin/String|>|))
+        }
+        )
+        ^box when () {
+            R|<local>/results|.R|kotlin/collections/any|<R|kotlin/Boolean|>(<L> = any@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+                ^ R|<local>/it|.R|kotlin/Boolean.not|()
+            }
+            ) ->  {
+                <strcat>(String(Fail: ), R|<local>/results|)
+            }
+            else ->  {
+                String(OK)
+            }
+        }
+
+    }

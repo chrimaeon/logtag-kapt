@@ -9,6 +9,18 @@ trim_trailing_whitespace=true
 
 [*.{kt,kts}]
 ij_kotlin_imports_layout=*,java.**,javax.**,kotlin.**,^
+ktlint_function_naming_ignore_when_annotated_with=Composable
 
 [*.{json,yml}]
 indent_size=2
+
+[**/META-INF/{services,gradle}/**]
+insert_final_newline=false
+
+[compiler/compiler-plugin/testData/**/*.kt]
+ktlint_standard_filename=disabled
+
+[compiler/compiler-plugin/testData/diagnostics/*.kt]
+ktlint_standard=disabled
+
+

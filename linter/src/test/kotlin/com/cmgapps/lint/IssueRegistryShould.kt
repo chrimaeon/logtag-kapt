@@ -27,10 +27,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class IssueRegistryShould {
-
     private lateinit var registry: IssueRegistry
 
-    @Suppress("UnstableApiUsage")
     @BeforeEach
     fun setUp() {
         LintClient.clientName = LintClient.CLIENT_UNIT_TESTS
@@ -55,8 +53,8 @@ internal class IssueRegistryShould {
                 hasProperty("vendorName", `is`("CMG Mobile Apps")),
                 hasProperty("identifier", `is`("log-tag")),
                 hasProperty("feedbackUrl", `is`("https://github.com/chrimaeon/logtag-kapt/issues")),
-                hasProperty("contact", `is`("https://github.com/chrimaeon/logtag-kapt/issues"))
-            )
+                hasProperty("contact", `is`("https://github.com/chrimaeon/logtag-kapt/issues")),
+            ),
         )
     }
 }

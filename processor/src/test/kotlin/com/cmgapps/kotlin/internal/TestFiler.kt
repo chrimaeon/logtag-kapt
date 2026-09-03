@@ -34,81 +34,72 @@ import javax.tools.JavaFileObject
 internal class TestFiler : Filer {
     private var fileObject: FileObject? = null
 
-    override fun createSourceFile(name: CharSequence?, vararg originatingElements: Element?): JavaFileObject {
-        return TestFileObject(name.toString()).also {
+    override fun createSourceFile(
+        name: CharSequence?,
+        vararg originatingElements: Element?,
+    ): JavaFileObject =
+        TestFileObject(name.toString()).also {
             fileObject = it
         }
-    }
 
-    override fun createClassFile(name: CharSequence?, vararg originatingElements: Element?): JavaFileObject {
-        throw UnsupportedOperationException()
-    }
+    override fun createClassFile(
+        name: CharSequence?,
+        vararg originatingElements: Element?,
+    ): JavaFileObject = throw UnsupportedOperationException()
 
     override fun createResource(
         location: JavaFileManager.Location?,
         pkg: CharSequence?,
         relativeName: CharSequence?,
-        vararg originatingElements: Element?
-    ): FileObject = TestFileObject("$pkg.$relativeName").also {
-        fileObject = it
-    }
+        vararg originatingElements: Element?,
+    ): FileObject =
+        TestFileObject("$pkg.$relativeName").also {
+            fileObject = it
+        }
 
     override fun getResource(
         location: JavaFileManager.Location?,
         pkg: CharSequence?,
-        relativeName: CharSequence?
-    ): FileObject {
-        throw UnsupportedOperationException()
-    }
+        relativeName: CharSequence?,
+    ): FileObject = throw UnsupportedOperationException()
 
     fun getFileObject(): FileObject? = fileObject
 }
 
-internal class TestFileObject(private val _name: String) : JavaFileObject {
-
+internal class TestFileObject(
+    private val _name: String,
+) : JavaFileObject {
     private var bos: ByteArrayOutputStream? = null
 
-    override fun toUri(): URI {
-        throw UnsupportedOperationException()
-    }
+    override fun toUri(): URI = throw UnsupportedOperationException()
 
     override fun getName() = _name
 
-    override fun openInputStream(): InputStream {
-        throw UnsupportedOperationException()
-    }
+    override fun openInputStream(): InputStream = throw UnsupportedOperationException()
 
-    override fun openOutputStream(): OutputStream = ByteArrayOutputStream().also {
-        bos = it
-    }
+    override fun openOutputStream(): OutputStream =
+        ByteArrayOutputStream().also {
+            bos = it
+        }
 
-    override fun openReader(ignoreEncodingErrors: Boolean): Reader {
-        throw UnsupportedOperationException()
-    }
+    override fun openReader(ignoreEncodingErrors: Boolean): Reader = throw UnsupportedOperationException()
 
-    override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence? {
-        return bos?.toString(Charsets.UTF_8.name())
-    }
+    override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence? = bos?.toString(Charsets.UTF_8.name())
 
     override fun openWriter(): Writer = OutputStreamWriter(openOutputStream())
 
-    override fun getLastModified(): Long {
-        throw UnsupportedOperationException()
-    }
+    override fun getLastModified(): Long = throw UnsupportedOperationException()
 
     override fun delete(): Boolean = true
 
     override fun getKind(): JavaFileObject.Kind = JavaFileObject.Kind.CLASS
 
-    override fun isNameCompatible(simpleName: String?, kind: JavaFileObject.Kind?): Boolean {
-        throw UnsupportedOperationException()
-    }
+    override fun isNameCompatible(
+        simpleName: String?,
+        kind: JavaFileObject.Kind?,
+    ): Boolean = throw UnsupportedOperationException()
 
-    override fun getNestingKind(): NestingKind {
-        throw UnsupportedOperationException()
-    }
+    override fun getNestingKind(): NestingKind = throw UnsupportedOperationException()
 
-    override fun getAccessLevel(): Modifier {
-        throw UnsupportedOperationException()
-    }
+    override fun getAccessLevel(): Modifier = throw UnsupportedOperationException()
 }

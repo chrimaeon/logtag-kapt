@@ -1,13 +1,51 @@
-# Log TAG Annotation Processor [![Build & Test](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/chrimaeon/logtag-kapt/branch/main/graph/badge.svg?token=QH5OYAQUX3)](https://codecov.io/gh/chrimaeon/logtag-kapt)
+# Log TAG Generator [![Build & Test](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/chrimaeon/logtag-kapt/branch/main/graph/badge.svg?token=QH5OYAQUX3)](https://codecov.io/gh/chrimaeon/logtag-kapt)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
 [![MavenCentral](https://img.shields.io/maven-central/v/com.cmgapps.logtag/log-tag?style=for-the-badge)](https://repo1.maven.org/maven2/com/cmgapps/logtag/)
 
 This is an annotation processor that will generate an appropriate log tag for Android Log messages
 
-## Usage
+You can use the library with either the [Kotlin Compiler Plugin](#Using-Kotlin-Compiler-Plugin) or
+an [Annotation Processor](#Using-Annotation-Processors)
 
-### Setup
+## Using Kotlin Compiler Plugin
+
+> [!NOTE]
+> Currently, this feature is experimental.
+>
+> The K2 Kotlin IntelliJ plugin supports running third party FIR plugins in the IDE, but this feature is hidden behind a flag.
+>
+> To enable it, do the following:
+>
+> 1. Enable K2 Mode for the Kotlin IntelliJ plugin.
+> 2. Open the Registry
+> 3. Set the kotlin.k2.only.bundled.compiler.plugins.enabled entry to false.
+>
+> That support is unstable and subject to change.
+
+Apply the compiler plugin with Gradle
+
+```kotlin
+plugins {
+    id("com.cmgapps.logtag") version "2.0.0-alpha.1"
+}
+```
+
+Now you can use the `@LogTag` annotation in your source files
+
+```kotlin
+@com.cmgapps.LogTag
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(LOG_TAG, "onCreate")
+    }
+}
+```
+
+The compiler will generate a private property `LOG_TAG` with the class' name that you can use as the tag for your
+log messages.
+
+## Using Annotation Processors
 
 <details open>
 
@@ -19,8 +57,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:1.1.0")
-    ksp("com.cmgapps:log-tag-processor:1.1.0")
+    implementation("com.cmgapps.logtag:log-tag:2.0.0-alpha.1")
+    ksp("com.cmgapps.logtag:processor:2.0.0-alpha.1")
 }
 ```
 
@@ -28,7 +66,7 @@ also get sure to apply the KSP Gradle Plugin
 
 ```kotlin
 plugins {
-    id("com.google.devtools.ksp") version "1.1.0"
+    id("com.google.devtools.ksp") version "<ksp-version>"
 }
 ```
 
@@ -42,8 +80,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps:log-tag:1.1.0")
-    kapt("com.cmgapps:log-tag-processor:1.1.0")
+    implementation("com.cmgapps.logtag:log-tag:2.0.0-alpha.1")
+    kapt("com.cmgapps.logtag:processor:2.0.0-alpha.1")
 }
 ```
 
@@ -79,19 +117,9 @@ class SuperImportantClass
 ## License
 
 ```text
-Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
+Copyright (c) 2021-2026. Christian Grach <christian.grach@cmgapps.com>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+SPDX-License-Identifier: Apache-2.0
 ```
 
 [Kotlin Symbol Processing API]: https://github.com/google/ksp

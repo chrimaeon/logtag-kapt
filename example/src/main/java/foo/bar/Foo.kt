@@ -21,36 +21,26 @@ interface LogProvider {
 
 @com.cmgapps.LogTag
 class Public : LogProvider {
-    override fun logging(): String {
-        return LOG_TAG
-    }
+    override fun logging(): String = LOG_TAG
 }
 
 @com.cmgapps.LogTag
 internal class Internal : LogProvider {
-    override fun logging(): String {
-        return LOG_TAG
-    }
+    override fun logging(): String = LOG_TAG
 }
 
 @com.cmgapps.LogTag
 class ThisIsAClassThatWillBeTruncated : LogProvider {
-    override fun logging(): String {
-        return LOG_TAG
-    }
+    override fun logging(): String = LOG_TAG
 }
 
 @com.cmgapps.LogTag("ShortTag")
 class ThisIsAClassWithACustomLogTag : LogProvider {
-    override fun logging(): String {
-        return LOG_TAG
-    }
+    override fun logging(): String = LOG_TAG
 }
 
 // @com.cmgapps.LogTag
-fun tagging(): String {
-    return ""
-}
+fun tagging(): String = ""
 
 // @com.cmgapps.LogTag("ShortTag")
 // private class Private {
@@ -62,7 +52,7 @@ fun tagging(): String {
 @com.cmgapps.LogTag
 enum class Works {
     VALUE1,
-    VALUE2;
+    VALUE2,
 }
 
 @androidx.compose.runtime.Composable
@@ -70,7 +60,7 @@ enum class Works {
 fun Test() {}
 
 @com.cmgapps.LogTag
-fun WontWorkTest() {}
+fun wontWorkTest() {}
 
 fun main() {
     listOf<LogProvider>(
@@ -79,7 +69,7 @@ fun main() {
         ThisIsAClassThatWillBeTruncated(),
         ThisIsAClassWithACustomLogTag(),
         FooJava(),
-        PackageJava()
+        PackageJava(),
     ).forEach {
         println("${it::class.java.simpleName} -> ${it.logging()}")
     }

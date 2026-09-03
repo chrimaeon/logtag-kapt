@@ -1,0 +1,35 @@
+FILE: privateClass.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() private final class Private : R|kotlin/Any| {
+        public constructor(): R|foo/bar/Private| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun log(message: R|kotlin/String|): R|kotlin/String| {
+            ^log this@R|foo/bar/Private.Companion|.R|foo/bar/Private.Companion.LOG_TAG|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/Private.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/Private.Private|().R|foo/bar/Private.log|(String(Hello World))
+        ^box when () {
+            ==(R|<local>/result|, String(Private)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
+    }

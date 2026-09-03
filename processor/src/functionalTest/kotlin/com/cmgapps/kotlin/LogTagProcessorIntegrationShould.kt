@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalCompilerApi::class)
+
 package com.cmgapps.kotlin
 
 import com.tschuchort.compiletesting.KotlinCompilation
@@ -21,110 +23,121 @@ import com.tschuchort.compiletesting.SourceFile
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.Test
 
 class LogTagProcessorIntegrationShould {
-
     @Test
     fun `generate extension for kotlin class`() {
-        val result = SourceFile.kotlin(
-            "class.kt",
-            """
+        val result =
+            SourceFile
+                .kotlin(
+                    "class.kt",
+                    """
               package cmgapps.test
 
               @com.cmgapps.LogTag
               class TestClass
-            """
-        ).compile()
+            """,
+                ).compile()
 
         @Language("kotlin")
-        val expected = """
-          @file:Suppress(
-            "SpellCheckingInspection",
-            "RedundantVisibilityModifier",
-            "unused"
-          )
+        val expected =
+            """
+            @file:Suppress(
+              "SpellCheckingInspection",
+              "RedundantVisibilityModifier",
+              "unused",
+            )
 
-          package cmgapps.test
+            package cmgapps.test
 
-          import kotlin.String
-          import kotlin.Suppress
+            import kotlin.String
+            import kotlin.Suppress
 
-          public val TestClass.LOG_TAG: String
-            inline get() = "TestClass"
+            public inline val TestClass.LOG_TAG: String
+              get() = "TestClass"
 
-        """.trimIndent()
+            """.trimIndent()
         assertThat(
             result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestClassLogTag.kt" }?.readText(),
-            `is`(expected)
+            `is`(expected),
         )
     }
 
     @Test
     fun `not generate for private class`() {
-        val result = SourceFile.kotlin(
-            "object.kt",
-            """
+        val result =
+            SourceFile
+                .kotlin(
+                    "object.kt",
+                    """
               package cmgapps.test
 
               @com.cmgapps.LogTag
               private class TestClass
-            """
-        ).compile()
+            """,
+                ).compile()
 
         assertThat(result.exitCode, `is`(KotlinCompilation.ExitCode.COMPILATION_ERROR))
     }
 
     @Test
     fun `generate extension for object`() {
-        val result = SourceFile.kotlin(
-            "file1.kt",
-            """
+        val result =
+            SourceFile
+                .kotlin(
+                    "file1.kt",
+                    """
               package cmgapps.test
 
               @com.cmgapps.LogTag
               object TestObject
-            """
-        ).compile()
+            """,
+                ).compile()
 
         @Language("kotlin")
-        val expected = """
-          @file:Suppress(
-            "SpellCheckingInspection",
-            "RedundantVisibilityModifier",
-            "unused"
-          )
+        val expected =
+            """
+            @file:Suppress(
+              "SpellCheckingInspection",
+              "RedundantVisibilityModifier",
+              "unused",
+            )
 
-          package cmgapps.test
+            package cmgapps.test
 
-          import kotlin.String
-          import kotlin.Suppress
+            import kotlin.String
+            import kotlin.Suppress
 
-          public val TestObject.LOG_TAG: String
-            inline get() = "TestObject"
+            public inline val TestObject.LOG_TAG: String
+              get() = "TestObject"
 
-        """.trimIndent()
+            """.trimIndent()
         assertThat(
             result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestObjectLogTag.kt" }?.readText(),
-            `is`(expected)
+            `is`(expected),
         )
     }
 
     @Test
     fun `generate class for java class`() {
         val className = "TestJava"
-        val result = SourceFile.java(
-            "$className.java",
-            """
+        val result =
+            SourceFile
+                .java(
+                    "$className.java",
+                    """
               package cmgapps.test;
 
               @com.cmgapps.LogTag
               public class $className{}
-            """
-        ).compile()
+            """,
+                ).compile()
 
         @Language("Java")
-        val expected = """
+        val expected =
+            """
             package cmgapps.test;
 
             import java.lang.String;
@@ -133,64 +146,70 @@ class LogTagProcessorIntegrationShould {
               static final String LOG_TAG = "TestJava";
             }
 
-        """.trimIndent()
+            """.trimIndent()
 
         assertThat(
             result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestJavaLogTag.java" }?.readText(),
-            `is`(expected)
+            `is`(expected),
         )
     }
 
     @Test
     fun `use custom logtag for kotlin class`() {
-        val result = SourceFile.kotlin(
-            "class.kt",
-            """
+        val result =
+            SourceFile
+                .kotlin(
+                    "class.kt",
+                    """
               package cmgapps.test
 
               @com.cmgapps.LogTag("MyCustomTag")
               class TestClass
-            """
-        ).compile()
+            """,
+                ).compile()
 
         @Language("kotlin")
-        val expected = """
-          @file:Suppress(
-            "SpellCheckingInspection",
-            "RedundantVisibilityModifier",
-            "unused"
-          )
+        val expected =
+            """
+            @file:Suppress(
+              "SpellCheckingInspection",
+              "RedundantVisibilityModifier",
+              "unused",
+            )
 
-          package cmgapps.test
+            package cmgapps.test
 
-          import kotlin.String
-          import kotlin.Suppress
+            import kotlin.String
+            import kotlin.Suppress
 
-          public val TestClass.LOG_TAG: String
-            inline get() = "MyCustomTag"
+            public inline val TestClass.LOG_TAG: String
+              get() = "MyCustomTag"
 
-        """.trimIndent()
+            """.trimIndent()
         assertThat(
             result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestClassLogTag.kt" }?.readText(),
-            `is`(expected)
+            `is`(expected),
         )
     }
 
     @Test
     fun `use custom tag for java class`() {
         val className = "TestJava"
-        val result = SourceFile.java(
-            "$className.java",
-            """
+        val result =
+            SourceFile
+                .java(
+                    "$className.java",
+                    """
               package cmgapps.test;
 
               @com.cmgapps.LogTag("MyCustomTag")
               public class $className{}
-            """
-        ).compile()
+            """,
+                ).compile()
 
         @Language("Java")
-        val expected = """
+        val expected =
+            """
             package cmgapps.test;
 
             import java.lang.String;
@@ -199,17 +218,19 @@ class LogTagProcessorIntegrationShould {
               static final String LOG_TAG = "MyCustomTag";
             }
 
-        """.trimIndent()
+            """.trimIndent()
 
         assertThat(
             result.sourcesGeneratedByAnnotationProcessor.find { it.name == "TestJavaLogTag.java" }?.readText(),
-            `is`(expected)
+            `is`(expected),
         )
     }
 
-    private fun SourceFile.compile() = KotlinCompilation().apply {
-        sources = listOf(this@compile)
-        annotationProcessors = listOf(LogTagProcessor())
-        inheritClassPath = true
-    }.compile()
+    private fun SourceFile.compile() =
+        KotlinCompilation()
+            .apply {
+                sources = listOf(this@compile)
+                annotationProcessors = listOf(LogTagProcessor())
+                inheritClassPath = true
+            }.compile()
 }

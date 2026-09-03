@@ -1,96 +1,79 @@
 /*
  * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
-import kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.Date
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import java.time.Instant
 
 plugins {
-    idea
+    alias(libs.plugins.gradle.idea)
     `java-library`
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
     kotlin("kapt")
-    `maven-publish`
-    signing
-    ktlint
-    id("org.jetbrains.dokka") version "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin".version()
+    id("com.cmgapps.publish")
+    id("ktlint")
+    alias(libs.plugins.dokka)
+    id("com.cmgapps.kover")
 }
 
-val functionalTestName = "functionalTest"
+testing {
+    @Suppress("UnstableApiUsage")
+    suites {
+        val test =
+            named("test", JvmTestSuite::class) {
+                useJUnitJupiter()
+                dependencies {
+                    implementation(platform(libs.junit.bom))
+                    implementation(libs.junit.jupiter)
+                    implementation(libs.mockito.junit)
+                    implementation(libs.mockito.kotlin)
+                    implementation(libs.hamcrest)
+                    runtimeOnly(libs.junit.platform)
+                }
 
-configurations {
-    create("${functionalTestName}Implementation") {
-        extendsFrom(testImplementation.get())
-    }
-}
+                targets.all {
+                    testTask.configure {
+                        testLogging {
+                            events("PASSED", "SKIPPED", "FAILED")
+                        }
+                    }
+                }
+            }
 
-sourceSets {
-    create(functionalTestName) {
-        java {
-            srcDir("src/$functionalTestName/kotlin")
+        register<JvmTestSuite>("functionalTest") {
+            useJUnitJupiter()
+            dependencies {
+                implementation(platform(libs.junit.bom))
+                implementation(libs.junit.jupiter)
+                implementation(project())
+                implementation(libs.hamcrest)
+                implementation(libs.tschuchortdev.compile.testing.ksp)
+            }
+            targets.all {
+                testTask.configure {
+                    testLogging {
+                        events("PASSED", "SKIPPED", "FAILED")
+                    }
+                    shouldRunAfter(test)
+                }
+            }
         }
-
-        resources {
-            srcDir("src/$functionalTestName/resources")
-            destinationDirectory.set(file("$buildDir/resources/$functionalTestName"))
-        }
-
-        compileClasspath += sourceSets.main.get().output + configurations.testRuntimeClasspath.get()
-        runtimeClasspath += output + compileClasspath
     }
-}
-
-idea {
-    module {
-        testSourceDirs = testSourceDirs + sourceSets[functionalTestName].allJava.srcDirs
-        testResourceDirs = testResourceDirs + sourceSets[functionalTestName].resources.srcDirs
-    }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 kotlin {
     explicitApi()
+    jvmToolchain(17)
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation()
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-    }
-
-    test {
-        useJUnitPlatform()
-        logEvents()
-    }
-
-    val functionalTest by registering(Test::class) {
-        group = "verification"
-        testClassesDirs = sourceSets[functionalTestName].output.classesDirs
-        classpath = sourceSets[functionalTestName].runtimeClasspath
-        logEvents()
-        useJUnitPlatform()
-    }
-
     check {
-        dependsOn(functionalTest)
+        dependsOn(named("functionalTest"))
     }
 
     jar {
@@ -99,66 +82,18 @@ tasks {
                 "Implementation-Title" to project.name,
                 "Implementation-Version" to project.version.toString(),
                 "Built-By" to System.getProperty("user.name"),
-                "Built-Date" to Date(),
+                "Built-Date" to Instant.now().toString(),
                 "Built-JDK" to System.getProperty("java.version"),
-                "Built-Gradle" to gradle.gradleVersion
+                "Built-Gradle" to gradle.gradleVersion,
             )
         }
     }
-
-    koverVerify {
-        rule {
-            name = "Minimal line coverage"
-            bound {
-                minValue = 80
-                valueType = COVERED_LINES_PERCENTAGE
-            }
-        }
-    }
-}
-
-fun Test.logEvents() = testLogging {
-    events("PASSED", "SKIPPED", "FAILED")
-}
-
-val group: String by project
-val versionName: String by project
-val artifactId: String by project
-
-project.group = group
-project.version = versionName
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks.dokkaJavadoc)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("processor") {
-
-            from(components["java"])
-            artifact(sourcesJar)
-            artifact(javadocJar)
-
-            logtagPom(project)
-        }
-    }
-
-    repositories {
-        sonatype(project)
-    }
-}
-
-signing {
-    sign(publishing.publications["processor"])
 }
 
 dependencies {
-    addProcessorDependencies()
+    implementation(projects.annotation)
+    implementation(libs.squareup.kotlinpoet)
+    implementation(libs.squareup.javapoet)
+
+    compileOnly(libs.google.ksp.api)
 }

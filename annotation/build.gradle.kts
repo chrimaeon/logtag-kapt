@@ -1,82 +1,69 @@
 /*
  * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.Date
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
-    `java-library`
-    `maven-publish`
-    signing
+    alias(libs.plugins.kotlin.multiplatform)
+    id("ktlint")
+    id("com.cmgapps.publish")
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
+kotlin {
+    jvmToolchain(8)
 
-tasks {
-    jar {
-        manifest {
-            attributes(
-                "Implementation-Title" to project.name,
-                "Implementation-Version" to project.version.toString(),
-                "Built-By" to System.getProperty("user.name"),
-                "Built-Date" to Date(),
-                "Built-JDK" to System.getProperty("java.version"),
-                "Built-Gradle" to gradle.gradleVersion
-            )
+    explicitApi()
+    applyDefaultHierarchyTemplate()
+
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation()
+
+    js().nodejs()
+
+    jvm()
+
+    wasmJs().nodejs()
+    wasmWasi().nodejs()
+
+    nativePlatforms()
+
+    sourceSets {
+        named("commonMain") {
+            dependencies {
+                implementation(libs.kotlin.stdlib)
+            }
         }
     }
 }
 
-val group: String by project
-val versionName: String by project
-val artifactId: String by project
+private fun KotlinMultiplatformExtension.nativePlatforms() {
+    // According to https://kotlinlang.org/docs/native-target-support.html
+    // Tier 1
+    macosArm64()
+    iosSimulatorArm64()
+    iosArm64()
 
-project.group = group
-project.version = versionName
+    // Tier 2
+    linuxX64()
+    linuxArm64()
+    watchosSimulatorArm64()
+    watchosArm32()
+    watchosArm64()
+    tvosSimulatorArm64()
+    tvosArm64()
 
-val name: String by project
-val description: String by project
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("annotation") {
-            from(components["java"])
-            artifact(sourcesJar)
-            artifact(javadocJar)
-
-            logtagPom(project)
-        }
-    }
-    repositories {
-        sonatype(project)
-    }
-}
-
-signing {
-    sign(publishing.publications["annotation"])
+    // Tier 3
+    androidNativeArm32()
+    androidNativeArm64()
+    androidNativeX86()
+    androidNativeX64()
+    mingwX64()
+    watchosDeviceArm64()
+    iosX64()
 }

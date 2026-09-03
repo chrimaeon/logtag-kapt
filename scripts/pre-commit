@@ -6,7 +6,8 @@ set -e
 
 command -v ktlint >/dev/null 2>&1 || { echo >&2 "ktlint not found.\nAborting."; exit 2; }
 
-FILES=$(git diff --cached --name-only | grep -i -E "\.kts?" || true)
+# dont ktlint files in the compiler test folder - diagnostics are no real kt files
+FILES=$(git diff --cached --name-only | grep -i -E "\.kts?" | grep -vE "(^|/)compiler/compiler-plugin/testData/" || true)
 
 if [ -n "$FILES" ]
 then
