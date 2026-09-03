@@ -9,11 +9,15 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.jetbrains.changelog)
+    id("com.cmgapps.publish") apply false
 }
 
 allprojects {
-    val versionName: String = project.findProperty("versionName") as String
-    version = versionName
+    val group = providers.gradleProperty("group")
+    val versionName = providers.gradleProperty("versionName")
+
+    this.group = group.get()
+    this.version = versionName.get()
 }
 
 changelog {

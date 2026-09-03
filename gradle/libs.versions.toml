@@ -7,14 +7,12 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 gradle-java-test-fixtures = { id = "java-test-fixtures" }
 gradle-idea = { id = "idea" }
 gradle-plugin = { id = "java-gradle-plugin" }
-android-library = "com.android.library:9.3.2"
+android-library = "com.android.library:9.4.0"
 dokka = "org.jetbrains.dokka:2.2.0"
 buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.0.10" }
 gradle-pluginPublish = "com.gradle.plugin-publish:2.1.1"
 jetbrains-changelog = "org.jetbrains.changelog:2.5.0"
 node-gradle = { id = "com.github.node-gradle.node", version = "7.1.0" }
-signing = { id = "signing" }
-maven-publish = { id = "maven-publish" }
 
 [versions]
 
@@ -22,11 +20,9 @@ gradle = "9.7.1"
 
 kotlin = "2.4.10"
 ksp = "2.3.11"
-androidLint = "32.3.2"
+androidLint = "32.4.0"
 mockito = "5.23.0"
 junit = "4.13.2"
-
-kover = "0.9.9"
 
 [libraries]
 
@@ -68,4 +64,6 @@ junit = { module = "junit:junit", version.ref = "junit" }
 
 ktlint-cli = "com.pinterest.ktlint:ktlint-cli:1.8.0"
 
-kover = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin", version.ref = "kover" }
+kover = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin", version = "0.9.9" }
+
+vanniktech-maven-publish = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version = "0.37.0" }

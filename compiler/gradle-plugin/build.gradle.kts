@@ -10,13 +10,7 @@ plugins {
     alias(libs.plugins.buildconfig)
     alias(libs.plugins.gradle.pluginPublish)
     id("ktlint")
-}
-
-val versionName = project.findProperty("versionName") as String
-project.version = versionName
-
-java {
-    withSourcesJar()
+    id("com.cmgapps.publish")
 }
 
 kotlin {
@@ -53,12 +47,6 @@ gradlePlugin {
                 setOf("Kotlin Compiler Plugin", "compiler", "log-tag", "logging", "tagging")
             implementationClass = "com.cmgapps.gradle.LogTagGradleSupportPlugin"
         }
-    }
-}
-
-publishing {
-    repositories {
-        mavenLocal()
     }
 }
 

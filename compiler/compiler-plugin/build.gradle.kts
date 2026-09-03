@@ -7,9 +7,6 @@
 @file:Suppress("UnstableApiUsage")
 @file:OptIn(ExperimentalWasmDsl::class)
 
-import kotlinx.kover.gradle.plugin.dsl.AggregationType
-import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
-import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -20,19 +17,18 @@ import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.buildconfig)
-    `maven-publish`
-    signing
     alias(libs.plugins.gradle.java.test.fixtures)
     alias(libs.plugins.gradle.idea)
     id("ktlint")
     alias(libs.plugins.node.gradle)
     id("com.cmgapps.kover")
+    id("com.cmgapps.publish")
 }
 
 project.plugins.apply(D8Plugin::class.java)
 
-val versionName: String = project.findProperty("versionName") as String
-project.version = "${getKotlinPluginVersion()}-$versionName"
+val versionName = providers.gradleProperty("versionName")
+project.version = "${getKotlinPluginVersion()}-${versionName.get()}"
 
 val testDataDir = layout.projectDirectory.dir("testData")
 val testGenDirectory = layout.buildDirectory.dir("test-gen")
@@ -69,75 +65,9 @@ val annotationsJsRuntimeClasspath =
         }
     }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
 buildConfig {
     packageName.set("com.cmgapps.logtag")
     buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"${rootProject.group}\"")
-}
-
-publishing {
-    publications {
-        register<MavenPublication>("compiler-plugin") {
-            from(components["java"])
-
-            pom {
-                val artifactId: String = project.name
-                val name: String = project.findProperty("name") as String
-                val description: String = project.findProperty("description") as String
-                val scmUrl: String = project.findProperty("scmUrl") as String
-                val connectionUrl: String = project.findProperty("connectionUrl") as String
-                val developerConnectionUrl: String = project.findProperty("developerConnectionUrl") as String
-                val projectUrl: String = project.findProperty("projectUrl") as String
-
-                groupId = project.group.toString()
-                setArtifactId(artifactId)
-                version = project.version.toString()
-
-                this.name.set(name)
-                this.description.set(description)
-                this.url.set(projectUrl)
-                developers {
-                    developer {
-                        this.id.set("chrimaeon")
-                        this.name.set("Christian Grach")
-                        this.email.set("christian.grach@cmgapps.com")
-                    }
-                }
-
-                scm {
-                    this.url.set(scmUrl)
-                    this.connection.set(connectionUrl)
-                    this.developerConnection.set(developerConnectionUrl)
-                }
-
-                issueManagement {
-                    this.url.set("$projectUrl/issues")
-                    this.system.set("github")
-                }
-
-                licenses {
-                    license {
-                        this.name.set("Apache-2.0")
-                        this.url.set("https://spdx.org/licenses/Apache-2.0.html")
-                    }
-                }
-            }
-        }
-
-        signing {
-            isRequired = !versionName.endsWith("SNAPSHOT")
-            sign(publications)
-        }
-
-        repositories {
-            // TODO setup central sonatype
-            mavenLocal()
-        }
-    }
 }
 
 tasks.test {
@@ -171,8 +101,14 @@ tasks.test {
     setLibraryProperty("org.jetbrains.kotlin.test.kotlin-test-js", "kotlin-test-js")
 
     systemProperty("javascript.engine.path.V8", d8EnvSpec.executable.get())
-    systemProperty("javascript.engine.path.repl", "${layout.projectDirectory.file("repl.js").asFile}")
-    systemProperty("kotlin.js.test.root.out.dir", "${layout.buildDirectory.dir("js-test-output").get().asFile}")
+    systemProperty(
+        "javascript.engine.path.repl",
+        "${layout.projectDirectory.file("repl.js").asFile}",
+    )
+    systemProperty(
+        "kotlin.js.test.root.out.dir",
+        "${layout.buildDirectory.dir("js-test-output").get().asFile}",
+    )
 
     testLogging {
         events("PASSED", "SKIPPED", "FAILED")
@@ -183,12 +119,15 @@ tasks.test {
 }
 
 kover {
-
     currentProject {
         sources {
             excludedSourceSets.addAll("testFixtures")
         }
     }
+}
+
+mavenPublishing {
+    configureBasedOnAppliedPlugins()
 }
 
 val generateTests =

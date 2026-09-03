@@ -4,9 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import kotlinx.kover.gradle.plugin.dsl.AggregationType
-import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
-import java.util.Date
+import java.time.Instant
 
 plugins {
     alias(libs.plugins.gradle.idea)
@@ -33,6 +31,14 @@ testing {
                     implementation(libs.hamcrest)
                     runtimeOnly(libs.junit.platform)
                 }
+
+                targets.all {
+                    testTask.configure {
+                        testLogging {
+                            events("PASSED", "SKIPPED", "FAILED")
+                        }
+                    }
+                }
             }
 
         register<JvmTestSuite>("functionalTest") {
@@ -44,11 +50,12 @@ testing {
                 implementation(libs.hamcrest)
                 implementation(libs.tschuchortdev.compile.testing.ksp)
             }
-            targets {
-                all {
-                    testTask.configure {
-                        shouldRunAfter(test)
+            targets.all {
+                testTask.configure {
+                    testLogging {
+                        events("PASSED", "SKIPPED", "FAILED")
                     }
+                    shouldRunAfter(test)
                 }
             }
         }
@@ -60,27 +67,9 @@ kotlin {
     jvmToolchain(17)
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
 tasks {
-    test {
-        testLogging {
-            events("PASSED", "SKIPPED", "FAILED")
-        }
-    }
-
-    val functionalTest =
-        named("functionalTest", Test::class) {
-            testLogging {
-                events("PASSED", "SKIPPED", "FAILED")
-            }
-        }
-
     check {
-        dependsOn(functionalTest)
+        dependsOn(named("functionalTest"))
     }
 
     jar {
@@ -89,7 +78,7 @@ tasks {
                 "Implementation-Title" to project.name,
                 "Implementation-Version" to project.version.toString(),
                 "Built-By" to System.getProperty("user.name"),
-                "Built-Date" to Date(),
+                "Built-Date" to Instant.now().toString(),
                 "Built-JDK" to System.getProperty("java.version"),
                 "Built-Gradle" to gradle.gradleVersion,
             )
