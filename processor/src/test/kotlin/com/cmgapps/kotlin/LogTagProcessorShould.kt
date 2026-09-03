@@ -453,6 +453,14 @@ class LogTagProcessorShould {
 
         assertThat(filer.getFileObject()?.getCharContent(false), `is`(expected))
     }
+
+    @Test
+    fun `should log warning`() {
+        verify(messagerMock).printMessage(
+            Diagnostic.Kind.MANDATORY_WARNING,
+            "LogTag's KAPT will be removed in the next major release; change to the KSP version",
+        )
+    }
 }
 
 private fun String.asName(): Name =
