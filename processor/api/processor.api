@@ -1,0 +1,12 @@
+public final class com/cmgapps/kotlin/LogTagProcessor : javax/annotation/processing/AbstractProcessor {
+	public fun <init> ()V
+	public fun getSupportedAnnotationTypes ()Ljava/util/Set;
+	public fun init (Ljavax/annotation/processing/ProcessingEnvironment;)V
+	public fun process (Ljava/util/Set;Ljavax/annotation/processing/RoundEnvironment;)Z
+}
+
+public final class com/cmgapps/kotlin/LogTagProcessorProvider : com/google/devtools/ksp/processing/SymbolProcessorProvider {
+	public fun <init> ()V
+	public fun create (Lcom/google/devtools/ksp/processing/SymbolProcessorEnvironment;)Lcom/google/devtools/ksp/processing/SymbolProcessor;
+}
+
