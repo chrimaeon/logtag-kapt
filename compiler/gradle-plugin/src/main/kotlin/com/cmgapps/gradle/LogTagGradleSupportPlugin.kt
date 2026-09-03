@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 @Suppress("kotlin:S6526")
-abstract class LogTagExtension {
-    abstract val enabled: Property<Boolean>
+public abstract class LogTagExtension {
+    public abstract val enabled: Property<Boolean>
 
     init {
         enabled.convention(true)
@@ -28,8 +28,8 @@ abstract class LogTagExtension {
 }
 
 @Suppress("unused")
-class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
-    lateinit var kotlinVersion: Property<String>
+public class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
+    private lateinit var kotlinVersion: Property<String>
 
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     override fun apply(target: Project) {
@@ -41,7 +41,7 @@ class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         }
     }
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>) = true
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         kotlinCompilation.defaultSourceSet.dependencies {
