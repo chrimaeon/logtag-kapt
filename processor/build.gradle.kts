@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import java.time.Instant
 
 plugins {
@@ -65,6 +66,9 @@ testing {
 kotlin {
     explicitApi()
     jvmToolchain(17)
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation()
 }
 
 tasks {

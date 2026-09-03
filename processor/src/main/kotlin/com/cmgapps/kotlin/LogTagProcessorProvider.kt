@@ -18,6 +18,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
@@ -181,30 +182,7 @@ private class LogTagSymbolProcessor(
             .writeTo(codeGenerator, element.containingFile!!)
     }
 
-    private fun Resolver.getTag(element: KSClassDeclaration): String {
-        val logTagType = this.getClassDeclarationByName<LogTag>()!!.asType(emptyList())
-
-        val logTagAnnotation = element.annotations.find { it.annotationType.resolve() == logTagType }
-        val logTag = logTagAnnotation?.arguments?.find { it.name?.asString() == "value" }?.value as? String
-
-        if (!logTag.isNullOrBlank()) {
-            return logTag
-        }
-
-        return element.simpleName.asString().let {
-            if (it.length > 23) {
-                logger.warn(
-                    "Class name \"$it\" is to long for a log tag. Max. length is 23. Class name will be truncated.",
-                    element,
-                )
-                it.substring(0..22)
-            } else {
-                it
-            }
-        }
-    }
-
-    private fun Resolver.getTag(element: KSFunctionDeclaration): String {
+    private fun Resolver.getTag(element: KSDeclaration): String {
         val logTagType = this.getClassDeclarationByName<LogTag>()!!.asType(emptyList())
 
         val logTagAnnotation = element.annotations.find { it.annotationType.resolve() == logTagType }
@@ -259,10 +237,4 @@ private fun JavaFile.writeTo(
     val dependencies = Dependencies(false, originatingFile)
     val file = codeGenerator.createNewFile(dependencies, packageName, typeSpec.name, "java")
     OutputStreamWriter(file, UTF_8).use(::writeTo)
-}
-
-public class ComposableTag {
-    public companion object {
-        public const val TAG: String = "ComposableTag"
-    }
 }

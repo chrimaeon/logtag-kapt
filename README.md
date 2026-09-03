@@ -11,14 +11,23 @@ an [Annotation Processor](#Using-Annotation-Processors)
 ## Using Kotlin Compiler Plugin
 
 > [!NOTE]
-> Currently this feature is experimental.
-> Jetbrains IDEs will not recognize the generated property as a valid property for the class.
+> Currently, this feature is experimental.
+>
+> The K2 Kotlin IntelliJ plugin supports running third party FIR plugins in the IDE, but this feature is hidden behind a flag.
+>
+> To enable it, do the following:
+>
+> 1. Enable K2 Mode for the Kotlin IntelliJ plugin.
+> 2. Open the Registry
+> 3. Set the kotlin.k2.only.bundled.compiler.plugins.enabled entry to false.
+>
+> That support is unstable and subject to change.
 
 Apply the compiler plugin with Gradle
 
 ```kotlin
 plugins {
-    id("com.cmgapps.logtag") version "2.0.0-SNAPSHOT"
+    id("com.cmgapps.logtag") version "2.0.0-alpha.1"
 }
 ```
 
@@ -34,7 +43,7 @@ class MainActivity : ComponentActivity() {
 ```
 
 The compiler will generate a private property `LOG_TAG` with the class' name that you can use as the tag for your
-android log messages.
+log messages.
 
 ## Using Annotation Processors
 
@@ -48,8 +57,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps.logtag:log-tag:2.0.0-SNAPSHOT")
-    ksp("com.cmgapps.logtag:processor:2.0.0-SNAPSHOT")
+    implementation("com.cmgapps.logtag:log-tag:2.0.0-alpha.1")
+    ksp("com.cmgapps.logtag:processor:2.0.0-alpha.1")
 }
 ```
 
@@ -71,8 +80,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps.logtag:log-tag:2.0.0-SNAPSHOT")
-    kapt("com.cmgapps.logtag:processor:2.0.0-SNAPSHOT")
+    implementation("com.cmgapps.logtag:log-tag:2.0.0-alpha.1")
+    kapt("com.cmgapps.logtag:processor:2.0.0-alpha.1")
 }
 ```
 
@@ -108,19 +117,9 @@ class SuperImportantClass
 ## License
 
 ```text
-Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
+Copyright (c) 2021-2026. Christian Grach <christian.grach@cmgapps.com>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+SPDX-License-Identifier: Apache-2.0
 ```
 
 [Kotlin Symbol Processing API]: https://github.com/google/ksp

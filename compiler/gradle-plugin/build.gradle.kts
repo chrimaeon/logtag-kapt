@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+
 /*
  * Copyright (c) 2024. Christian Grach <christian.grach@cmgapps.com>
  *
@@ -15,6 +17,10 @@ plugins {
 
 kotlin {
     jvmToolchain(17)
+    explicitApi()
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation()
 }
 
 buildConfig {

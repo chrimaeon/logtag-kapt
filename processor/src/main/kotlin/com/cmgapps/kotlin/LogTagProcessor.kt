@@ -20,6 +20,7 @@ import javax.annotation.processing.Filer
 import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
+import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
@@ -29,6 +30,7 @@ import com.squareup.javapoet.ClassName as JavaClassName
 import com.squareup.kotlinpoet.ClassName as KotlinClassName
 
 @Deprecated("LogTag's KAPT will be removed in the next major release")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class LogTagProcessor : AbstractProcessor() {
     private lateinit var filer: Filer
     private lateinit var messager: Messager
@@ -40,14 +42,12 @@ public class LogTagProcessor : AbstractProcessor() {
         messager = processingEnv.messager
 
         messager.printMessage(
-            Diagnostic.Kind.WARNING,
+            Diagnostic.Kind.MANDATORY_WARNING,
             "LogTag's KAPT will be removed in the next major release; change to the KSP version",
         )
     }
 
     override fun getSupportedAnnotationTypes(): Set<String> = setOf(LogTag::class.java.canonicalName)
-
-    override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 
     override fun process(
         annotations: MutableSet<out TypeElement>,
@@ -91,7 +91,7 @@ public class LogTagProcessor : AbstractProcessor() {
         val field =
             FieldSpec
                 .builder(String::class.java, "LOG_TAG", Modifier.STATIC, Modifier.FINAL)
-                .initializer("\$S", getTag(element))
+                .initializer($$"$S", getTag(element))
                 .build()
         val clazz =
             TypeSpec
