@@ -1,0 +1,23 @@
+FILE: customTag.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|(value = String(CustomTag) [evaluated = String(CustomTag)]) public final fun customTag(): R|kotlin/String| {
+        ^customTag R|foo/bar/LOG_TAG|
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/customTag|()
+        ^box when () {
+            ==(R|<local>/result|, String(CustomTag)) ->  {
+                String(OK)
+            }
+            else ->  {
+                String(FAIL)
+            }
+        }
+
+    }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|

@@ -1,0 +1,23 @@
+FILE: simple.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() public final fun defaultTag(): R|kotlin/String| {
+        ^defaultTag R|foo/bar/LOG_TAG|
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/defaultTag|()
+        ^box when () {
+            ==(R|<local>/result|, String(defaultTag)) ->  {
+                String(OK)
+            }
+            else ->  {
+                String(FAIL)
+            }
+        }
+
+    }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|

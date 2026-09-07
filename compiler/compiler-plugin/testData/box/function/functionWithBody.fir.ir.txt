@@ -1,0 +1,53 @@
+FILE fqName:foo.bar fileName:/functionWithBody.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      WHEN type=kotlin.Nothing origin=IF
+        BRANCH
+          if: CALL 'public final fun equals (first: kotlin.Int, second: kotlin.Int): kotlin.Boolean declared in foo.bar' type=kotlin.Boolean origin=null
+            ARG first: CONST Int type=kotlin.Int value=1
+            ARG second: CONST Int type=kotlin.Int value=1
+          then: BLOCK type=kotlin.Nothing origin=null
+            RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
+              CONST String type=kotlin.String value="OK"
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: BLOCK type=kotlin.Nothing origin=null
+            RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
+              CONST String type=kotlin.String value="Fail"
+  FUN name:equals visibility:public modality:FINAL returnType:kotlin.Boolean
+    VALUE_PARAMETER kind:Regular name:first index:0 type:kotlin.Int
+    VALUE_PARAMETER kind:Regular name:second index:1 type:kotlin.Int
+    BLOCK_BODY
+      VAR GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG type:kotlin.String [val]
+        CONST String type=kotlin.String value="equals"
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+            ARG arg0: GET_VAR 'first: kotlin.Int declared in foo.bar.equals' type=kotlin.Int origin=null
+            ARG arg1: GET_VAR 'second: kotlin.Int declared in foo.bar.equals' type=kotlin.Int origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            RETURN type=kotlin.Nothing from='public final fun equals (first: kotlin.Int, second: kotlin.Int): kotlin.Boolean declared in foo.bar'
+              CONST Boolean type=kotlin.Boolean value=true
+      CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
+        ARG message: CALL 'public final fun log (tag: kotlin.String, message: kotlin.String): kotlin.String declared in foo.bar' type=kotlin.String origin=null
+          ARG tag: GET_VAR 'val LOG_TAG: kotlin.String declared in foo.bar.equals' type=kotlin.String origin=null
+          ARG message: CONST String type=kotlin.String value="not equal"
+      RETURN type=kotlin.Nothing from='public final fun equals (first: kotlin.Int, second: kotlin.Int): kotlin.Boolean declared in foo.bar'
+        CONST Boolean type=kotlin.Boolean value=false
+  FUN name:log visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER kind:Regular name:tag index:0 type:kotlin.String
+    VALUE_PARAMETER kind:Regular name:message index:1 type:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun log (tag: kotlin.String, message: kotlin.String): kotlin.String declared in foo.bar'
+        STRING_CONCATENATION type=kotlin.String
+          GET_VAR 'tag: kotlin.String declared in foo.bar.log' type=kotlin.String origin=null
+          CONST String type=kotlin.String value=" -> "
+          GET_VAR 'message: kotlin.String declared in foo.bar.log' type=kotlin.String origin=null
+FILE fqName:foo.bar fileName:foo/bar/LogTagResolver.kt
+  PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:LOG_TAG type:kotlin.String visibility:private [final,static]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LOG_TAG> visibility:public modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:LOG_TAG type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null

@@ -95,14 +95,11 @@ value class ValueClass(
     override fun log(message: String) = println("$LOG_TAG:$value -> $message")
 }
 
-// @androidx.compose.runtime.Composable
-// @LogTag
-// fun Test() {
-// }
-//
-// @LogTag
-// fun wontWorkTest() {
-// }
+@androidx.compose.runtime.Composable
+@LogTag
+fun Test() {
+    println("$LOG_TAG -> annotated function")
+}
 
 fun main() {
     listOf(
@@ -117,4 +114,23 @@ fun main() {
     ).forEach { it.log("Hello, World!") }
 
     Works.entries.forEach { it.log() }
+
+    Test()
+    println(box())
+}
+
+fun localTag(): String {
+    @LogTag
+    fun tagged(): String = LOG_TAG
+
+    return tagged()
+}
+
+fun box(): String {
+    val result = localTag()
+    return if (result == "tagged") {
+        "OK"
+    } else {
+        "FAIL"
+    }
 }

@@ -1,6 +1,0 @@
-FILE: onFunction.kt
-    package foo.bar
-
-    @R|com/cmgapps/LogTag|() public final fun topLevelFunction(): R|kotlin/String| {
-        ^topLevelFunction <Unresolved name: LOG_TAG>#
-    }

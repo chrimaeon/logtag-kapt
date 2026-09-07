@@ -48,6 +48,13 @@ public class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
             implementation(BuildConfig.ANNOTATIONS_LIBRARY_COORDINATES)
         }
 
+        kotlinCompilation.compileTaskProvider.configure {
+            // Run this compiler plugin before Compose plugin.
+            it.compilerOptions.freeCompilerArgs.add(
+                "-Xcompiler-plugin-order=${BuildConfig.KOTLIN_PLUGIN_ID}>androidx.compose.compiler.plugins.kotlin",
+            )
+        }
+
         return with(kotlinCompilation.target.project) {
             val extension = extensions.getByType(LogTagExtension::class.java)
             objects.listProperty(SubpluginOption::class.java).apply {

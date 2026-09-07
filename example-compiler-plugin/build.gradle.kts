@@ -17,18 +17,13 @@ import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
  */
 
 plugins {
-    id("application")
-    id("org.jetbrains.kotlin.jvm") version "2.4.10"
-    id("com.cmgapps.logtag") version "2.0.0-SNAPSHOT"
+    id("org.jetbrains.kotlin.multiplatform") version "2.4.10"
+    id("com.cmgapps.logtag") version "2.0.0-alpha.2-SNAPSHOT"
 }
 
 repositories {
     mavenCentral()
     google()
-}
-
-logTag {
-    enabled = true
 }
 
 kotlin {

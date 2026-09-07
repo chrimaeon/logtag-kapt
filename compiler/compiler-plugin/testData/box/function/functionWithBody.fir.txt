@@ -1,0 +1,32 @@
+FILE: functionWithBody.kt
+    package foo.bar
+
+    public final fun log(tag: R|kotlin/String|, message: R|kotlin/String|): R|kotlin/String| {
+        ^log <strcat>(R|<local>/tag|, String( -> ), R|<local>/message|)
+    }
+    @R|com/cmgapps/LogTag|() public final fun equals(first: R|kotlin/Int|, second: R|kotlin/Int|): R|kotlin/Boolean| {
+        when () {
+            ==(R|<local>/first|, R|<local>/second|) ->  {
+                ^equals Boolean(true)
+            }
+        }
+
+        R|kotlin/io/println|(R|foo/bar/log|(R|foo/bar/LOG_TAG|, String(not equal)))
+        ^equals Boolean(false)
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            R|foo/bar/equals|(Int(1), Int(1)) ->  {
+                ^box String(OK)
+            }
+            else ->  {
+                ^box String(Fail)
+            }
+        }
+
+    }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|
