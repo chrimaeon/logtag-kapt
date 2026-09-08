@@ -1,0 +1,46 @@
+FILE: logTagScope.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() public final fun tagged(): R|kotlin/String| {
+        ^tagged R|foo/bar/LOG_TAG|
+    }
+    public final fun untagged(): R|kotlin/String| {
+        ^untagged R|foo/bar/LOG_TAG|
+    }
+    @R|com/cmgapps/LogTag|() public final class TaggedClass : R|kotlin/Any| {
+        public constructor(): R|foo/bar/TaggedClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun member(): R|kotlin/String| {
+            ^member this@R|foo/bar/TaggedClass.Companion|.R|foo/bar/TaggedClass.Companion.LOG_TAG|
+        }
+
+        public final fun nested(): R|kotlin/String| {
+            local final fun local(): R|kotlin/String| {
+                ^local this@R|foo/bar/TaggedClass.Companion|.R|foo/bar/TaggedClass.Companion.LOG_TAG|
+            }
+
+            ^nested R|<local>/local|()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/TaggedClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun userDefined(): R|kotlin/String| {
+        lval LOG_TAG: R|kotlin/String| = String(user-defined)
+        ^userDefined R|<local>/LOG_TAG|
+    }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|

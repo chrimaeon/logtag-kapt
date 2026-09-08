@@ -7,6 +7,7 @@
 package com.cmgapps.logtag
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -16,3 +17,4 @@ object LogTagPluginKey : GeneratedDeclarationKey() {
 
 val LOG_TAG_ANNOTATION_FQ_NAME = FqName("com.cmgapps.LogTag")
 val LOG_TAG_PROPERTY_NAME = Name.identifier("LOG_TAG")
+val LOG_TAG_ANNOTATION_CLASS_ID = ClassId.topLevel(LOG_TAG_ANNOTATION_FQ_NAME)

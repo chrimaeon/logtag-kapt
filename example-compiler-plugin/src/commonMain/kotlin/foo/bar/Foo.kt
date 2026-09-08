@@ -101,6 +101,10 @@ fun Test() {
     println("$LOG_TAG -> annotated function")
 }
 
+// class LogTagNotInScope {
+//    fun logTag() = LOG_TAG
+// }
+
 fun main() {
     listOf(
         Public(),
