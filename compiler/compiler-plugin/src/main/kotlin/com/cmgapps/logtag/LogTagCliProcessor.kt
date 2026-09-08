@@ -10,6 +10,8 @@ import com.cmgapps.logtag.fir.LogTagFirExtensionRegistrar
 import com.cmgapps.logtag.ir.LogTagIrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 object LogTagConfigurationKeys {
@@ -60,8 +62,6 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val messageCollector = configuration.messageCollector
-
         val enabled = configuration.getBoolean(LogTagConfigurationKeys.ENABLED)
         val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
 
@@ -79,20 +79,21 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
             }
 
         if (!enabled) {
-            messageCollector.report(
+            configuration.messageCollector.report(
                 CompilerMessageSeverity.WARNING,
                 message,
             )
             return
         }
 
-        messageCollector.report(
-            CompilerMessageSeverity.INFO,
-            message,
-        )
+        configuration.reportInfo(message)
 
         FirExtensionRegistrarAdapter.registerExtension(LogTagFirExtensionRegistrar())
 
         IrGenerationExtension.registerExtension(LogTagIrGenerationExtension())
     }
 }
+
+@OptIn(MessageCollectorAccess::class)
+private val CompilerConfiguration.messageCollector: MessageCollector
+    get() = this.getOrDefault(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY) { MessageCollector.NONE }

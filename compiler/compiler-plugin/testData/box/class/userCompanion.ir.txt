@@ -5,16 +5,6 @@ FILE fqName:foo.bar fileName:/userCompanion.kt
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.Foo
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.Foo.Companion
-      PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:private modality:FINAL [val]
-        FIELD name:LOG_TAG type:kotlin.String visibility:private [final]
-          EXPRESSION_BODY
-            CONST String type=kotlin.String value="Foo"
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LOG_TAG> visibility:private modality:FINAL returnType:kotlin.String
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.Foo.Companion
-          correspondingProperty: PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:private modality:FINAL [val]
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='private final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar.Foo.Companion'
-              CONST String type=kotlin.String value="Foo"
       CONSTRUCTOR visibility:private returnType:foo.bar.Foo.Companion [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -65,8 +55,7 @@ FILE fqName:foo.bar fileName:/userCompanion.kt
       VALUE_PARAMETER kind:Regular name:message index:1 type:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun log (message: kotlin.String): kotlin.String declared in foo.bar.Foo'
-          CALL 'private final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar.Foo.Companion' type=kotlin.String origin=GET_PROPERTY
-            ARG <this>: GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=foo.bar.Foo.Companion
+          CONST String type=kotlin.String value="Foo"
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       VAR name:result type:kotlin.String [val]

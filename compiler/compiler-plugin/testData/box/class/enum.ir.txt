@@ -11,16 +11,6 @@ FILE fqName:foo.bar fileName:/enum.kt
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in foo.bar.MyEnum'
     CLASS GENERATED[com.cmgapps.logtag.LogTagPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.MyEnum.Companion
-      PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:private modality:FINAL [val]
-        FIELD name:LOG_TAG type:kotlin.String visibility:private [final]
-          EXPRESSION_BODY
-            CONST String type=kotlin.String value="MyEnum"
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LOG_TAG> visibility:private modality:FINAL returnType:kotlin.String
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.MyEnum.Companion
-          correspondingProperty: PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:private modality:FINAL [val]
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='private final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar.MyEnum.Companion'
-              CONST String type=kotlin.String value="MyEnum"
       CONSTRUCTOR GENERATED[com.cmgapps.logtag.LogTagPluginKey] visibility:private returnType:foo.bar.MyEnum.Companion [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -43,10 +33,10 @@ FILE fqName:foo.bar fileName:/enum.kt
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
           TYPE_ARG E: foo.bar.MyEnum
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<foo.bar.MyEnum>]' type=kotlin.Unit
-    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:foo.bar.MyEnum
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:foo.bar.MyEnum [companion]
       VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<foo.bar.MyEnum>
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<foo.bar.MyEnum> [companion]
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<foo.bar.MyEnum>
@@ -75,13 +65,12 @@ FILE fqName:foo.bar fileName:/enum.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun log (): kotlin.String declared in foo.bar.MyEnum'
           STRING_CONCATENATION type=kotlin.String
-            CALL 'private final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar.MyEnum.Companion' type=kotlin.String origin=GET_PROPERTY
-              ARG <this>: GET_OBJECT 'CLASS GENERATED[com.cmgapps.logtag.LogTagPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=foo.bar.MyEnum.Companion
+            CONST String type=kotlin.String value="MyEnum"
             CONST String type=kotlin.String value=" "
             CALL 'public final fun <get-name> (): kotlin.String declared in foo.bar.MyEnum' type=kotlin.String origin=GET_PROPERTY
               ARG <this>: GET_VAR '<this>: foo.bar.MyEnum declared in foo.bar.MyEnum.log' type=foo.bar.MyEnum origin=IMPLICIT_ARGUMENT
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<foo.bar.MyEnum>
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<foo.bar.MyEnum> [companion]
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]

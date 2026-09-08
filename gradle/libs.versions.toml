@@ -18,7 +18,7 @@ node-gradle = { id = "com.github.node-gradle.node", version = "7.1.0" }
 
 gradle = "9.7.1"
 
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 ksp = "2.3.11"
 androidLint = "32.4.0"
 mockito = "5.23.0"

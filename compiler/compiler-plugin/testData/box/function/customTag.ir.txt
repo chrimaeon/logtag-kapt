@@ -17,15 +17,6 @@ FILE fqName:foo.bar fileName:/customTag.kt
               CONST String type=kotlin.String value="FAIL"
   FUN name:customTag visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
-      VAR GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG type:kotlin.String [val]
-        CONST String type=kotlin.String value="CustomTag"
       RETURN type=kotlin.Nothing from='public final fun customTag (): kotlin.String declared in foo.bar'
-        GET_VAR 'val LOG_TAG: kotlin.String declared in foo.bar.customTag' type=kotlin.String origin=null
+        CONST String type=kotlin.String value="CustomTag"
 FILE fqName:foo.bar fileName:foo/bar/LogTagResolver.kt
-  PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:LOG_TAG type:kotlin.String visibility:private [final,static]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LOG_TAG> visibility:public modality:FINAL returnType:kotlin.String
-      correspondingProperty: PROPERTY GENERATED[com.cmgapps.logtag.LogTagPluginKey] name:LOG_TAG visibility:public modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-LOG_TAG> (): kotlin.String declared in foo.bar'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:LOG_TAG type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null

@@ -1,0 +1,44 @@
+FILE: nestedTag.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|(value = String(ClassTag) [evaluated = String(ClassTag)]) public final class TaggedClass : R|kotlin/Any| {
+        public constructor(): R|foo/bar/TaggedClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun classTag(): R|kotlin/String| {
+            ^classTag this@R|foo/bar/TaggedClass.Companion|.R|foo/bar/TaggedClass.Companion.LOG_TAG|
+        }
+
+        @R|com/cmgapps/LogTag|(value = String(FunctionTag) [evaluated = String(FunctionTag)]) public final fun functionTag(): R|kotlin/String| {
+            ^functionTag this@R|foo/bar/TaggedClass.Companion|.R|foo/bar/TaggedClass.Companion.LOG_TAG|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/TaggedClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval tagged: R|foo/bar/TaggedClass| = R|foo/bar/TaggedClass.TaggedClass|()
+        ^box when () {
+            ==(R|<local>/tagged|.R|foo/bar/TaggedClass.classTag|(), String(ClassTag)) && ==(R|<local>/tagged|.R|foo/bar/TaggedClass.functionTag|(), String(FunctionTag)) ->  {
+                String(OK)
+            }
+            else ->  {
+                String(FAIL)
+            }
+        }
+
+    }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|

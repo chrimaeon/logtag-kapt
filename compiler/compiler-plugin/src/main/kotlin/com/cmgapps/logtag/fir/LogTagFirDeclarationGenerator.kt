@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.plugin.createTopLevelProperty
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -141,7 +140,6 @@ internal class LogTagFirDeclarationGenerator(
             else -> createCompanionObject(owner, key).symbol
         }
 
-    @OptIn(SymbolInternals::class)
     override fun getNestedClassifiersNames(
         classSymbol: FirClassSymbol<*>,
         context: NestedClassGenerationContext,
@@ -149,7 +147,7 @@ internal class LogTagFirDeclarationGenerator(
         val regular = classSymbol as? FirRegularClassSymbol ?: return emptySet()
         return when {
             regular !in matchedClasses -> emptySet()
-            regular.companionObjectSymbol != null -> emptySet()
+            regular.resolvedCompanionObjectSymbol != null -> emptySet()
             else -> setOf(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
         }
     }
