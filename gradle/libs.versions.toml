@@ -67,3 +67,5 @@ ktlint-cli = "com.pinterest.ktlint:ktlint-cli:1.8.0"
 kover = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.gradle.plugin", version = "0.9.9" }
 
 vanniktech-maven-publish = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version = "0.37.0" }
+
+metro-compiler-compat = "dev.zacsweers.metro:compiler-compat-latest:1.4.2"

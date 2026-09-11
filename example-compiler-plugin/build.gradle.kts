@@ -1,4 +1,4 @@
-import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 /*
  * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
@@ -17,7 +17,7 @@ import sun.jvmstat.monitor.MonitoredVmUtil.mainClass
  */
 
 plugins {
-    id("org.jetbrains.kotlin.multiplatform") version "2.4.10"
+    id("org.jetbrains.kotlin.multiplatform") version "2.4.0"
     id("com.cmgapps.logtag") version "2.0.0-alpha.2-SNAPSHOT"
 }
 
@@ -28,9 +28,10 @@ repositories {
 
 kotlin {
 
-    jvmToolchain(17)
+    jvmToolchain(21)
 
     jvm {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         mainRun {
             mainClass.set("foo.bar.FooKt")
         }

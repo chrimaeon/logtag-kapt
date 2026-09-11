@@ -10,9 +10,6 @@ import com.cmgapps.logtag.gradle.BuildConfig
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -29,12 +26,8 @@ public abstract class LogTagExtension {
 
 @Suppress("unused")
 public class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
-    private lateinit var kotlinVersion: Property<String>
-
-    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     override fun apply(target: Project) {
         with(target) {
-            kotlinVersion = extensions.getByType(KotlinBaseExtension::class.java).compilerVersion
             extensions.create("logTag", LogTagExtension::class.java)
 
             // TODO: check if android project and apply the linter library
@@ -71,6 +64,6 @@ public class LogTagGradleSupportPlugin : KotlinCompilerPluginSupportPlugin {
         SubpluginArtifact(
             groupId = BuildConfig.KOTLIN_PLUGIN_GROUP,
             artifactId = BuildConfig.KOTLIN_PLUGIN_NAME,
-            version = "${kotlinVersion.get()}-${BuildConfig.LIBRARY_VERSION}",
+            version = BuildConfig.LIBRARY_VERSION,
         )
 }

@@ -9,7 +9,6 @@
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Plugin
@@ -27,9 +26,6 @@ plugins {
 
 project.plugins.apply(D8Plugin::class.java)
 
-val versionName = providers.gradleProperty("versionName")
-project.version = "${getKotlinPluginVersion()}-${versionName.get()}"
-
 val testDataDir = layout.projectDirectory.dir("testData")
 val testGenDirectory = layout.buildDirectory.dir("test-gen")
 
@@ -43,6 +39,10 @@ sourceSets {
 idea {
     // This is needed until IDEA fixes https://youtrack.jetbrains.com/issue/IDEA-339729.
     module.generatedSourceDirs.add(testGenDirectory.get().asFile)
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 val testArtifacts: Configuration = configurations.create("testArtifact")
@@ -159,6 +159,8 @@ tasks.compileTestKotlin {
 
 dependencies {
     compileOnly(libs.kotlin.compiler)
+
+    implementation(libs.metro.compiler.compat)
 
     // kotlin-compiler-internal-test-framework is compiled against JUnit >= 5.12
     // (JUnit5Assertions calls AssertionsKt.fail_nonNullableLambda), while

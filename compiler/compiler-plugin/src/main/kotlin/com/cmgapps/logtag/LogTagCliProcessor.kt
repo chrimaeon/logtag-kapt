@@ -8,20 +8,17 @@ package com.cmgapps.logtag
 
 import com.cmgapps.logtag.fir.LogTagFirExtensionRegistrar
 import com.cmgapps.logtag.ir.LogTagIrGenerationExtension
+import dev.zacsweers.metro.compiler.compat.CompatContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.cli.reportException
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 object LogTagConfigurationKeys {
@@ -62,38 +59,18 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val enabled = configuration.getBoolean(LogTagConfigurationKeys.ENABLED)
-        val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
+        if (!configuration.getBoolean(LogTagConfigurationKeys.ENABLED)) return
 
-        val message =
-            buildString {
-                append("LOG-TAG plugin is ")
-                if (enabled) {
-                    append("enabled")
-                    if (useFir) {
-                        append(" and uses FIR")
-                    }
-                } else {
-                    append("disabled")
-                }
+        val compatContext =
+            try {
+                CompatContext.create()
+            } catch (t: Throwable) {
+                configuration.reportException(RuntimeException("Unable to create CompatContext", t))
+                return
             }
-
-        if (!enabled) {
-            configuration.messageCollector.report(
-                CompilerMessageSeverity.WARNING,
-                message,
-            )
-            return
-        }
-
-        configuration.reportInfo(message)
 
         FirExtensionRegistrarAdapter.registerExtension(LogTagFirExtensionRegistrar())
 
-        IrGenerationExtension.registerExtension(LogTagIrGenerationExtension())
+        IrGenerationExtension.registerExtension(LogTagIrGenerationExtension(compatContext))
     }
 }
-
-@OptIn(MessageCollectorAccess::class)
-private val CompilerConfiguration.messageCollector: MessageCollector
-    get() = this.getOrDefault(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY) { MessageCollector.NONE }

@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- The LogTag Gradle plugin now requires JVM 21+.
 
 ### Deprecated
 

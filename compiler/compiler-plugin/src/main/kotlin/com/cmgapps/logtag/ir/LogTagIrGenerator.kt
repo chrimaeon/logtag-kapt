@@ -9,6 +9,7 @@ package com.cmgapps.logtag.ir
 import com.cmgapps.logtag.LOG_TAG_ANNOTATION_FQ_NAME
 import com.cmgapps.logtag.LOG_TAG_PROPERTY_NAME
 import com.cmgapps.logtag.LogTagPluginKey
+import dev.zacsweers.metro.compiler.compat.CompatContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -18,16 +19,18 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 class LogTagIrGenerator(
     private val context: IrPluginContext,
+    private val compatContext: CompatContext,
 ) : IrElementTransformerVoid() {
     private val activeTags = mutableListOf<String?>()
 
@@ -85,9 +88,10 @@ class LogTagIrGenerator(
     private fun IrClass.logTagOrNull(): String? = annotations.findAnnotation(LOG_TAG_ANNOTATION_FQ_NAME)?.toLogTag(name.asString())
 
     private fun IrAnnotation.toLogTag(default: String): String =
-        this
-            .getConstArgument<String>("value")
-            .orEmpty()
+        with(compatContext) {
+            val expression = getAnnotationArgumentCompat(Name.identifier("value")) as? IrConst
+            expression?.value as? String
+        }.orEmpty()
             .ifBlank { default.take(23) }
 
     private fun IrProperty.isGeneratedLogTag(): Boolean =
