@@ -48,6 +48,8 @@ private class LogTagSymbolProcessor(
 ) : SymbolProcessor {
     private val codeGenerator = environment.codeGenerator
     private val logger = environment.logger
+    private val androidMinSdkVersion =
+        environment.options["logtag.androidMinSdkVersion"]?.toIntOrNull() ?: Int.MAX_VALUE
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver.getSymbolsWithAnnotation(LOG_TAG_ANNOTATION_NAME).apply {
@@ -193,12 +195,12 @@ private class LogTagSymbolProcessor(
         }
 
         return element.simpleName.asString().let {
-            if (it.length > 23) {
+            if (androidMinSdkVersion < 26 && it.length > 23) {
                 logger.warn(
-                    "Class name \"$it\" is to long for a log tag. Max. length is 23. Class name will be truncated.",
+                    "Class name \"$it\" is too long for a log tag. Max. length is 23. Class name will be truncated.",
                     element,
                 )
-                it.substring(0..22)
+                it.take(23)
             } else {
                 it
             }

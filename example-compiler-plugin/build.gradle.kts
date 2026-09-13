@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-
 /*
  * Copyright (c) 2021. Christian Grach <christian.grach@cmgapps.com>
  *
@@ -16,8 +14,11 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     id("org.jetbrains.kotlin.multiplatform") version "2.4.0"
+    id("com.android.kotlin.multiplatform.library") version "9.4.0"
     id("com.cmgapps.logtag") version "2.0.0-alpha.2-SNAPSHOT"
 }
 
@@ -27,8 +28,13 @@ repositories {
 }
 
 kotlin {
-
     jvmToolchain(21)
+
+    android {
+        namespace = "com.cmgapps.logtag.example"
+        compileSdk { version = release(37) }
+        minSdk = 21
+    }
 
     jvm {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)

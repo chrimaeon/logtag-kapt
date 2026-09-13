@@ -18,64 +18,49 @@
 
 package com.cmgapps.kotlin
 
+import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.SourceFile.Companion.kotlin
+import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.symbolProcessorProviders
+import com.tschuchort.compiletesting.useKsp2
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.`is`
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 class LogTagProcessorProviderShould {
-    @Test
-    fun `generate extension for kotlin class`() {
-        val compilation =
-            kotlin(
-                "class.kt",
-                """
-              package cmgapps.test
+    @ParameterizedTest(
+        name = "{0}",
+    )
+    @ValueSource(
+        strings = [
+            "generate_extension_for_kotlin_class",
+            "generate_extension_for_object",
+            "generate_class_for_java_class",
+            "use_custom_logtag_for_kotlin_class",
+            "use_custom_tag_for_java_class",
+            "create_composable_tag",
+            "generate_for_internal_class",
+        ],
+    )
+    fun `generate log tag for`(testId: String) {
+        val fixture = functionalTestFixture(testId)
+        val compilation = fixture.sources.compile()
 
-              @com.cmgapps.LogTag
-              class TestClass
-            """,
-            ).compile()
-
-        @Language("kotlin")
-        val expected =
-            """
-            @file:Suppress(
-              "SpellCheckingInspection",
-              "RedundantVisibilityModifier",
-              "unused",
-            )
-
-            package cmgapps.test
-
-            import kotlin.String
-            import kotlin.Suppress
-
-            public inline val TestClass.LOG_TAG: String
-              get() = "TestClass"
-
-            """.trimIndent()
-        assertThat(
-            compilation.kotlinCompilation.kspSourcesDir
-                .walkTopDown()
-                .find { it.name == "TestClassLogTag.kt" }
-                ?.readText(),
-            `is`(expected),
-        )
+        fixture.assertGeneratedSources(compilation.kotlinCompilation.kspSourcesDir)
     }
 
     @Test
     fun `not generate for private class`() {
         val compilation =
             kotlin(
-                "object.kt",
+                "private.kt",
                 """
               package cmgapps.test
 
@@ -85,200 +70,6 @@ class LogTagProcessorProviderShould {
             ).compile()
 
         assertThat(compilation.result.exitCode, `is`(KotlinCompilation.ExitCode.COMPILATION_ERROR))
-    }
-
-    @Test
-    fun `generate extension for object`() {
-        val compilation =
-            kotlin(
-                "file1.kt",
-                """
-              package cmgapps.test
-
-              @com.cmgapps.LogTag
-              object TestObject
-            """,
-            ).compile()
-
-        @Language("kotlin")
-        val expected =
-            """
-            @file:Suppress(
-              "SpellCheckingInspection",
-              "RedundantVisibilityModifier",
-              "unused",
-            )
-
-            package cmgapps.test
-
-            import kotlin.String
-            import kotlin.Suppress
-
-            public inline val TestObject.LOG_TAG: String
-              get() = "TestObject"
-
-            """.trimIndent()
-        assertThat(
-            compilation.kotlinCompilation.kspSourcesDir
-                .walkTopDown()
-                .find { it.name == "TestObjectLogTag.kt" }
-                ?.readText(),
-            `is`(expected),
-        )
-    }
-
-    @Test
-    fun `generate class for java class`() {
-        val className = "TestJava"
-        val compilation =
-            SourceFile
-                .java(
-                    "$className.java",
-                    """
-              package cmgapps.test;
-
-              @com.cmgapps.LogTag
-              public class $className{}
-            """,
-                ).compile()
-
-        @Language("Java")
-        val expected =
-            """
-            package cmgapps.test;
-
-            import java.lang.String;
-
-            class TestJavaLogTag {
-              static final String LOG_TAG = "TestJava";
-            }
-
-            """.trimIndent()
-
-        assertThat(
-            compilation.kotlinCompilation.kspSourcesDir
-                .walkTopDown()
-                .find { it.name == "TestJavaLogTag.java" }
-                ?.readText(),
-            `is`(expected),
-        )
-    }
-
-    @Test
-    fun `use custom logtag for kotlin class`() {
-        val compilation =
-            kotlin(
-                "class.kt",
-                """
-              package cmgapps.test
-
-              @com.cmgapps.LogTag("MyCustomTag")
-              class TestClass
-            """,
-            ).compile()
-
-        @Language("kotlin")
-        val expected =
-            """
-            @file:Suppress(
-              "SpellCheckingInspection",
-              "RedundantVisibilityModifier",
-              "unused",
-            )
-
-            package cmgapps.test
-
-            import kotlin.String
-            import kotlin.Suppress
-
-            public inline val TestClass.LOG_TAG: String
-              get() = "MyCustomTag"
-
-            """.trimIndent()
-        assertThat(
-            compilation.kotlinCompilation.kspSourcesDir
-                .walkTopDown()
-                .find { it.name == "TestClassLogTag.kt" }
-                ?.readText(),
-            `is`(expected),
-        )
-    }
-
-    @Test
-    fun `use custom tag for java class`() {
-        val className = "TestJava"
-        val compilation =
-            SourceFile
-                .java(
-                    "$className.java",
-                    """
-              package cmgapps.test;
-
-              @com.cmgapps.LogTag("MyCustomTag")
-              public class $className{}
-            """,
-                ).compile()
-
-        @Language("Java")
-        val expected =
-            """
-            package cmgapps.test;
-
-            import java.lang.String;
-
-            class TestJavaLogTag {
-              static final String LOG_TAG = "MyCustomTag";
-            }
-
-            """.trimIndent()
-
-        assertThat(
-            compilation.kotlinCompilation.kspSourcesDir
-                .walkTopDown()
-                .find { it.name == "TestJavaLogTag.java" }
-                ?.readText(),
-            `is`(expected),
-        )
-    }
-
-    @Test
-    fun `generate for internal class`() {
-        val compilation =
-            kotlin(
-                "class.kt",
-                """
-              package cmgapps.test
-
-              @com.cmgapps.LogTag
-              internal class TestClass
-            """,
-            ).compile()
-
-        @Language("kotlin")
-        val expected =
-            """
-            @file:Suppress(
-              "SpellCheckingInspection",
-              "RedundantVisibilityModifier",
-              "unused",
-            )
-
-            package cmgapps.test
-
-            import kotlin.String
-            import kotlin.Suppress
-
-            internal inline val TestClass.LOG_TAG: String
-              get() = "TestClass"
-
-            """.trimIndent()
-        assertThat(
-            compilation.kotlinCompilation.kspSourcesDir
-                .walkTopDown()
-                .find { it.name == "TestClassLogTag.kt" }
-                ?.readText(),
-            `is`(expected),
-        )
     }
 
     @Test
@@ -300,75 +91,38 @@ class LogTagProcessorProviderShould {
     }
 
     @Test
-    fun `create composable TAG`() {
-        val compilation =
-            listOf(
-                kotlin(
-                    "class.kt",
-                    """
-                package cmgapps.test
+    fun `truncate log tags for older Android versions`() {
+        val fixture = functionalTestFixture("truncate_log_tags_for_older_android_versions")
+        val compilation = fixture.sources.compile(kspArgs = mapOf("logtag.androidMinSdkVersion" to "23"))
 
-                @com.cmgapps.LogTag
-                @androidx.compose.runtime.Composable
-                fun Test() {}
-                """,
-                ),
-                kotlin(
-                    "composable.kt",
-                    """
-                    package androidx.compose.runtime
+        fixture.assertGeneratedSources(compilation.kotlinCompilation.kspSourcesDir)
+    }
 
-                    annotation class Composable
-                    """.trimIndent(),
-                ),
-            ).compile()
+    @Test
+    fun `not truncate log tags for  Android versions greater or equal to 26`() {
+        val fixture = functionalTestFixture("not_truncate_log_tags_for_android_versions_greater_or_equal_to_26")
+        val compilation = fixture.sources.compile(kspArgs = mapOf("logtag.androidMinSdkVersion" to "26"))
 
-        @Language("kotlin")
-        val expected =
-            """
-            @file:Suppress(
-              "SpellCheckingInspection",
-              "RedundantVisibilityModifier",
-              "unused",
-            )
-
-            package cmgapps.test
-
-            import kotlin.String
-            import kotlin.Suppress
-
-            public class ComposableTest {
-              public companion object {
-                public const val LOG_TAG: String = "Test"
-              }
-            }
-
-            """.trimIndent()
-
-        assertThat(
-            compilation.kotlinCompilation.kspSourcesDir
-                .walkTopDown()
-                .find { it.name == "ComposableTest.kt" }
-                ?.readText(),
-            `is`(expected),
-        )
+        fixture.assertGeneratedSources(compilation.kotlinCompilation.kspSourcesDir)
     }
 }
 
 private class PreparedCompilation(
     val kotlinCompilation: KotlinCompilation,
 ) {
-    val result: KotlinCompilation.Result = kotlinCompilation.compile()
+    val result: JvmCompilationResult = kotlinCompilation.compile()
 }
 
-private fun SourceFile.compile() = listOf(this).compile()
+private fun SourceFile.compile(kspArgs: Map<String, String> = emptyMap()) = listOf(this).compile(kspArgs)
 
-private fun List<SourceFile>.compile() =
+private fun List<SourceFile>.compile(kspArgs: Map<String, String> = emptyMap()) =
     PreparedCompilation(
         KotlinCompilation()
             .apply {
+                useKsp2()
                 inheritClassPath = true
-                symbolProcessorProviders = listOf(LogTagProcessorProvider())
+                symbolProcessorProviders += listOf(LogTagProcessorProvider())
                 sources = this@compile
+                kspProcessorOptions += kspArgs
             },
     )

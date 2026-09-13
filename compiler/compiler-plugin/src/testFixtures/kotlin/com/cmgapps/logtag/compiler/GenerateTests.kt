@@ -6,6 +6,7 @@
 
 package com.cmgapps.logtag.compiler
 
+import com.cmgapps.logtag.compiler.runner.AbstractAndroidBoxTest
 import com.cmgapps.logtag.compiler.runner.AbstractJsBoxOnlyTest
 import com.cmgapps.logtag.compiler.runner.AbstractJsBoxTest
 import com.cmgapps.logtag.compiler.runner.AbstractJsDiagnosticTest
@@ -27,6 +28,10 @@ fun main(args: Array<String>) {
             testClass<AbstractJvmBoxTest> {
                 model("box")
                 model("boxJvm")
+            }
+
+            testClass<AbstractAndroidBoxTest> {
+                model("boxAndroid")
             }
 
             testClass<AbstractJsBoxTest> {

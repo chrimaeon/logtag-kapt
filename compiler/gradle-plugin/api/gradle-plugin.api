@@ -1,5 +1,4 @@
-public abstract class com/cmgapps/gradle/LogTagExtension {
-	public fun <init> ()V
+public abstract interface class com/cmgapps/gradle/LogTagExtension {
 	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
 }
 

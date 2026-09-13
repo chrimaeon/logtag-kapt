@@ -16,7 +16,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
     explicitApi()
 
     @OptIn(ExperimentalAbiValidation::class)
@@ -37,10 +37,30 @@ buildConfig {
 
     val annotationsProject = projects.annotation
     buildConfigField(
-        type = "String",
+        type = String::class.java,
         name = "ANNOTATIONS_LIBRARY_COORDINATES",
-        expression = "\"${annotationsProject.group}:${annotationsProject.name}:${annotationsProject.version}\"",
+        value = "${annotationsProject.group}:${annotationsProject.name}:${annotationsProject.version}",
     )
+
+    try {
+        val androidLintLibrary = project(":library")
+
+        buildConfigField(
+            type = String::class.java,
+            name = "ANDROID_LINT_LIBRARY_COORDINATES",
+            value = "${androidLintLibrary.group}:${androidLintLibrary.property("artifactId")}:${androidLintLibrary.version}",
+        )
+    } catch (e: UnknownProjectException) {
+        logger.warn(
+            "Could not find :library; Most probably disabled in settings.gradle due to unsupported AGP 9.x in IntelliJ IDEA Android Plugin",
+            e,
+        )
+        buildConfigField(
+            type = String::class.java,
+            name = "ANDROID_LINT_LIBRARY_COORDINATES",
+            value = "com.cmgapps.logtag:log-tag:${project.version}",
+        )
+    }
 }
 
 gradlePlugin {
@@ -57,5 +77,6 @@ gradlePlugin {
 }
 
 dependencies {
-    compileOnly(libs.kotlin.gradle.plugin.api)
+    compileOnly(libs.kotlin.gradle.plugin)
+    compileOnly(libs.android.api)
 }

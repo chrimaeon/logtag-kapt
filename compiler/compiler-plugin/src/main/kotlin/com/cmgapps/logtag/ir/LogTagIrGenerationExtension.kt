@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class LogTagIrGenerationExtension(
     private val compatContext: CompatContext,
+    private val androidMinSdkVersion: Int,
 ) : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext,
     ) {
         moduleFragment.transformChildrenVoid(
-            LogTagIrGenerator(pluginContext, compatContext),
+            LogTagIrGenerator(pluginContext, compatContext, androidMinSdkVersion),
         )
     }
 }

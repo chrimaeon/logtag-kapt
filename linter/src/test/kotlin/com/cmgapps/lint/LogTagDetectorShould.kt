@@ -85,7 +85,7 @@ class LogTagDetectorShould : LintDetectorTest() {
             ).run()
             .expect(
                 """
-                src/com/test/JavaClassWithAnnotationTooLong.java:4: Warning: Log tags are only allowed to be at most 23 characters long. You should set a custom log tag in the annotation or it will be truncated. [LogTagClassNameTooLong]
+                src/com/test/JavaClassWithAnnotationTooLong.java:4: Warning: Log tags are only allowed to be at most 23 characters long. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong]
                 public class JavaClassWithAnnotationTooLong {}
                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warnings
@@ -96,6 +96,31 @@ class LogTagDetectorShould : LintDetectorTest() {
                 @@ -3 +3
                 - @com.cmgapps.LogTag
                 + @com.cmgapps.LogTag("|")
+                """.trimIndent(),
+            )
+    }
+
+    @Test
+    fun `detect on functions`() {
+        lint()
+            .files(
+                java(
+                    """
+                    package com.test;
+
+                    public class JavaClassWithAnnotationTooLong {
+                        @com.cmgapps.LogTag
+                        public void thisMethodIsLongerThan23Characters() {}
+                    }
+                """,
+                ).indented(),
+            ).run()
+            .expect(
+                """
+                src/com/test/JavaClassWithAnnotationTooLong.java:5: Warning: Log tags are only allowed to be at most 23 characters long. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong]
+                    public void thisMethodIsLongerThan23Characters() {}
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                0 errors, 1 warning
                 """.trimIndent(),
             )
     }

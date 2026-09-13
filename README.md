@@ -70,26 +70,11 @@ plugins {
 }
 ```
 
-</details>
-
-<details>
-
-<summary>using KAPT</summary>
-
-Add the processor and annotation libraries to the projects dependencies
+To generate the appropriate Log tag for your Android project, set the min SDK version for the KSP processor
 
 ```kotlin
-dependencies {
-    implementation("com.cmgapps.logtag:log-tag:2.0.0-alpha.1")
-    kapt("com.cmgapps.logtag:processor:2.0.0-alpha.1")
-}
-```
-
-also get sure to apply the Annotation Processor Plugin
-
-```kotlin
-plugins {
-    kotlin("kapt")
+ksp {
+    arg("logtag.androidMinSdkVersion", "<Your Android API Level>")
 }
 ```
 

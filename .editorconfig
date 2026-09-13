@@ -23,4 +23,7 @@ ktlint_standard_filename=disabled
 [compiler/compiler-plugin/testData/diagnostics/*.kt]
 ktlint_standard=disabled
 
+[processor/src/functionalTest/resources/test/**/*.kt]
+ktlint_standard=disabled
+indent_size=2
 

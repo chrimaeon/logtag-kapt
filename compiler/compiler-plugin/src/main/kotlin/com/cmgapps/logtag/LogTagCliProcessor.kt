@@ -23,13 +23,14 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 object LogTagConfigurationKeys {
     val ENABLED: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("enabled")
+    val ANDROID_MIN_SDK: CompilerConfigurationKey<Int> = CompilerConfigurationKey.create("android.minSdk")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
 class LogTagCliProcessor : CommandLineProcessor {
     override val pluginId: String = BuildConfig.KOTLIN_PLUGIN_ID
 
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(ENABLED_OPTION)
+    override val pluginOptions: Collection<AbstractCliOption> = listOf(ENABLED_OPTION, ANDROID_MIN_SDK_OPTION)
 
     companion object {
         val ENABLED_OPTION =
@@ -37,6 +38,14 @@ class LogTagCliProcessor : CommandLineProcessor {
                 LogTagConfigurationKeys.ENABLED.toString(),
                 "<true|false>",
                 "sets the enabled state of the plugin",
+                required = false,
+                allowMultipleOccurrences = false,
+            )
+        val ANDROID_MIN_SDK_OPTION =
+            CliOption(
+                LogTagConfigurationKeys.ANDROID_MIN_SDK.toString(),
+                "<Android min SDK version>",
+                "sets the android.defaultConfig.minSdk the compiler should consider",
                 required = false,
                 allowMultipleOccurrences = false,
             )
@@ -48,6 +57,7 @@ class LogTagCliProcessor : CommandLineProcessor {
         configuration: CompilerConfiguration,
     ) = when (option) {
         ENABLED_OPTION -> configuration.put(LogTagConfigurationKeys.ENABLED, value.toBoolean())
+        ANDROID_MIN_SDK_OPTION -> configuration.put(LogTagConfigurationKeys.ANDROID_MIN_SDK, value.toInt())
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -60,6 +70,7 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (!configuration.getBoolean(LogTagConfigurationKeys.ENABLED)) return
+        val androidMinSdkVersion = configuration[LogTagConfigurationKeys.ANDROID_MIN_SDK, Int.MAX_VALUE]
 
         val compatContext =
             try {
@@ -71,6 +82,6 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
 
         FirExtensionRegistrarAdapter.registerExtension(LogTagFirExtensionRegistrar())
 
-        IrGenerationExtension.registerExtension(LogTagIrGenerationExtension(compatContext))
+        IrGenerationExtension.registerExtension(LogTagIrGenerationExtension(compatContext, androidMinSdkVersion))
     }
 }

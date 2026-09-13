@@ -16,6 +16,7 @@
 
 package com.cmgapps.lint
 
+import com.android.sdklib.AndroidVersion
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.ConstantEvaluator
@@ -26,48 +27,65 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
+import com.android.tools.lint.detector.api.nameFromSource
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UMethod
 
-@Suppress("unused")
+private const val MAX_TAG_LENGTH = 23
+
 class LogTagDetector :
     Detector(),
     Detector.UastScanner {
-    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(UClass::class.java)
+    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(UClass::class.java, UMethod::class.java)
 
     override fun createUastHandler(context: JavaContext): UElementHandler = UastHandler(context)
 
     private class UastHandler(
-        private val context: JavaContext,
+        private val javaContext: JavaContext,
     ) : UElementHandler() {
         override fun visitClass(node: UClass) {
-            val allAnnotations = context.evaluator.getAllAnnotations(node as UAnnotated, false)
-            val annotation = allAnnotations.firstOrNull { it.qualifiedName == "com.cmgapps.LogTag" } ?: return
+            node.checkLogTagValue()
+        }
 
-            val className = node.name ?: return
+        override fun visitMethod(node: UMethod) {
+            node.checkLogTagValue()
+        }
 
-            if (className.length <= 23) return
+        private fun UDeclaration.checkLogTagValue() {
+            // Tag length limit was removed in API 26.
+            if (javaContext.project.minSdkVersion.isAtLeast(AndroidVersion.VersionCodes.O)) return
+
+            val annotation =
+                javaContext.evaluator
+                    .getAllAnnotations(this as UAnnotated, false)
+                    .firstOrNull { it.qualifiedName == "com.cmgapps.LogTag" } ?: return
+
+            val className = nameFromSource ?: return
+
+            if (className.length <= MAX_TAG_LENGTH) return
 
             val valueAttribute = annotation.findAttributeValue("value")
             val hasValue =
                 valueAttribute != null &&
-                    !(ConstantEvaluator.evaluate(context, valueAttribute) as? String).isNullOrBlank()
+                    !(ConstantEvaluator.evaluate(javaContext, valueAttribute) as? String).isNullOrBlank()
 
             if (hasValue) return
 
-            context.report(
+            javaContext.report(
                 ISSUE,
-                node,
-                context.getNameLocation(node),
-                "Log tags are only allowed to be at most 23 characters long. " +
+                this as UElement,
+                javaContext.getNameLocation(this),
+                "Log tags are only allowed to be at most $MAX_TAG_LENGTH characters long. " +
                     "You should set a custom log tag in the annotation or it will be truncated.",
                 LintFix
                     .create()
                     .name("Add custom log tag")
                     .replace()
                     .text(annotation.asSourceString())
-                    .range(context.getNameLocation(annotation))
+                    .range(javaContext.getNameLocation(annotation))
                     .shortenNames()
                     .reformat(true)
                     .with("""@${annotation.qualifiedName}("")""")
@@ -81,12 +99,11 @@ class LogTagDetector :
         @JvmField
         val ISSUE =
             Issue.create(
-                id = "LogTagClassNameTooLong",
+                id = "LogTagElementNameTooLong",
                 briefDescription = "Log tag too long",
-                explanation = """
-                Checks if the class' name annotated with @com.cmgapps.LogTag is at most 23 characters long
-                 and does not have a custom log tag specified.
-            """,
+                explanation =
+                    "Checks if the elements name annotated with `@com.cmgapps.LogTag` is at most $MAX_TAG_LENGTH characters long " +
+                        "and does not have a custom log tag specified.",
                 category = Category.CORRECTNESS,
                 priority = 6,
                 severity = Severity.WARNING,

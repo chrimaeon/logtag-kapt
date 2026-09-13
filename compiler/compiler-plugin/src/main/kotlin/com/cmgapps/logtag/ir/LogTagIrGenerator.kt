@@ -27,10 +27,13 @@ import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 
+private const val DEFAULT_ANDROID_TAG_LENGTH_BEFORE_API_26 = 23
+
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 class LogTagIrGenerator(
     private val context: IrPluginContext,
     private val compatContext: CompatContext,
+    private val androidMinSdkVersion: Int,
 ) : IrElementTransformerVoid() {
     private val activeTags = mutableListOf<String?>()
 
@@ -92,7 +95,13 @@ class LogTagIrGenerator(
             val expression = getAnnotationArgumentCompat(Name.identifier("value")) as? IrConst
             expression?.value as? String
         }.orEmpty()
-            .ifBlank { default.take(23) }
+            .ifBlank {
+                if (androidMinSdkVersion >= 26) {
+                    default
+                } else {
+                    default.take(DEFAULT_ANDROID_TAG_LENGTH_BEFORE_API_26)
+                }
+            }
 
     private fun IrProperty.isGeneratedLogTag(): Boolean =
         name == LOG_TAG_PROPERTY_NAME &&

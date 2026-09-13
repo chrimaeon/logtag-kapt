@@ -49,10 +49,22 @@ testing {
                 implementation(libs.junit.jupiter)
                 implementation(project())
                 implementation(libs.hamcrest)
-                implementation(libs.tschuchortdev.compile.testing.ksp)
+                implementation(libs.kotlin.compile.testing.ksp)
             }
             targets.all {
                 testTask.configure {
+                    jvmArgs(
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+                        "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+                    )
                     testLogging {
                         events("PASSED", "SKIPPED", "FAILED")
                     }

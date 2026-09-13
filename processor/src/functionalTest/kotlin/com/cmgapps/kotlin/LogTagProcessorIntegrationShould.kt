@@ -20,6 +20,7 @@ package com.cmgapps.kotlin
 
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
+import com.tschuchort.compiletesting.useKsp2
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.intellij.lang.annotations.Language
@@ -229,6 +230,7 @@ class LogTagProcessorIntegrationShould {
     private fun SourceFile.compile() =
         KotlinCompilation()
             .apply {
+                useKsp2()
                 sources = listOf(this@compile)
                 annotationProcessors = listOf(LogTagProcessor())
                 inheritClassPath = true

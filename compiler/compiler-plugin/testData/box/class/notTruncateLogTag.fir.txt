@@ -1,0 +1,35 @@
+FILE: notTruncateLogTag.kt
+    package foo.bar
+
+    @R|com/cmgapps/LogTag|() public final class ThisIsAClassThatWillNotBeTruncated : R|kotlin/Any| {
+        public constructor(): R|foo/bar/ThisIsAClassThatWillNotBeTruncated| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun log(message: R|kotlin/String|): R|kotlin/String| {
+            ^log this@R|foo/bar/ThisIsAClassThatWillNotBeTruncated.Companion|.R|foo/bar/ThisIsAClassThatWillNotBeTruncated.Companion.LOG_TAG|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private final val LOG_TAG: R|kotlin/String|
+                private get(): R|kotlin/String|
+
+            private constructor(): R|foo/bar/ThisIsAClassThatWillNotBeTruncated.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|foo/bar/ThisIsAClassThatWillNotBeTruncated.ThisIsAClassThatWillNotBeTruncated|().R|foo/bar/ThisIsAClassThatWillNotBeTruncated.log|(String(Hello World))
+        ^box when () {
+            ==(R|<local>/result|, String(ThisIsAClassThatWillNotBeTruncated)) ->  {
+                String(OK)
+            }
+            else ->  {
+                <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
+    }
