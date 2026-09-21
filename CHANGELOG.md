@@ -8,6 +8,7 @@
 - The LogTag Gradle plugin now requires JVM 21+.
 - Add Android Linter as a dependency to the LogTag Gradle plugin
 - The KSP processor now respects the `logtag.androidMinSdkVersion` option; Android API 26 removes the 23-character limit for log tags
+- `com.cmgapps.logtag:log-tag` maven module moved to `com.cmgapps.logtag:android-lint`
 
 ### Deprecated
 

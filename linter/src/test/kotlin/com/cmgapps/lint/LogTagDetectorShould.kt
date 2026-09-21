@@ -19,6 +19,7 @@ package com.cmgapps.lint
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class LogTagDetectorShould : LintDetectorTest() {
@@ -85,7 +86,7 @@ class LogTagDetectorShould : LintDetectorTest() {
             ).run()
             .expect(
                 """
-                src/com/test/JavaClassWithAnnotationTooLong.java:4: Warning: Log tags are only allowed to be at most 23 characters long. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong]
+                src/com/test/JavaClassWithAnnotationTooLong.java:4: Warning: Log tags are only allowed to be at most 23 characters long on Android API < 26. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong]
                 public class JavaClassWithAnnotationTooLong {}
                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warnings
@@ -93,6 +94,37 @@ class LogTagDetectorShould : LintDetectorTest() {
             ).expectFixDiffs(
                 """
                 Fix for src/com/test/JavaClassWithAnnotationTooLong.java line 4: Add custom log tag:
+                @@ -3 +3
+                - @com.cmgapps.LogTag
+                + @com.cmgapps.LogTag("|")
+                """.trimIndent(),
+            )
+    }
+
+    @Disabled("test not reporting correctly - :compiler:gradle-plugin tests confirms correct handling")
+    @Test
+    fun `detect too long name on kotlin`() {
+        lint()
+            .files(
+                kotlin(
+                    """
+                    package com.test
+
+                    @com.cmgapps.LogTag
+                    class ClassWithAnnotationTooLong
+                """,
+                ).indented(),
+            ).run()
+            .expect(
+                """
+                src/com/test/ClassWithAnnotationTooLong.kt:4: Warning: Log tags are only allowed to be at most 23 characters long. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong]
+                class ClassWithAnnotationTooLong {}
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                0 errors, 1 warnings
+                """.trimIndent(),
+            ).expectFixDiffs(
+                """
+                Fix for src/com/test/ClassWithAnnotationTooLong.kt line 4: Add custom log tag:
                 @@ -3 +3
                 - @com.cmgapps.LogTag
                 + @com.cmgapps.LogTag("|")
@@ -117,7 +149,7 @@ class LogTagDetectorShould : LintDetectorTest() {
             ).run()
             .expect(
                 """
-                src/com/test/JavaClassWithAnnotationTooLong.java:5: Warning: Log tags are only allowed to be at most 23 characters long. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong]
+                src/com/test/JavaClassWithAnnotationTooLong.java:5: Warning: Log tags are only allowed to be at most 23 characters long on Android API < 26. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong]
                     public void thisMethodIsLongerThan23Characters() {}
                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warning

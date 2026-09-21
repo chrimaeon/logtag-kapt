@@ -53,12 +53,12 @@ val annotationsRuntimeClasspath =
     }
 val annotationsJvmRuntimeClasspath =
     configurations.resolvable("annotationsJvmRuntimeClasspath") {
-        extendsFrom(annotationsRuntimeClasspath)
+        extendsFrom(annotationsRuntimeClasspath.get())
     }
 
 val annotationsJsRuntimeClasspath =
     configurations.resolvable("annotationsJsRuntimeClasspath") {
-        extendsFrom(annotationsRuntimeClasspath)
+        extendsFrom(annotationsRuntimeClasspath.get())
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)

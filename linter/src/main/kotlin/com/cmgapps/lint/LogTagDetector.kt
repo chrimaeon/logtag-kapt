@@ -28,7 +28,6 @@ import com.android.tools.lint.detector.api.LintFix
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.nameFromSource
-import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UDeclaration
 import org.jetbrains.uast.UElement
@@ -60,8 +59,7 @@ class LogTagDetector :
 
             val annotation =
                 javaContext.evaluator
-                    .getAllAnnotations(this as UAnnotated, false)
-                    .firstOrNull { it.qualifiedName == "com.cmgapps.LogTag" } ?: return
+                    .getAnnotation(this, "com.cmgapps.LogTag") ?: return
 
             val className = nameFromSource ?: return
 
@@ -78,7 +76,7 @@ class LogTagDetector :
                 ISSUE,
                 this as UElement,
                 javaContext.getNameLocation(this),
-                "Log tags are only allowed to be at most $MAX_TAG_LENGTH characters long. " +
+                "Log tags are only allowed to be at most $MAX_TAG_LENGTH characters long on Android API < 26. " +
                     "You should set a custom log tag in the annotation or it will be truncated.",
                 LintFix
                     .create()
@@ -102,8 +100,8 @@ class LogTagDetector :
                 id = "LogTagElementNameTooLong",
                 briefDescription = "Log tag too long",
                 explanation =
-                    "Checks if the elements name annotated with `@com.cmgapps.LogTag` is at most $MAX_TAG_LENGTH characters long " +
-                        "and does not have a custom log tag specified.",
+                    "Checks if the element's name, annotated with @com.cmgapps.LogTag, is at most $MAX_TAG_LENGTH " +
+                        "characters long on Android API < 26 and does not have a custom log tag specified.",
                 category = Category.CORRECTNESS,
                 priority = 6,
                 severity = Severity.WARNING,

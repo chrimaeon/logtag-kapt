@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 object LogTagConfigurationKeys {
-    val ENABLED: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("enabled")
-    val ANDROID_MIN_SDK: CompilerConfigurationKey<Int> = CompilerConfigurationKey.create("android.minSdk")
+    val ENABLED: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey("enabled")
+    val ANDROID_MIN_SDK: CompilerConfigurationKey<Int> = CompilerConfigurationKey("android.minSdk")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -80,8 +80,9 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
                 return
             }
 
-        FirExtensionRegistrarAdapter.registerExtension(LogTagFirExtensionRegistrar())
-
-        IrGenerationExtension.registerExtension(LogTagIrGenerationExtension(compatContext, androidMinSdkVersion))
+        with(compatContext) {
+            registerFirExtensionCompat(LogTagFirExtensionRegistrar())
+            registerIrExtensionCompat(LogTagIrGenerationExtension(compatContext, androidMinSdkVersion))
+        }
     }
 }

@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026. Christian Grach <christian.grach@cmgapps.com>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import com.cmgapps.LogTag
+
+@LogTag
+class Main {
+    fun log(message: String) {
+        println("$LOG_TAG -> $message")
+    }
+
+    fun getLogTag(): String = LOG_TAG
+}
+
+fun main() {
+    Main().log("Hello World")
+}

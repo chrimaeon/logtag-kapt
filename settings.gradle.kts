@@ -53,17 +53,11 @@ dependencyResolutionManagement {
     }
 }
 
-val isJetBrains = System.getProperty("idea.vendor.name") == "JetBrains"
-
 include(
     ":annotation",
     ":processor",
     ":linter",
     ":compiler:gradle-plugin",
     ":compiler:compiler-plugin",
+    ":android-lint",
 )
-
-// TODO disable until AGP 9.x is supported by IntelliJ IDEA
-if (!isJetBrains) {
-    include(":library")
-}

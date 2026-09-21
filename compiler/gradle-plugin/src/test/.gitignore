@@ -1,0 +1,2 @@
+/fixtures/*/gradle/libs.versions.toml
+!/fixtures/**/expected/**/build

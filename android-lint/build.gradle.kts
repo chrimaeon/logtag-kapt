@@ -13,7 +13,7 @@ plugins {
 
 android {
     namespace = "com.cmgapps.logtag"
-    compileSdk = 37
+    compileSdk = 36
     defaultConfig {
         minSdk = 15
     }
@@ -39,4 +39,20 @@ mavenPublishing {
             variant = "release",
         ),
     )
+}
+
+publishing {
+    publications.register("relocation", MavenPublication::class) {
+        val logtagProjectGroup = project.group as String
+        val logtagProjectVersion = project.version as String
+        val androidLintProjectName = project.name
+        groupId = logtagProjectGroup
+        artifactId = "log-tag"
+        version = logtagProjectVersion
+        pom.withXml {
+            val relocation = asNode().appendNode("distributionManagement").appendNode("relocation")
+            relocation.appendNode("groupId", logtagProjectGroup)
+            relocation.appendNode("artifactId", androidLintProjectName)
+        }
+    }
 }
