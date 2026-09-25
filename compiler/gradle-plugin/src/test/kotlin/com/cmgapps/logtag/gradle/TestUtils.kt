@@ -6,6 +6,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.not
 import org.hamcrest.TypeSafeDiagnosingMatcher
@@ -33,7 +34,7 @@ private val gradleDir = File("gradle")
 fun createBuildRunner(
     fixtureDir: File,
     vararg args: String = arrayOf("clean", "build"),
-    kotlinVersion: String = "2.4.20",
+    kotlinVersion: String = BuildConfig.MAX_KOTLIN_VERSION,
 ): GradleRunner {
     fixtureDir.resolve(gradleDir).apply {
         if (!exists()) mkdir()
@@ -69,8 +70,13 @@ fun assertExpectedFiles(
     assertThat("$expectedDir is emtpy", expectedFiles, not(empty()))
     for (expectedFile in expectedFiles) {
         val actualFile = File(fixtureDir, expectedFile.relativeTo(expectedDir).toString())
-        assertThat(actualFile, anExistingFile())
-        assertThat(actualFile, hasSameContentAs(expectedFile))
+        assertThat(
+            actualFile,
+            allOf(
+                anExistingFile(),
+                hasSameContentAs(expectedFile),
+            ),
+        )
     }
 }
 
@@ -95,20 +101,9 @@ private fun hasSameContentAs(
             actual: File,
             mismatchDescription: Description,
         ): Boolean {
-            if (!expected.exists()) {
-                mismatchDescription.appendText("expected file does not exist: ").appendValue(expected.path)
-                return false
-            }
-            if (!actual.exists()) {
-                mismatchDescription.appendText("actual file does not exist: ").appendValue(actual.path)
-                return false
-            }
-            if (!expected.isFile) {
-                mismatchDescription.appendText("expected is not a file: ").appendValue(expected.path)
-                return false
-            }
-            if (!actual.isFile) {
-                mismatchDescription.appendText("actual is not a file: ").appendValue(actual.path)
+            val existingFileMatcher = anExistingFile()
+            if (!existingFileMatcher.matches(expected)) {
+                existingFileMatcher.describeMismatch(expected, mismatchDescription)
                 return false
             }
 

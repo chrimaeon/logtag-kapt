@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.1.0">
+
+    <issue
+        id="LogDebugConditional"
+        severity="Warning"
+        message="The log call Log.d(...) should be conditional: surround with `if (Log.isLoggable(...))` or `if (BuildConfig.DEBUG) { ... }`"
+        category="Performance"
+        priority="5"
+        summary="Unconditional Logging calls"
+        explanation="The `BuildConfig` class provides a constant, `DEBUG`, which indicates whether the code is being built in release mode or in debug mode. In release mode, you typically want to strip out all the logging calls. Since the compiler will automatically remove all code which is inside a &quot;if (false)&quot; check, surrounding your logging calls with a check for BuildConfig.DEBUG is a good idea.&#xA;&#xA;If you **really** intend for the logging to be present in release mode, you can suppress this warning with a @SuppressLint annotation for the intentional logging calls."
+        errorLine1="        Log.d(LOG_TAG, message)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/Main.kt"
+            line="13"
+            column="9"/>
+    </issue>
+
+</issues>

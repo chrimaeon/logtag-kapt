@@ -1,0 +1,22 @@
+src/main/kotlin/Main.kt:13: Warning: The log call Log.d(...) should be conditional: surround with if (Log.isLoggable(...)) or if (BuildConfig.DEBUG) { ... } [LogDebugConditional from log-tag]
+        Log.d(LOG_TAG, message)
+        ~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "LogDebugConditional":
+   The BuildConfig class provides a constant, DEBUG, which indicates whether
+   the code is being built in release mode or in debug mode. In release mode,
+   you typically want to strip out all the logging calls. Since the compiler
+   will automatically remove all code which is inside a "if (false)" check,
+   surrounding your logging calls with a check for BuildConfig.DEBUG is a good
+   idea.
+
+   If you really intend for the logging to be present in release mode, you can
+   suppress this warning with a @SuppressLint annotation for the intentional
+   logging calls.
+
+   Vendor: CMG Mobile Apps
+   Identifier: log-tag
+   Contact: https://github.com/chrimaeon/logtag-kapt/issues
+   Feedback: https://github.com/chrimaeon/logtag-kapt/issues
+
+0 errors, 1 warning

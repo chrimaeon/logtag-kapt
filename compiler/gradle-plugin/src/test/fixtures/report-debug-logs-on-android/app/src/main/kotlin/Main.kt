@@ -4,13 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import android.util.Log
 import com.cmgapps.LogTag
 
 @LogTag
 class Main {
     fun log(message: String) {
-        println("$LOG_TAG -> $message")
+        Log.d(LOG_TAG, message)
     }
-
-    fun getLogTag(): String = LOG_TAG
 }

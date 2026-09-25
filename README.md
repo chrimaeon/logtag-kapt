@@ -1,9 +1,9 @@
 # Log TAG Generator [![Build & Test](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/logtag-kapt/actions/workflows/main.yml) [![codecov](https://codecov.io/gh/chrimaeon/logtag-kapt/branch/main/graph/badge.svg?token=QH5OYAQUX3)](https://codecov.io/gh/chrimaeon/logtag-kapt)
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
+[![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=for-the-badge)](https://spdx.org/licenses/Apache-2.0.html)
 [![MavenCentral](https://img.shields.io/maven-central/v/com.cmgapps.logtag/log-tag?style=for-the-badge)](https://repo1.maven.org/maven2/com/cmgapps/logtag/)
 
-This is an annotation processor that will generate an appropriate log tag for Android Log messages
+This is a Kotlin compiler plugin/annotation processor that will generate an appropriate log tag for log messages
 
 You can use the library with either the [Kotlin Compiler Plugin](#Using-Kotlin-Compiler-Plugin) or
 an [Annotation Processor](#Using-Annotation-Processors)

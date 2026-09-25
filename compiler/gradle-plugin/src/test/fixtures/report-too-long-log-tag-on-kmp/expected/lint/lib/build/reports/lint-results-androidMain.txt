@@ -1,4 +1,4 @@
-/Users/christian/IdeaProjects/logtag-kapt/compiler/gradle-plugin/src/test/fixtures/report-too-long-log-tag-on-kmp/lib/src/commonMain/kotlin/ThisIsAVeryLongClassNameAndWillBeTruncated.kt:10: Warning: Log tags are only allowed to be at most 23 characters long on Android API < 26. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong from log-tag]
+src/commonMain/kotlin/ThisIsAVeryLongClassNameAndWillBeTruncated.kt:10: Warning: Log tags are only allowed to be at most 23 characters long on Android API < 26. You should set a custom log tag in the annotation or it will be truncated. [LogTagElementNameTooLong from log-tag]
 class ThisIsAVeryLongClassNameAndWillBeTruncated {
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

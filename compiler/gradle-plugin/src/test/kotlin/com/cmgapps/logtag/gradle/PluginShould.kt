@@ -115,11 +115,10 @@ class PluginShould {
     @Test
     fun `report when log tag is too long on Android`() {
         val fixturesDir = File(fixturesDir, "report-too-long-log-tag-on-android")
-        val result =
-            createBuildRunner(
-                fixturesDir,
-                args = arrayOf("clean", "build", ":app:lint"),
-            ).build()
+        createBuildRunner(
+            fixturesDir,
+            args = arrayOf("clean", "build", ":app:lint"),
+        ).build()
 
         assertExpectedFiles(fixturesDir, "lint")
     }
@@ -127,11 +126,21 @@ class PluginShould {
     @Test
     fun `report when log tag is too long on KMP`() {
         val fixturesDir = File(fixturesDir, "report-too-long-log-tag-on-kmp")
-        val result =
-            createBuildRunner(
-                fixturesDir,
-                args = arrayOf("clean", "build", ":lib:lint"),
-            ).build()
+        createBuildRunner(
+            fixturesDir,
+            args = arrayOf("clean", "build", ":lib:lint"),
+        ).build()
+
+        assertExpectedFiles(fixturesDir, "lint")
+    }
+
+    @Test
+    fun `report debug logging on android`() {
+        val fixturesDir = File(fixturesDir, "report-debug-logs-on-android")
+        createBuildRunner(
+            fixturesDir,
+            args = arrayOf("clean", "build", ":app:lint"),
+        ).build()
 
         assertExpectedFiles(fixturesDir, "lint")
     }

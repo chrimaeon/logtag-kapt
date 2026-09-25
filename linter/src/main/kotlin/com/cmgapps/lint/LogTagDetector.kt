@@ -100,7 +100,7 @@ class LogTagDetector :
                 id = "LogTagElementNameTooLong",
                 briefDescription = "Log tag too long",
                 explanation =
-                    "Checks if the element's name, annotated with @com.cmgapps.LogTag, is at most $MAX_TAG_LENGTH " +
+                    "Checks if the element's name, annotated with `@com.cmgapps.LogTag`, is at most $MAX_TAG_LENGTH " +
                         "characters long on Android API < 26 and does not have a custom log tag specified.",
                 category = Category.CORRECTNESS,
                 priority = 6,

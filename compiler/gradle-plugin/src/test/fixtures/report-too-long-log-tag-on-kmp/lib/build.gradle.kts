@@ -13,9 +13,25 @@ plugins {
 kotlin {
     jvm()
 
+    lint {
+        absolutePaths = false
+        htmlReport = false // containes timestamp
+        sarifReport = false // containes abs paths
+        textReport = true
+        xmlReport = true
+    }
+
     android {
         namespace = "com.cmgapps.test"
         compileSdk = 36
         minSdk = 24
+
+        lint {
+            absolutePaths = false
+            htmlReport = false // containes timestamp
+            sarifReport = false // containes abs paths
+            textReport = true
+            xmlReport = true
+        }
     }
 }

@@ -59,7 +59,9 @@ dependencies {
     compileOnly(libs.android.lint.checks)
 
     testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter) {
+        exclude(group = "org.hamcrest")
+    }
     testImplementation(libs.hamcrest)
     testImplementation(libs.android.lint.lint)
     testImplementation(libs.android.lint.test)

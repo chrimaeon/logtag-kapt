@@ -42,7 +42,7 @@ internal class IssueRegistryShould {
 
     @Test
     fun `have issues registered`() {
-        assertThat(registry.issues, contains(LogTagDetector.ISSUE))
+        assertThat(registry.issues, contains(LogTagDetector.ISSUE, LogDebugDetector.ISSUE))
     }
 
     @Test

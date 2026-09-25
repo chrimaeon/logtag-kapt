@@ -8,11 +8,11 @@
         category="Correctness"
         priority="6"
         summary="Log tag too long"
-        explanation="Checks if the element&apos;s name, annotated with @com.cmgapps.LogTag, is at most 23 characters long on Android API &lt; 26 and does not have a custom log tag specified."
+        explanation="Checks if the element&apos;s name, annotated with `@com.cmgapps.LogTag`, is at most 23 characters long on Android API &lt; 26 and does not have a custom log tag specified."
         errorLine1="class ThisIsAVeryLongClassNameAndWillBeTruncated {"
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="/Users/christian/IdeaProjects/logtag-kapt/compiler/gradle-plugin/src/test/fixtures/report-too-long-log-tag-on-android/app/src/main/kotlin/ThisIsAVeryLongClassNameAndWillBeTruncated.kt"
+            file="src/main/kotlin/ThisIsAVeryLongClassNameAndWillBeTruncated.kt"
             line="10"
             column="7"/>
     </issue>
