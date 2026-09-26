@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.gradle.pluginPublish)
     id("ktlint")
     id("com.cmgapps.publish")
+    id("com.cmgapps.kover")
 }
 
 private val jvmTargetVersion = JvmTarget.JVM_17
@@ -57,45 +58,82 @@ tasks.withType<KotlinCompile>().configureEach {
 
 testing {
     suites {
-        named<JvmTestSuite>("test") {
-            useJUnitJupiter()
-            dependencies {
-                implementation(project())
-                implementation(platform(libs.junit.bom))
-                implementation(libs.junit.jupiter) {
-                    exclude(group = "org.hamcrest")
-                }
-                implementation(libs.hamcrest)
-                implementation(gradleTestKit())
-                implementation(libs.java.diff.utils)
-            }
-
-            targets.all {
-                testTask.configure {
-                    javaLauncher.set(
-                        javaToolchains.launcherFor {
-                            languageVersion.set(JavaLanguageVersion.of(21))
-                        },
-                    )
-                    jvmArgs("-Xmx2g", "-Xms512m")
-                    testLogging {
-                        events("PASSED", "SKIPPED", "FAILED")
+        val test =
+            named<JvmTestSuite>("test") {
+                useJUnitJupiter()
+                dependencies {
+                    implementation(libs.kotlin.gradle.plugin)
+                    implementation(libs.android.api)
+                    implementation(gradleTestKit())
+                    implementation(libs.junit.jupiter) {
+                        exclude(group = "org.hamcrest")
                     }
+                    implementation(libs.hamcrest)
+                    implementation(libs.mockito.kotlin)
+                }
 
-                    dependsOn(
-                        ":annotation:publishAllPublicationsToLocalStagingRepository",
-                        ":compiler:compiler-plugin:publishAllPublicationsToLocalStagingRepository",
-                        ":compiler:gradle-plugin:publishAllPublicationsToLocalStagingRepository",
-                        ":android-lint:publishAllPublicationsToLocalStagingRepository",
-                    )
+                targets.all {
+                    testTask.configure {
+                        testLogging {
+                            events("PASSED", "SKIPPED", "FAILED")
+                        }
+                    }
                 }
             }
+
+        val functionalTestSuite =
+            register<JvmTestSuite>("functionalTest") {
+                useJUnitJupiter()
+                dependencies {
+                    implementation(platform(libs.junit.bom))
+                    implementation(libs.junit.jupiter) {
+                        exclude(group = "org.hamcrest")
+                    }
+                    implementation(libs.hamcrest)
+                    implementation(gradleTestKit())
+                    implementation(libs.java.diff.utils)
+                }
+
+                targets.all {
+                    testTask.configure {
+                        javaLauncher.set(
+                            javaToolchains.launcherFor {
+                                languageVersion.set(JavaLanguageVersion.of(21))
+                            },
+                        )
+                        jvmArgs("-Xmx2g", "-Xms512m")
+                        testLogging {
+                            events("PASSED", "SKIPPED", "FAILED")
+                        }
+
+                        dependsOn(
+                            ":annotation:publishAllPublicationsToLocalStagingRepository",
+                            ":compiler:compiler-plugin:publishAllPublicationsToLocalStagingRepository",
+                            ":compiler:gradle-plugin:publishAllPublicationsToLocalStagingRepository",
+                            ":android-lint:publishAllPublicationsToLocalStagingRepository",
+                        )
+
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+
+        tasks.check {
+            dependsOn(functionalTestSuite)
+        }
+    }
+}
+
+kover {
+    currentProject {
+        sources {
+            excludedSourceSets.addAll(sourceSets["functionalTest"].name)
         }
     }
 }
 
 buildConfig {
-    packageName.set("com.cmgapps.logtag.gradle")
+    packageName.set("com.cmgapps.gradle")
     buildConfigField("MIN_KOTLIN_VERSION", "2.3.0")
     buildConfigField("MAX_KOTLIN_VERSION", libs.versions.kotlin)
     buildConfigField("LIBRARY_VERSION", project.version.toString())
@@ -130,12 +168,15 @@ buildConfig {
         )
     }
 
-    sourceSets.named("test") {
+    sourceSets.named("functionalTest") {
         useKotlinOutput {
-            packageName = "com.cmgapps.logtag.gradle"
+            packageName = "com.cmgapps.gradle"
             topLevelConstants = true
         }
         buildConfigField("MINIMUM_GRADLE_VERSION", minimumGradleVersion)
+        buildConfigField("LIBRARY_VERSION", project.version.toString())
+        buildConfigField("MIN_KOTLIN_VERSION", "2.3.0")
+        buildConfigField("MAX_KOTLIN_VERSION", libs.versions.kotlin)
     }
 }
 

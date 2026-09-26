@@ -8,12 +8,12 @@ package com.cmgapps.gradle
 
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
-import com.cmgapps.logtag.gradle.BuildConfig
 import org.gradle.api.Project
 import org.gradle.api.problems.ProblemGroup
 import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.Problems
 import org.gradle.api.provider.Provider
+import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
 
-private val ANDROID_IDS =
+@VisibleForTesting
+internal val ANDROID_IDS =
     listOf(
         "com.android.application",
         "com.android.library",
@@ -98,6 +99,9 @@ public class LogTagGradleSupportPlugin
 
                 afterEvaluate {
                     val compilerVersion = compilerVersionProvider.get()
+
+                    project.logger.lifecycle("Project initialized")
+
                     val minSupported = KotlinToolingVersion(BuildConfig.MIN_KOTLIN_VERSION)
                     val maxSupported = KotlinToolingVersion(BuildConfig.MAX_KOTLIN_VERSION)
                     val isSupported = compilerVersion in minSupported..maxSupported

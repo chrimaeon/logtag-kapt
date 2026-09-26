@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package com.cmgapps.logtag.gradle
+package com.cmgapps.gradle
 
-import com.cmgapps.logtag.gradle.BuildConfig.LIBRARY_VERSION
 import org.gradle.testkit.runner.TaskOutcome
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
@@ -166,8 +165,8 @@ class PluginShould {
         @JvmStatic
         fun kotlinVersions(): Stream<Arguments> =
             buildList {
-                add(BuildConfig.MIN_KOTLIN_VERSION)
-                add(BuildConfig.MAX_KOTLIN_VERSION)
+                add(MIN_KOTLIN_VERSION)
+                add(MAX_KOTLIN_VERSION)
                 if (System.getenv("CI") == null) {
                     add("2.3.20")
                     add("2.4.0")

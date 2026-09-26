@@ -1,4 +1,10 @@
-package com.cmgapps.logtag.gradle
+/*
+ * Copyright (c) 2026. Christian Grach <christian.grach@cmgapps.com>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package com.cmgapps.gradle
 
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
@@ -18,7 +24,7 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.stream.Stream
 
-val fixturesDir = File("src/test/fixtures")
+val fixturesDir = File("src/functionalTest/fixtures")
 
 fun Stream<Arguments>.cartesianProduct(other: Stream<Arguments>): Stream<Arguments> {
     val otherArguments = other.toList()
@@ -34,7 +40,7 @@ private val gradleDir = File("gradle")
 fun createBuildRunner(
     fixtureDir: File,
     vararg args: String = arrayOf("clean", "build"),
-    kotlinVersion: String = BuildConfig.MAX_KOTLIN_VERSION,
+    kotlinVersion: String = MAX_KOTLIN_VERSION,
 ): GradleRunner {
     fixtureDir.resolve(gradleDir).apply {
         if (!exists()) mkdir()
@@ -42,7 +48,7 @@ fun createBuildRunner(
             """
             [versions]
             kotlin = "$kotlinVersion"
-            logtag = "${BuildConfig.LIBRARY_VERSION}"
+            logtag = "$LIBRARY_VERSION"
             """.trimIndent(),
         )
     }
