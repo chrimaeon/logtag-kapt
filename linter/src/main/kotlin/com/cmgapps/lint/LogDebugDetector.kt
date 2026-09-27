@@ -28,6 +28,7 @@ import org.jetbrains.uast.UIfExpression
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.USimpleNameReferenceExpression
+import org.jetbrains.uast.visitor.AbstractUastVisitor
 
 class LogDebugDetector :
     Detector(),
@@ -85,7 +86,18 @@ class LogDebugDetector :
                     return true
                 }
 
-                if (condition is USimpleNameReferenceExpression && condition.identifier == DEBUG_MEMBER) {
+                var checksDebug = false
+                condition.accept(
+                    object : AbstractUastVisitor() {
+                        override fun visitSimpleNameReferenceExpression(node: USimpleNameReferenceExpression): Boolean {
+                            if (node.identifier == DEBUG_MEMBER) {
+                                checksDebug = true
+                            }
+                            return false
+                        }
+                    },
+                )
+                if (checksDebug) {
                     return true
                 }
             } else if (curr is UCallExpression ||

@@ -576,6 +576,30 @@ class LogDebugDetectorShould : LintDetectorTest() {
             )
     }
 
+    @Test
+    fun `not report nested BuildConfig#DEBUG`() {
+        lint()
+            .files(
+                timberStub,
+                manifestStub,
+                kotlin(
+                    """
+                import timber.log.Timber
+                class Test {
+                   fun test(param: Boolean) {
+                       if (param && BuildConfig.DEBUG) {
+                           Timber.tag("TestTag").d("Debug")
+                       }
+                   }
+                }
+                """,
+                ).indented(),
+            ).skipTestModes(TestMode.IF_TO_WHEN)
+            .run()
+            .expect("No warnings.")
+            .expectFixDiffs("")
+    }
+
     override fun getDetector(): Detector = LogDebugDetector()
 
     override fun getIssues(): List<Issue?> = listOf(LogDebugDetector.ISSUE)
