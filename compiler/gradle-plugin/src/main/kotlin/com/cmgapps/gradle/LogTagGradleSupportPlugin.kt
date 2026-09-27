@@ -99,9 +99,6 @@ public class LogTagGradleSupportPlugin
 
                 afterEvaluate {
                     val compilerVersion = compilerVersionProvider.get()
-
-                    project.logger.lifecycle("Project initialized")
-
                     val minSupported = KotlinToolingVersion(BuildConfig.MIN_KOTLIN_VERSION)
                     val maxSupported = KotlinToolingVersion(BuildConfig.MAX_KOTLIN_VERSION)
                     val isSupported = compilerVersion in minSupported..maxSupported
