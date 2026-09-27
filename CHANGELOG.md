@@ -29,7 +29,7 @@
 - The KSP processor now respects the `logtag.androidMinSdkVersion` option; Android API 26 removes the 23-character limit
   for log tags
 - `com.cmgapps.logtag:log-tag` maven module moved to `com.cmgapps.logtag:android-lint`
-- Annotation library `com.cmgapps.logtag:annotation` is not Kotlin Multiplatform compatible
+- Annotation library `com.cmgapps.logtag:annotation` is now Kotlin Multiplatform compatible
 
 ### Deprecated
 
