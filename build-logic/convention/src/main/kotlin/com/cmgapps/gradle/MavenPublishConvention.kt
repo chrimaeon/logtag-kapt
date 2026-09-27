@@ -23,7 +23,9 @@ class MavenPublishConvention : Plugin<Project> {
                     automaticRelease = false,
                 )
 
-                extension.signAllPublications()
+                if (System.getenv("CI") == null) {
+                    extension.signAllPublications()
+                }
 
                 extension.coordinates(
                     artifactId = target.findProperty("artifactId") as? String,
