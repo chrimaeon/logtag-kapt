@@ -3,25 +3,6 @@ FILE fqName:foo.bar fileName:/privateClass.kt
     annotations:
       LogTag(value = <null>)
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.Private
-    CLASS GENERATED[com.cmgapps.logtag.LogTagPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
-      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.Private.Companion
-      CONSTRUCTOR GENERATED[com.cmgapps.logtag.LogTagPluginKey] visibility:private returnType:foo.bar.Private.Companion [primary]
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[com.cmgapps.logtag.LogTagPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-        overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
     CONSTRUCTOR visibility:public returnType:foo.bar.Private [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -65,3 +46,4 @@ FILE fqName:foo.bar fileName:/privateClass.kt
               STRING_CONCATENATION type=kotlin.String
                 CONST String type=kotlin.String value="Fail: "
                 GET_VAR 'val result: kotlin.String declared in foo.bar.box' type=kotlin.String origin=null
+FILE fqName:foo.bar fileName:foo/bar/LogTagResolver.kt

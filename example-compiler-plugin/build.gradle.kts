@@ -18,23 +18,28 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform") version "2.4.0"
-    id("com.android.kotlin.multiplatform.library") version "9.4.0"
-    id("com.cmgapps.logtag") version "2.0.0-alpha.2-SNAPSHOT"
+//    id("com.android.kotlin.multiplatform.library") version "9.4.0"
+    id("com.cmgapps.logtag") version "2.0.0-alpha.3-SNAPSHOT"
 }
 
 repositories {
     mavenCentral()
     google()
+
+    maven {
+        logger.lifecycle(rootDir.parentFile.resolve("build/local-staging").absolutePath)
+        url = rootDir.parentFile.resolve("build/local-staging").toURI()
+    }
 }
 
 kotlin {
     jvmToolchain(21)
 
-    android {
-        namespace = "com.cmgapps.logtag.example"
-        compileSdk { version = release(37) }
-        minSdk = 21
-    }
+//    android {
+//        namespace = "com.cmgapps.logtag.example"
+//        compileSdk { version = release(37) }
+//        minSdk = 21
+//    }
 
     jvm {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)

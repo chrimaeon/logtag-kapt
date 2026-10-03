@@ -10,31 +10,19 @@ import com.cmgapps.logtag.LOG_TAG_ANNOTATION_FQ_NAME
 import com.cmgapps.logtag.LOG_TAG_PROPERTY_NAME
 import com.cmgapps.logtag.LogTagPluginKey
 import org.jetbrains.kotlin.GeneratedDeclarationKey
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
-import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
-import org.jetbrains.kotlin.fir.plugin.createCompanionObject
-import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
-import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.plugin.createTopLevelProperty
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 
 internal class LogTagFirDeclarationGenerator(
     session: FirSession,
@@ -49,39 +37,22 @@ internal class LogTagFirDeclarationGenerator(
             .filterIsInstance<FirRegularClassSymbol>()
     }
 
-    private val companionOwners: Map<ClassId, FirRegularClassSymbol> by lazy {
-        matchedClasses.associateBy {
-            it.classId.createNestedClassId(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+    private val resolverPackages: Set<FqName> by lazy {
+        buildSet {
+            session.predicateBasedProvider
+                .getSymbolsByPredicate(predicate)
+                .filterIsInstance<FirNamedFunctionSymbol>()
+                .mapTo(this) { it.callableId.packageName }
+            matchedClasses.mapTo(this) { it.classId.packageFqName }
         }
     }
-
-    private val functionPackages: Set<FqName> by lazy {
-        session.predicateBasedProvider
-            .getSymbolsByPredicate(predicate)
-            .filterIsInstance<FirNamedFunctionSymbol>()
-            .mapTo(linkedSetOf()) { it.callableId.packageName }
-    }
-
-    private val FirClassSymbol<*>.isOurs: Boolean
-        get() = (origin as? FirDeclarationOrigin.Plugin)?.key == LogTagPluginKey
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(predicate)
     }
 
-    override fun getCallableNamesForClass(
-        classSymbol: FirClassSymbol<*>,
-        context: MemberGenerationContext,
-    ): Set<Name> {
-        if (classSymbol.classId !in companionOwners) return emptySet()
-        return buildSet {
-            add(LOG_TAG_PROPERTY_NAME)
-            if (classSymbol.isOurs) add(SpecialNames.INIT)
-        }
-    }
-
     @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
-    override fun getTopLevelCallableIds(): Set<CallableId> = functionPackages.mapTo(linkedSetOf()) { CallableId(it, LOG_TAG_PROPERTY_NAME) }
+    override fun getTopLevelCallableIds(): Set<CallableId> = resolverPackages.mapTo(linkedSetOf()) { CallableId(it, LOG_TAG_PROPERTY_NAME) }
 
     @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     override fun generateProperties(
@@ -89,7 +60,7 @@ internal class LogTagFirDeclarationGenerator(
         context: MemberGenerationContext?,
     ): List<FirPropertySymbol> {
         if (context == null && callableId.classId == null) {
-            if (callableId.callableName != LOG_TAG_PROPERTY_NAME || callableId.packageName !in functionPackages) {
+            if (callableId.callableName != LOG_TAG_PROPERTY_NAME || callableId.packageName !in resolverPackages) {
                 return emptyList()
             }
             return listOf(
@@ -104,57 +75,6 @@ internal class LogTagFirDeclarationGenerator(
             )
         }
 
-        val owner = context?.owner ?: return emptyList()
-
-        val property =
-            when (callableId.callableName) {
-                LOG_TAG_PROPERTY_NAME -> {
-                    createMemberProperty(
-                        owner = owner,
-                        key = key,
-                        name = LOG_TAG_PROPERTY_NAME,
-                        returnType = session.builtinTypes.stringType.coneType,
-                        isVal = true,
-                        hasBackingField = false,
-                    ) {
-                        visibility = Visibilities.Private
-                    }
-                }
-
-                else -> {
-                    null
-                }
-            } ?: return emptyList()
-
-        return listOf(property.symbol)
-    }
-
-    override fun generateNestedClassLikeDeclaration(
-        owner: FirClassSymbol<*>,
-        name: Name,
-        context: NestedClassGenerationContext,
-    ): FirClassLikeSymbol<*>? =
-        when {
-            name != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT -> null
-            owner !in matchedClasses -> null
-            else -> createCompanionObject(owner, key).symbol
-        }
-
-    override fun getNestedClassifiersNames(
-        classSymbol: FirClassSymbol<*>,
-        context: NestedClassGenerationContext,
-    ): Set<Name> {
-        val regular = classSymbol as? FirRegularClassSymbol ?: return emptySet()
-        return when {
-            regular !in matchedClasses -> emptySet()
-            regular.resolvedCompanionObjectSymbol != null -> emptySet()
-            else -> setOf(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
-        }
-    }
-
-    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val owner = context.owner
-        if (!owner.isOurs) return emptyList()
-        return listOf(createDefaultPrivateConstructor(owner, key).symbol)
+        return emptyList()
     }
 }

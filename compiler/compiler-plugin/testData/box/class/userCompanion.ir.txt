@@ -86,3 +86,4 @@ FILE fqName:foo.bar fileName:/userCompanion.kt
                 GET_VAR 'val result: kotlin.String declared in foo.bar.box' type=kotlin.String origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
         CONST String type=kotlin.String value="OK"
+FILE fqName:foo.bar fileName:foo/bar/LogTagResolver.kt

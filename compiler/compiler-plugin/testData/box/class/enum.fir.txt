@@ -9,7 +9,7 @@ FILE: enum.kt
         public final static enum entry VALUE1: R|foo/bar/MyEnum|
         public final static enum entry VALUE2: R|foo/bar/MyEnum|
         public final fun log(): R|kotlin/String| {
-            ^log <strcat>(this@R|foo/bar/MyEnum.Companion|.R|foo/bar/MyEnum.Companion.LOG_TAG|, String( ), this@R|foo/bar/MyEnum|.R|SubstitutionOverride<foo/bar/MyEnum.name: R|kotlin/String|>|)
+            ^log <strcat>(R|foo/bar/LOG_TAG|, String( ), this@R|foo/bar/MyEnum|.R|SubstitutionOverride<foo/bar/MyEnum.name: R|kotlin/String|>|)
         }
 
         public final static fun values(): R|kotlin/Array<foo/bar/MyEnum>| {
@@ -20,16 +20,6 @@ FILE: enum.kt
 
         public final static val entries: R|kotlin/enums/EnumEntries<foo/bar/MyEnum>|
             public static get(): R|kotlin/enums/EnumEntries<foo/bar/MyEnum>|
-
-        public final companion object Companion : R|kotlin/Any| {
-            private final val LOG_TAG: R|kotlin/String|
-                private get(): R|kotlin/String|
-
-            private constructor(): R|foo/bar/MyEnum.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
 
     }
     public final fun box(): R|kotlin/String| {
@@ -51,3 +41,8 @@ FILE: enum.kt
         }
 
     }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|

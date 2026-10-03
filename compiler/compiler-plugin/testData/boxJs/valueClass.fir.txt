@@ -10,17 +10,7 @@ FILE: valueClass.kt
             private get(): R|kotlin/String|
 
         public final fun log(): R|kotlin/String| {
-            ^log this@R|foo/bar/MyValueClass.Companion|.R|foo/bar/MyValueClass.Companion.LOG_TAG|
-        }
-
-        public final companion object Companion : R|kotlin/Any| {
-            private final val LOG_TAG: R|kotlin/String|
-                private get(): R|kotlin/String|
-
-            private constructor(): R|foo/bar/MyValueClass.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
+            ^log R|foo/bar/LOG_TAG|
         }
 
     }
@@ -36,3 +26,8 @@ FILE: valueClass.kt
         }
 
     }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|

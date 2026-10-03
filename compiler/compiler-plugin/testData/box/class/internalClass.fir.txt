@@ -7,17 +7,7 @@ FILE: internalClass.kt
         }
 
         public final fun log(message: R|kotlin/String|): R|kotlin/String| {
-            ^log this@R|foo/bar/Internal.Companion|.R|foo/bar/Internal.Companion.LOG_TAG|
-        }
-
-        public final companion object Companion : R|kotlin/Any| {
-            private final val LOG_TAG: R|kotlin/String|
-                private get(): R|kotlin/String|
-
-            private constructor(): R|foo/bar/Internal.Companion| {
-                super<R|kotlin/Any|>()
-            }
-
+            ^log R|foo/bar/LOG_TAG|
         }
 
     }
@@ -33,3 +23,8 @@ FILE: internalClass.kt
         }
 
     }
+FILE: foo/bar/LogTagResolver.kt
+    package foo.bar
+
+    public final val LOG_TAG: R|kotlin/String|
+        public get(): R|kotlin/String|

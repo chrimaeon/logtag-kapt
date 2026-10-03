@@ -44,13 +44,7 @@ class LogTagIrGenerator(
         return result
     }
 
-    override fun visitClass(declaration: IrClass): IrStatement =
-        withTag(declaration.logTagOrNull()) {
-            super.visitClass(declaration).also {
-                @OptIn(UnsafeDuringIrConstructionAPI::class)
-                declaration.declarations.removeAll { it is IrProperty && it.isGeneratedLogTag() }
-            }
-        }
+    override fun visitClass(declaration: IrClass): IrStatement = withTag(declaration.logTagOrNull()) { super.visitClass(declaration) }
 
     override fun visitFunction(declaration: IrFunction): IrStatement =
         with(compatContext) {
