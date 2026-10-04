@@ -70,7 +70,7 @@
 
 - LogTag's KAPT will be removed in the next major release; change to the KSP version
 
-[Unreleased]: https://github.com/chrimaeon/logtag-kapt/compare/v2.0.0-alpha.3...HEAD
-[2.0.0-alpha.3]: https://github.com/chrimaeon/logtag-kapt/compare/v2.0.0-alpha.2...v2.0.0-alpha.3
-[2.0.0-alpha.2]: https://github.com/chrimaeon/logtag-kapt/compare/v2.0.0-alpha.1...v2.0.0-alpha.2
-[2.0.0-alpha.1]: https://github.com/chrimaeon/logtag-kapt/commits/v2.0.0-alpha.1
+[Unreleased]: https://github.com/chrimaeon/logtag-kapt/compare/2.0.0-alpha.3...HEAD
+[2.0.0-alpha.3]: https://github.com/chrimaeon/logtag-kapt/compare/2.0.0-alpha.2...2.0.0-alpha.3
+[2.0.0-alpha.2]: https://github.com/chrimaeon/logtag-kapt/compare/2.0.0-alpha.1...2.0.0-alpha.2
+[2.0.0-alpha.1]: https://github.com/chrimaeon/logtag-kapt/commits/2.0.0-alpha.1

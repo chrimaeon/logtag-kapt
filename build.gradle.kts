@@ -21,8 +21,9 @@ allprojects {
 }
 
 changelog {
-    header = provider { version.get() }
+    header = version
     repositoryUrl = providers.gradleProperty("projectUrl")
+    versionPrefix = ""
 }
 
 tasks {
