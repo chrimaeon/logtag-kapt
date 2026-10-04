@@ -27,7 +27,7 @@ Apply the compiler plugin with Gradle
 
 ```kotlin
 plugins {
-    id("com.cmgapps.logtag") version "2.0.0-alpha.2"
+    id("com.cmgapps.logtag") version "2.0.0-alpha.3"
 }
 
 logTag {
@@ -63,8 +63,8 @@ Add the processor and annotation libraries to the projects dependencies
 
 ```kotlin
 dependencies {
-    implementation("com.cmgapps.logtag:log-tag:2.0.0-alpha.2")
-    ksp("com.cmgapps.logtag:processor:2.0.0-alpha.2")
+    implementation("com.cmgapps.logtag:log-tag:2.0.0-alpha.3")
+    ksp("com.cmgapps.logtag:processor:2.0.0-alpha.3")
 }
 ```
 
