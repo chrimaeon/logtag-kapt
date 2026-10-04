@@ -11,17 +11,19 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 
 class LogTagIrGenerationExtension(
     private val compatContext: CompatContext,
     private val androidMinSdkVersion: Int,
+    private val tagName: Name,
 ) : IrGenerationExtension {
     override fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext,
     ) {
         moduleFragment.transformChildrenVoid(
-            LogTagIrGenerator(pluginContext, compatContext, androidMinSdkVersion),
+            LogTagIrGenerator(pluginContext, compatContext, androidMinSdkVersion, tagName),
         )
     }
 }

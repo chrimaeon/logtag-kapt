@@ -9,7 +9,6 @@ package com.cmgapps.logtag
 import com.cmgapps.logtag.fir.LogTagFirExtensionRegistrar
 import com.cmgapps.logtag.ir.LogTagIrGenerationExtension
 import dev.zacsweers.metro.compiler.compat.CompatContext
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.reportException
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
@@ -19,18 +18,20 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.name.Name
 
 object LogTagConfigurationKeys {
     val ENABLED: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey("enabled")
     val ANDROID_MIN_SDK: CompilerConfigurationKey<Int> = CompilerConfigurationKey("android.minSdk")
+    val TAG_NAME: CompilerConfigurationKey<String> = CompilerConfigurationKey("tagName")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
 class LogTagCliProcessor : CommandLineProcessor {
     override val pluginId: String = BuildConfig.KOTLIN_PLUGIN_ID
 
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(ENABLED_OPTION, ANDROID_MIN_SDK_OPTION)
+    override val pluginOptions: Collection<AbstractCliOption> =
+        listOf(ENABLED_OPTION, ANDROID_MIN_SDK_OPTION, TAG_NAME_OPTION)
 
     companion object {
         val ENABLED_OPTION =
@@ -49,6 +50,14 @@ class LogTagCliProcessor : CommandLineProcessor {
                 required = false,
                 allowMultipleOccurrences = false,
             )
+        val TAG_NAME_OPTION =
+            CliOption(
+                LogTagConfigurationKeys.TAG_NAME.toString(),
+                "<tag name>",
+                "sets the tag name used to identify the log tag",
+                required = false,
+                allowMultipleOccurrences = false,
+            )
     }
 
     override fun processOption(
@@ -58,6 +67,7 @@ class LogTagCliProcessor : CommandLineProcessor {
     ) = when (option) {
         ENABLED_OPTION -> configuration.put(LogTagConfigurationKeys.ENABLED, value.toBoolean())
         ANDROID_MIN_SDK_OPTION -> configuration.put(LogTagConfigurationKeys.ANDROID_MIN_SDK, value.toInt())
+        TAG_NAME_OPTION -> configuration.put(LogTagConfigurationKeys.TAG_NAME, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -70,7 +80,10 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (!configuration.getBoolean(LogTagConfigurationKeys.ENABLED)) return
+
         val androidMinSdkVersion = configuration[LogTagConfigurationKeys.ANDROID_MIN_SDK, Int.MAX_VALUE]
+        val tagName = configuration[LogTagConfigurationKeys.TAG_NAME, "LOG_TAG"]
+        val tagNameIdentifier = Name.identifier(tagName)
 
         val compatContext =
             try {
@@ -81,8 +94,14 @@ class LogTagCompilerRegistrar : CompilerPluginRegistrar() {
             }
 
         with(compatContext) {
-            registerFirExtensionCompat(LogTagFirExtensionRegistrar())
-            registerIrExtensionCompat(LogTagIrGenerationExtension(compatContext, androidMinSdkVersion))
+            registerFirExtensionCompat(LogTagFirExtensionRegistrar(tagNameIdentifier))
+            registerIrExtensionCompat(
+                LogTagIrGenerationExtension(
+                    compatContext,
+                    androidMinSdkVersion,
+                    tagNameIdentifier,
+                ),
+            )
         }
     }
 }

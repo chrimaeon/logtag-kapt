@@ -9,8 +9,10 @@ package com.cmgapps.logtag.compiler
 import com.cmgapps.logtag.compiler.runner.AbstractAndroidBoxTest
 import com.cmgapps.logtag.compiler.runner.AbstractJsBoxOnlyTest
 import com.cmgapps.logtag.compiler.runner.AbstractJsBoxTest
+import com.cmgapps.logtag.compiler.runner.AbstractJsCustomTagBoxTest
 import com.cmgapps.logtag.compiler.runner.AbstractJsDiagnosticTest
 import com.cmgapps.logtag.compiler.runner.AbstractJvmBoxTest
+import com.cmgapps.logtag.compiler.runner.AbstractJvmCustomTagBoxTest
 import com.cmgapps.logtag.compiler.runner.AbstractJvmDiagnosticTest
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 
@@ -34,12 +36,20 @@ fun main(args: Array<String>) {
                 model("boxAndroid")
             }
 
+            testClass<AbstractJvmCustomTagBoxTest> {
+                model("boxCustom")
+            }
+
             testClass<AbstractJsBoxTest> {
                 model("box")
             }
 
             testClass<AbstractJsBoxOnlyTest> {
                 model("boxJs")
+            }
+
+            testClass<AbstractJsCustomTagBoxTest> {
+                model("boxCustom")
             }
         }
     }

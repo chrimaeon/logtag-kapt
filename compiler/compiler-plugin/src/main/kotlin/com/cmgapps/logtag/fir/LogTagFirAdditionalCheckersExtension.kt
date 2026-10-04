@@ -7,7 +7,6 @@
 package com.cmgapps.logtag.fir
 
 import com.cmgapps.logtag.LOG_TAG_ANNOTATION_CLASS_ID
-import com.cmgapps.logtag.LOG_TAG_PROPERTY_NAME
 import com.cmgapps.logtag.LogTagPluginKey
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -23,18 +22,21 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.name.Name
 
 internal class LogTagFirAdditionalCheckersExtension(
     session: FirSession,
+    private val tagName: Name,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers =
         object : ExpressionCheckers() {
             override val propertyAccessExpressionCheckers: Set<FirExpressionChecker<FirPropertyAccessExpression>> =
-                setOf(LogTagPropertyAccessChecker)
+                setOf(LogTagPropertyAccessChecker(tagName))
         }
 
-    private object LogTagPropertyAccessChecker :
-        FirExpressionChecker<FirPropertyAccessExpression>(MppCheckerKind.Common) {
+    private class LogTagPropertyAccessChecker(
+        private val tagName: Name,
+    ) : FirExpressionChecker<FirPropertyAccessExpression>(MppCheckerKind.Common) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         override fun check(expression: FirPropertyAccessExpression) {
             val property =
@@ -60,7 +62,7 @@ internal class LogTagFirAdditionalCheckersExtension(
 
         @OptIn(SymbolInternals::class)
         private fun FirPropertySymbol.isGeneratedLogTag(): Boolean =
-            callableId?.callableName == LOG_TAG_PROPERTY_NAME &&
+            callableId?.callableName == tagName &&
                 (fir.origin as? FirDeclarationOrigin.Plugin)?.key == LogTagPluginKey
     }
 }

@@ -7,7 +7,6 @@
 package com.cmgapps.logtag.ir
 
 import com.cmgapps.logtag.LOG_TAG_ANNOTATION_FQ_NAME
-import com.cmgapps.logtag.LOG_TAG_PROPERTY_NAME
 import com.cmgapps.logtag.LogTagPluginKey
 import dev.zacsweers.metro.compiler.compat.CompatContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -34,6 +33,7 @@ class LogTagIrGenerator(
     private val context: IrPluginContext,
     private val compatContext: CompatContext,
     private val androidMinSdkVersion: Int,
+    private val tagName: Name,
 ) : IrElementTransformerVoid() {
     private val activeTags = mutableListOf<String?>()
 
@@ -114,6 +114,6 @@ class LogTagIrGenerator(
             }
 
     private fun IrProperty.isGeneratedLogTag(): Boolean =
-        name == LOG_TAG_PROPERTY_NAME &&
+        name == tagName &&
             (origin as? IrDeclarationOrigin.GeneratedByPlugin)?.pluginKey == LogTagPluginKey
 }

@@ -7,11 +7,14 @@
 package com.cmgapps.logtag.fir
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.name.Name
 
-internal class LogTagFirExtensionRegistrar : FirExtensionRegistrar() {
+internal class LogTagFirExtensionRegistrar(
+    private val tagName: Name,
+) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         registerDiagnosticContainers(LogTagDiagnostics)
-        +::LogTagFirDeclarationGenerator
-        +::LogTagFirAdditionalCheckersExtension
+        +::LogTagFirDeclarationGenerator.bind(tagName)
+        +::LogTagFirAdditionalCheckersExtension.bind(tagName)
     }
 }

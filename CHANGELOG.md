@@ -4,6 +4,8 @@
 
 ### Added
 
+- Custom tag name support for the Kotlin Compiler Plugin
+
 ### Changed
 
 ### Deprecated
@@ -20,7 +22,6 @@
 
 - Integrated the [https://github.com/chrimaeon/lint-logdebug](https://github.com/chrimaeon/lint-logdebug) project into
   the lint checks
-- Kotlin Compiler Plugin (Experimental)
 
 ### Changed
 

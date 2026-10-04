@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.runners.AbstractFirBlackBoxCodegenTestSpec
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 
-open class AbstractJvmBoxTest : AbstractFirBlackBoxCodegenTestSpec() {
+abstract class AbstractJvmBoxTest : AbstractFirBlackBoxCodegenTestSpec() {
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider =
         EnvironmentBasedStandardLibrariesPathProvider
 
@@ -50,4 +50,20 @@ open class AbstractJvmBoxTest : AbstractFirBlackBoxCodegenTestSpec() {
 
             configurePlugin(configurationMap = configurationMap)
         }
+}
+
+abstract class AbstractJvmCustomTagBoxTest : AbstractJvmBoxTest() {
+    override val configurationMap: Map<CompilerConfigurationKey<*>, Any>
+        get() =
+            super.configurationMap.toMutableMap().apply {
+                put(LogTagConfigurationKeys.TAG_NAME, "MY_TAG")
+            }
+}
+
+abstract class AbstractAndroidBoxTest : AbstractJvmBoxTest() {
+    override val configurationMap: Map<CompilerConfigurationKey<*>, Any> =
+        mapOf(
+            LogTagConfigurationKeys.ENABLED to true,
+            LogTagConfigurationKeys.ANDROID_MIN_SDK to 21,
+        )
 }

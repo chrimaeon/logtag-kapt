@@ -54,7 +54,6 @@ public class LogTagGradleSupportPlugin
                         .orElse(target.provider { target.kotlinToolingVersion })
 
                 val logTagExtension = objects.newInstance(LogTagExtensionInternal::class.java)
-                logTagExtension.minSdk.convention(Int.MAX_VALUE)
                 extensions.add(LogTagExtension::class.java, "logTag", logTagExtension)
 
                 ANDROID_IDS.forEach {
@@ -165,6 +164,7 @@ public class LogTagGradleSupportPlugin
                 objects.listProperty(SubpluginOption::class.java).apply {
                     add(extension.enabled.map { SubpluginOption("enabled", it.toString()) })
                     add(extension.minSdk.map { SubpluginOption("android.minSdk", it.toString()) })
+                    add(extension.tagName.map { SubpluginOption("tagName", it) })
                 }
             }
         }

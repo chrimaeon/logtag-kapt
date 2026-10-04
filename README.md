@@ -29,7 +29,13 @@ Apply the compiler plugin with Gradle
 plugins {
     id("com.cmgapps.logtag") version "2.0.0-alpha.2"
 }
+
+logTag {
+    tagName = "CUSTOM_TAG" // Defaults to "LOG_TAG"
+}
 ```
+
+Set `tagName` to choose the name of the generated tag property.
 
 Now you can use the `@LogTag` annotation in your source files
 
@@ -74,9 +80,11 @@ To generate the appropriate Log tag for your Android project, set the min SDK ve
 
 ```kotlin
 ksp {
-    arg("logtag.androidMinSdkVersion", "<Your Android API Level>")
+    arg("logtag.androidMinSdkVersion", "<Your Android MIN SDK Version a.k.a. android.default.minSdk>")
 }
 ```
+
+for `android.util.Log` Tags on Android API <26 can only have 23 characters and will automatically be truncated.
 
 </details>
 

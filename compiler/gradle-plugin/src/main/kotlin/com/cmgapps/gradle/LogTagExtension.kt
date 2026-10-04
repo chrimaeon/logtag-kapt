@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 
 public interface LogTagExtension {
     public val enabled: Property<Boolean>
+    public val tagName: Property<String>
 }
 
 @Suppress("kotlin:S6526")
@@ -18,5 +19,7 @@ internal abstract class LogTagExtensionInternal : LogTagExtension {
 
     init {
         enabled.convention(true)
+        tagName.convention("LOG_TAG")
+        minSdk.convention(Int.MAX_VALUE)
     }
 }

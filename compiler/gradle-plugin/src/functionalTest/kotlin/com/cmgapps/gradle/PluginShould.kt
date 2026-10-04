@@ -144,6 +144,19 @@ class PluginShould {
         assertExpectedFiles(fixturesDir, "lint")
     }
 
+    @Test
+    fun `handle custom log tag name`() {
+        val result =
+            createBuildRunner(
+                File(fixturesDir, "custom-log-tag-name"),
+            ).build()
+
+        assertThat(
+            result.task(":assemble")?.outcome,
+            `is`(TaskOutcome.SUCCESS),
+        )
+    }
+
     companion object {
         @JvmStatic
         fun versions() = gradleVersions().cartesianProduct(kotlinVersions())

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 
-open class AbstractJsDiagnosticTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree) {
+abstract class AbstractJsDiagnosticTest : AbstractJsDiagnosticWithBackendTestBase(FirParser.LightTree) {
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider =
         EnvironmentBasedStandardLibrariesPathProvider
 

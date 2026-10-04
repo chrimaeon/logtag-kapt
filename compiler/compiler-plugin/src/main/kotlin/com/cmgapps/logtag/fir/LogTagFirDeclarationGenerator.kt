@@ -7,7 +7,6 @@
 package com.cmgapps.logtag.fir
 
 import com.cmgapps.logtag.LOG_TAG_ANNOTATION_FQ_NAME
-import com.cmgapps.logtag.LOG_TAG_PROPERTY_NAME
 import com.cmgapps.logtag.LogTagPluginKey
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
@@ -23,9 +22,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 internal class LogTagFirDeclarationGenerator(
     session: FirSession,
+    private val tagName: Name,
 ) : FirDeclarationGenerationExtension(session) {
     private val predicate = LookupPredicate.create { annotated(LOG_TAG_ANNOTATION_FQ_NAME) }
 
@@ -52,7 +53,7 @@ internal class LogTagFirDeclarationGenerator(
     }
 
     @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
-    override fun getTopLevelCallableIds(): Set<CallableId> = resolverPackages.mapTo(linkedSetOf()) { CallableId(it, LOG_TAG_PROPERTY_NAME) }
+    override fun getTopLevelCallableIds(): Set<CallableId> = resolverPackages.mapTo(mutableSetOf()) { CallableId(it, tagName) }
 
     @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     override fun generateProperties(
@@ -60,7 +61,7 @@ internal class LogTagFirDeclarationGenerator(
         context: MemberGenerationContext?,
     ): List<FirPropertySymbol> {
         if (context == null && callableId.classId == null) {
-            if (callableId.callableName != LOG_TAG_PROPERTY_NAME || callableId.packageName !in resolverPackages) {
+            if (callableId.callableName != tagName || callableId.packageName !in resolverPackages) {
                 return emptyList()
             }
             return listOf(

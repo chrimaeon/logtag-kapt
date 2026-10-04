@@ -10,6 +10,7 @@ gradle-plugin = { id = "java-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 dokka = "org.jetbrains.dokka:2.2.0"
 buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.1.1" }
+##                                                         ⬆ = "6.1.2" }
 gradle-pluginPublish = "com.gradle.plugin-publish:2.2.1"
 jetbrains-changelog = "org.jetbrains.changelog:2.5.0"
 node-gradle = { id = "com.github.node-gradle.node", version = "7.1.0" }
@@ -22,6 +23,7 @@ kotlin = "2.4.20"
 ksp = "2.3.12"
 androidLint = "32.4.1"
 mockito = "5.23.0"
+##   ⬆ = "5.24.0"
 junit = "4.13.2"
 agp = "9.0.0"
 ##⬆= "9.0.1"
@@ -57,6 +59,7 @@ android-testutils = { module = "com.android.tools:testutils", version.ref = "and
 
 mockito-junit = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version = "6.3.0" }
+##                                                                    ⬆ = "6.4.0" }
 
 kotlin-compile-testing-ksp = "dev.zacsweers.kctfork:ksp:0.14.0"
 
@@ -82,5 +85,6 @@ kover = { module = "org.jetbrains.kotlinx.kover:org.jetbrains.kotlinx.kover.grad
 vanniktech-maven-publish = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version = "0.37.0" }
 
 metro-compiler-compat = "dev.zacsweers.metro:compiler-compat-latest:1.4.4"
+##                                                              ⬆ :1.4.5"
 
 java-diff-utils = "io.github.java-diff-utils:java-diff-utils:4.17"
