@@ -1,5 +1,6 @@
 public abstract interface class com/cmgapps/gradle/LogTagExtension {
 	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public abstract fun getTagName ()Lorg/gradle/api/provider/Property;
 }
 
 public final class com/cmgapps/gradle/LogTagGradleSupportPlugin : org/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin {
