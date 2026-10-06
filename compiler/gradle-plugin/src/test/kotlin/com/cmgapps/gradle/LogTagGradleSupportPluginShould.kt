@@ -237,6 +237,7 @@ class LogTagGradleSupportPluginShould {
             containsInAnyOrder(
                 hasProperty("key", `is`("enabled")),
                 hasProperty("key", `is`("android.minSdk")),
+                hasProperty("key", `is`("tagName")),
             ),
         )
     }
